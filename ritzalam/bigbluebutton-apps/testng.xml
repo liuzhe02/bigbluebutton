@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+<suite name="BigBlueButton Test Suite">
+  <test name="Conference tests">
+    <packages>
+    	<package name="org.bigbluebutton.conference.voice"/>
+    	<package name="org.bigbluebutton.conference.voice.asterisk"/>
+    </packages>
+  </test>
+</suite>
