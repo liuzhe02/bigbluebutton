@@ -3,15 +3,17 @@ class Schedule implements Comparable {
 	Date lastUpdated
 	String scheduledBy
 	String scheduleName
-	Integer scheduleNumber
+	String scheduleId
 	Integer numberOfAttendees = new Integer(3)
 	Date startDateTime = new Date()
 	Integer lengthOfConference
 	Boolean record = false
+	
+	static belongsTo = [conference : Conference]
 			
 	static constraints = {		
 		scheduleName(maxLength:50, blank:false)
-		scheduleNumber(maxLength:10, unique:true, blank:false)
+		scheduleId(blank:false)
 		lengthOfConference(inList:[1, 2, 3, 4])
 		numberOfAttendees()
 		scheduledBy(blank:false)

@@ -6,7 +6,7 @@ class Conference implements Comparable {
 	Integer conferenceNumber
 	SortedSet schedules
 	
-	static hasMany = [ schedules: Schedule ]
+	static hasMany = [ schedules : Schedule ]
 			
 	static constraints = {
 		username(blank:false)

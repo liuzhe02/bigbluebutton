@@ -19,38 +19,24 @@
             <div class="list">
                 <table>
                     <thead>
-                        <tr>
-                        
-                   	        <g:sortableColumn property="id" title="Id" />
-                        
-                   	        <g:sortableColumn property="username" title="Username" />
-                        
-                   	        <g:sortableColumn property="conferenceName" title="Conference Name" />
-                        
-                   	        <g:sortableColumn property="conferenceNumber" title="Conference Number" />
-                        
-                   	        <g:sortableColumn property="dateCreated" title="Date Created" />
-                        
-                   	        <g:sortableColumn property="lastUpdated" title="Last Updated" />
-                        
+                        <tr>                        
+                   	        <g:sortableColumn property="id" title="Id" />                        
+                   	        <g:sortableColumn property="username" title="Username" />                        
+                   	        <g:sortableColumn property="conferenceName" title="Conference Name" />                        
+                   	        <g:sortableColumn property="conferenceNumber" title="Conference Number" />                        
+                   	        <g:sortableColumn property="dateCreated" title="Date Created" />                        
+                   	        <g:sortableColumn property="lastUpdated" title="Last Updated" />                        
                         </tr>
                     </thead>
                     <tbody>
-                    <g:each in="${conferenceInstanceList}" status="i" var="conferenceInstance">
-                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-                        
-                            <td><g:link action="show" id="${conferenceInstance.id}">${fieldValue(bean:conferenceInstance, field:'id')}</g:link></td>
-                        
-                            <td>${fieldValue(bean:conferenceInstance, field:'username')}</td>
-                        
-                            <td>${fieldValue(bean:conferenceInstance, field:'conferenceName')}</td>
-                        
-                            <td>${fieldValue(bean:conferenceInstance, field:'conferenceNumber')}</td>
-                        
-                            <td>${fieldValue(bean:conferenceInstance, field:'dateCreated')}</td>
-                        
-                            <td>${fieldValue(bean:conferenceInstance, field:'lastUpdated')}</td>
-                        
+                    <g:each in="${conferenceList}" status="i" var="conference">
+                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">                        
+                            <td><g:link action="show" id="${conference.id}">${fieldValue(bean:conference, field:'id')}</g:link></td>                        
+                            <td>${fieldValue(bean:conference, field:'username')}</td>                        
+                            <td>${fieldValue(bean:conference, field:'conferenceName')}</td>                        
+                            <td>${fieldValue(bean:conference, field:'conferenceNumber')}</td>                        
+                            <td>${fieldValue(bean:conference, field:'dateCreated')}</td>                        
+                            <td>${fieldValue(bean:conference, field:'lastUpdated')}</td>                        
                         </tr>
                     </g:each>
                     </tbody>

@@ -1,3 +1,5 @@
+import java.util.UUID;
+
 class ScheduleController {
     
     def index = { redirect(action:list,params:params) }
@@ -25,7 +27,7 @@ class ScheduleController {
         if(scheduleInstance) {
             scheduleInstance.delete()
             flash.message = "Schedule ${params.id} deleted"
-            redirect(action:list)
+            redirect(controller:'conference', action:show,id:scheduleInstance.conferenceId)
         }
         else {
             flash.message = "Schedule not found with id ${params.id}"
@@ -51,7 +53,7 @@ class ScheduleController {
             scheduleInstance.properties = params
             if(!scheduleInstance.hasErrors() && scheduleInstance.save()) {
                 flash.message = "Schedule ${params.id} updated"
-                redirect(action:show,id:scheduleInstance.id)
+                redirect(controller:'conference', action:show,id:scheduleInstance.conferenceId)
             }
             else {
                 render(view:'edit',model:[scheduleInstance:scheduleInstance])
@@ -64,16 +66,23 @@ class ScheduleController {
     }
 
     def create = {
+    System.out.println("Conference ${params.conferenceId}")
         def scheduleInstance = new Schedule()
         scheduleInstance.properties = params
-        return ['scheduleInstance':scheduleInstance]
+        return ['scheduleInstance':scheduleInstance, 'conferenceId':params.conferenceId]
     }
 
     def save = {
+    	System.out.println("Conference ${params.conferenceId}")
+    	def conference = Conference.get(params.conferenceId)
+    	params.conference = conference
         def scheduleInstance = new Schedule(params)
+        scheduleInstance.scheduleId = UUID.randomUUID();
+        scheduleInstance.scheduledBy = session.username
+        
         if(!scheduleInstance.hasErrors() && scheduleInstance.save()) {
             flash.message = "Schedule ${scheduleInstance.id} created"
-            redirect(action:show,id:scheduleInstance.id)
+            redirect(controller:'conference', action:show,id:scheduleInstance.conferenceId)
         }
         else {
             render(view:'create',model:[scheduleInstance:scheduleInstance])

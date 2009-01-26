@@ -39,15 +39,6 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="scheduleNumber">Schedule Number:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'scheduleNumber','errors')}">
-                                    <input type="text" id="scheduleNumber" name="scheduleNumber" value="${fieldValue(bean:scheduleInstance,field:'scheduleNumber')}" />
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
                                     <label for="lengthOfConference">Length Of Conference:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'lengthOfConference','errors')}">
@@ -63,34 +54,7 @@
                                     <input type="text" id="numberOfAttendees" name="numberOfAttendees" value="${fieldValue(bean:scheduleInstance,field:'numberOfAttendees')}" />
                                 </td>
                             </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="scheduledBy">Scheduled By:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'scheduledBy','errors')}">
-                                    <input type="text" id="scheduledBy" name="scheduledBy" value="${fieldValue(bean:scheduleInstance,field:'scheduledBy')}"/>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="dateCreated">Date Created:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'dateCreated','errors')}">
-                                    <g:datePicker name="dateCreated" value="${scheduleInstance?.dateCreated}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="lastUpdated">Last Updated:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'lastUpdated','errors')}">
-                                    <g:datePicker name="lastUpdated" value="${scheduleInstance?.lastUpdated}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
+                                                
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="record">Record:</label>
@@ -109,6 +73,14 @@
                                 </td>
                             </tr> 
                         
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="scheduledBy">Scheduled By:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'scheduledBy','errors')}">
+                                    ${scheduleInstance.scheduledBy}
+                                </td>
+                            </tr>                         
                         </tbody>
                     </table>
                 </div>

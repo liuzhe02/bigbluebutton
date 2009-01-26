@@ -43,7 +43,7 @@
                         
                             <td>${fieldValue(bean:scheduleInstance, field:'scheduleName')}</td>
                         
-                            <td>${fieldValue(bean:scheduleInstance, field:'scheduleNumber')}</td>
+                            <td>${fieldValue(bean:scheduleInstance, field:'scheduleId')}</td>
                         
                             <td>${fieldValue(bean:scheduleInstance, field:'lengthOfConference')}</td>
                         

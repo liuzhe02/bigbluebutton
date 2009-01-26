@@ -37,9 +37,9 @@
                         </tr>
                     
                         <tr class="prop">
-                            <td valign="top" class="name">Schedule Number:</td>
+                            <td valign="top" class="name">Schedule Id:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:scheduleInstance, field:'scheduleNumber')}</td>
+                            <td valign="top" class="value">${fieldValue(bean:scheduleInstance, field:'scheduleId')}</td>
                             
                         </tr>
                     
@@ -98,6 +98,7 @@
             <div class="buttons">
                 <g:form>
                     <input type="hidden" name="id" value="${scheduleInstance?.id}" />
+                    <input type="hidden" name="conferenceId" value="${scheduleInstance?.conferenceId}" />
                     <span class="button"><g:actionSubmit class="edit" value="Edit" /></span>
                     <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
                 </g:form>

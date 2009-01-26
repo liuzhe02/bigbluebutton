@@ -21,16 +21,8 @@
                 <table>
                     <tbody>
 
-                    
                         <tr class="prop">
-                            <td valign="top" class="name">Id:</td>
-                            
-                            <td valign="top" class="value">${fieldValue(bean:conference, field:'id')}</td>
-                            
-                        </tr>
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Username:</td>
+                            <td valign="top" class="name">Created By:</td>
                             
                             <td valign="top" class="value">${fieldValue(bean:conference, field:'username')}</td>
                             
@@ -63,7 +55,22 @@
                             <td valign="top" class="value">${fieldValue(bean:conference, field:'lastUpdated')}</td>
                             
                         </tr>
-                    
+                             <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="schedules"></label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'schedules','errors')}">
+                                    
+<ul>
+<g:each var="s" in="${conferenceInstance?.schedules?}">
+    <li><g:link controller="schedule" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></li>
+</g:each>
+</ul>
+<g:link controller="schedule" params="['conferenceId':conference.id]" action="create">Add Schedule</g:link>
+
+                                </td>
+                            </tr> 
+                                               
                         <tr class="prop">
                             <td valign="top" class="name">Schedules:</td>
                             
@@ -82,7 +89,7 @@
             </div>
             <div class="buttons">
                 <g:form>
-                    <input type="hidden" name="id" value="${conferenceInstance?.id}" />
+                    <input type="hidden" name="id" value="${conference?.id}" />
                     <span class="button"><g:actionSubmit class="edit" value="Edit" /></span>
                     <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
                 </g:form>

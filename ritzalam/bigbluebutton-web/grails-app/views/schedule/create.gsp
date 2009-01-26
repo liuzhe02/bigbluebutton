@@ -22,31 +22,23 @@
             </div>
             </g:hasErrors>
             <g:form action="save" method="post" >
+            	<input type="hidden" name="conferenceId" value="${conferenceId}" />
                 <div class="dialog">
                     <table>
                         <tbody>
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="scheduleName">Schedule Name:</label>
+                                    <label for="scheduleName">Name this schedule:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'scheduleName','errors')}">
                                     <input type="text" id="scheduleName" name="scheduleName" value="${fieldValue(bean:scheduleInstance,field:'scheduleName')}"/>
                                 </td>
                             </tr> 
-                        
+                                                
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="scheduleNumber">Schedule Number:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'scheduleNumber','errors')}">
-                                    <input type="text" id="scheduleNumber" name="scheduleNumber" value="${fieldValue(bean:scheduleInstance,field:'scheduleNumber')}" />
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="lengthOfConference">Length Of Conference:</label>
+                                    <label for="lengthOfConference">How long (hours)?:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'lengthOfConference','errors')}">
                                     <input type="text" id="lengthOfConference" name="lengthOfConference" value="${fieldValue(bean:scheduleInstance,field:'lengthOfConference')}" />
@@ -55,43 +47,16 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="numberOfAttendees">Number Of Attendees:</label>
+                                    <label for="numberOfAttendees">How many will attend?:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'numberOfAttendees','errors')}">
                                     <input type="text" id="numberOfAttendees" name="numberOfAttendees" value="${fieldValue(bean:scheduleInstance,field:'numberOfAttendees')}" />
                                 </td>
                             </tr> 
-                        
+                                                
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="scheduledBy">Scheduled By:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'scheduledBy','errors')}">
-                                    <input type="text" id="scheduledBy" name="scheduledBy" value="${fieldValue(bean:scheduleInstance,field:'scheduledBy')}"/>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="dateCreated">Date Created:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'dateCreated','errors')}">
-                                    <g:datePicker name="dateCreated" value="${scheduleInstance?.dateCreated}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="lastUpdated">Last Updated:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'lastUpdated','errors')}">
-                                    <g:datePicker name="lastUpdated" value="${scheduleInstance?.lastUpdated}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="record">Record:</label>
+                                    <label for="record">Record the conference?:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'record','errors')}">
                                     <g:checkBox name="record" value="${scheduleInstance?.record}" ></g:checkBox>
@@ -100,7 +65,7 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="startDateTime">Start Date Time:</label>
+                                    <label for="startDateTime">Please enter the start date and time:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:scheduleInstance,field:'startDateTime','errors')}">
                                     <g:datePicker name="startDateTime" value="${scheduleInstance?.startDateTime}" ></g:datePicker>
