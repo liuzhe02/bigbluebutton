@@ -16,9 +16,9 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${user}">
+            <g:hasErrors bean="${userInstance}">
             <div class="errors">
-                <g:renderErrors bean="${user}" as="list" />
+                <g:renderErrors bean="${userInstance}" as="list" />
             </div>
             </g:hasErrors>
             <g:form action="save" method="post" >
@@ -28,19 +28,19 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="email">Email:</label>
+                                    <label for="username">Username:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:user,field:'email','errors')}">
-                                    <input type="text" id="email" name="email" value="${fieldValue(bean:user,field:'email')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:userInstance,field:'username','errors')}">
+                                    <input type="text" id="username" name="username" value="${fieldValue(bean:userInstance,field:'username')}"/>
                                 </td>
                             </tr> 
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="password">Password:</label>
+                                    <label for="email">Email:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:user,field:'password','errors')}">
-                                    <input type="text" id="password" name="password" value="${fieldValue(bean:user,field:'password')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:userInstance,field:'email','errors')}">
+                                    <input type="text" id="email" name="email" value="${fieldValue(bean:userInstance,field:'email')}"/>
                                 </td>
                             </tr> 
                         
@@ -48,8 +48,8 @@
                                 <td valign="top" class="name">
                                     <label for="fullName">Full Name:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:user,field:'fullName','errors')}">
-                                    <input type="text" id="fullName" name="fullName" value="${fieldValue(bean:user,field:'fullName')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:userInstance,field:'fullName','errors')}">
+                                    <input type="text" id="fullName" name="fullName" value="${fieldValue(bean:userInstance,field:'fullName')}"/>
                                 </td>
                             </tr> 
                         
@@ -57,14 +57,14 @@
                                 <td valign="top" class="name">
                                     <label for="conferences">Conferences:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:user,field:'conferences','errors')}">
+                                <td valign="top" class="value ${hasErrors(bean:userInstance,field:'conferences','errors')}">
                                     
 <ul>
-<g:each var="c" in="${user?.conferences?}">
-    <li><g:link controller="conference" action="show" id="${c.id}">${c}</g:link></li>
+<g:each var="c" in="${userInstance?.conferences?}">
+    <li><g:link controller="conference" action="show" id="${c.id}">${c?.encodeAsHTML()}</g:link></li>
 </g:each>
 </ul>
-<g:link controller="conference" params="["user.id":user?.id]" action="create">Add Conference</g:link>
+<g:link controller="conference" params="['user.id':userInstance?.id]" action="create">Add Conference</g:link>
 
                                 </td>
                             </tr> 
@@ -73,8 +73,8 @@
                                 <td valign="top" class="name">
                                     <label for="dateCreated">Date Created:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:user,field:'dateCreated','errors')}">
-                                    <g:datePicker name="dateCreated" value="${user?.dateCreated}" ></g:datePicker>
+                                <td valign="top" class="value ${hasErrors(bean:userInstance,field:'dateCreated','errors')}">
+                                    <g:datePicker name="dateCreated" value="${userInstance?.dateCreated}" ></g:datePicker>
                                 </td>
                             </tr> 
                         
@@ -82,8 +82,17 @@
                                 <td valign="top" class="name">
                                     <label for="lastUpdated">Last Updated:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:user,field:'lastUpdated','errors')}">
-                                    <g:datePicker name="lastUpdated" value="${user?.lastUpdated}" ></g:datePicker>
+                                <td valign="top" class="value ${hasErrors(bean:userInstance,field:'lastUpdated','errors')}">
+                                    <g:datePicker name="lastUpdated" value="${userInstance?.lastUpdated}" ></g:datePicker>
+                                </td>
+                            </tr> 
+                        
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="passwordHash">Password Hash:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:userInstance,field:'passwordHash','errors')}">
+                                    <input type="text" id="passwordHash" name="passwordHash" value="${fieldValue(bean:userInstance,field:'passwordHash')}"/>
                                 </td>
                             </tr> 
                         

@@ -1,7 +1,5 @@
             
-class AttendeesController extends BaseController {
-    def beforeInterceptor = [action:this.&auth]
-    
+class AttendeesController {
     def index = { redirect(action:list,params:params) }
 
     // the delete, save and update actions only accept POST requests

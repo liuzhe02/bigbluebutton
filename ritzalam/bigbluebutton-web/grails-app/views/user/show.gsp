@@ -25,28 +25,28 @@
                         <tr class="prop">
                             <td valign="top" class="name">Id:</td>
                             
-                            <td valign="top" class="value">${user.id}</td>
+                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'id')}</td>
+                            
+                        </tr>
+                    
+                        <tr class="prop">
+                            <td valign="top" class="name">Username:</td>
+                            
+                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'username')}</td>
                             
                         </tr>
                     
                         <tr class="prop">
                             <td valign="top" class="name">Email:</td>
                             
-                            <td valign="top" class="value">${user.email}</td>
-                            
-                        </tr>
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Password:</td>
-                            
-                            <td valign="top" class="value">${user.password}</td>
+                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'email')}</td>
                             
                         </tr>
                     
                         <tr class="prop">
                             <td valign="top" class="name">Full Name:</td>
                             
-                            <td valign="top" class="value">${user.fullName}</td>
+                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'fullName')}</td>
                             
                         </tr>
                     
@@ -55,8 +55,8 @@
                             
                             <td  valign="top" style="text-align:left;" class="value">
                                 <ul>
-                                <g:each var="c" in="${user.conferences}">
-                                    <li><g:link controller="conference" action="show" id="${c.id}">${c}</g:link></li>
+                                <g:each var="c" in="${userInstance.conferences}">
+                                    <li><g:link controller="conference" action="show" id="${c.id}">${c?.encodeAsHTML()}</g:link></li>
                                 </g:each>
                                 </ul>
                             </td>
@@ -66,14 +66,21 @@
                         <tr class="prop">
                             <td valign="top" class="name">Date Created:</td>
                             
-                            <td valign="top" class="value">${user.dateCreated}</td>
+                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'dateCreated')}</td>
                             
                         </tr>
                     
                         <tr class="prop">
                             <td valign="top" class="name">Last Updated:</td>
                             
-                            <td valign="top" class="value">${user.lastUpdated}</td>
+                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'lastUpdated')}</td>
+                            
+                        </tr>
+                    
+                        <tr class="prop">
+                            <td valign="top" class="name">Password Hash:</td>
+                            
+                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'passwordHash')}</td>
                             
                         </tr>
                     
@@ -82,7 +89,7 @@
             </div>
             <div class="buttons">
                 <g:form>
-                    <input type="hidden" name="id" value="${user?.id}" />
+                    <input type="hidden" name="id" value="${userInstance?.id}" />
                     <span class="button"><g:actionSubmit class="edit" value="Edit" /></span>
                     <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
                 </g:form>

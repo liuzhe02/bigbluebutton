@@ -1,10 +1,4 @@
-            
-class UserController extends BaseController {
-
-	VolunteerOttawaService volunteerOttawaService
-	
-    def beforeInterceptor = [action:this.&auth,
-    							except:['login', 'logout']]
+class UserController {
     
     def index = { redirect(action:list,params:params) }
 
@@ -13,23 +7,23 @@ class UserController extends BaseController {
 
     def list = {
         if(!params.max) params.max = 10
-        [ userList: User.list( params ) ]
+        [ userInstanceList: User.list( params ) ]
     }
 
     def show = {
-        def user = User.get( params.id )
+        def userInstance = User.get( params.id )
 
-        if(!user) {
+        if(!userInstance) {
             flash.message = "User not found with id ${params.id}"
             redirect(action:list)
         }
-        else { return [ user : user ] }
+        else { return [ userInstance : userInstance ] }
     }
 
     def delete = {
-        def user = User.get( params.id )
-        if(user) {
-            user.delete()
+        def userInstance = User.get( params.id )
+        if(userInstance) {
+            userInstance.delete()
             flash.message = "User ${params.id} deleted"
             redirect(action:list)
         }
@@ -40,27 +34,27 @@ class UserController extends BaseController {
     }
 
     def edit = {
-        def user = User.get( params.id )
+        def userInstance = User.get( params.id )
 
-        if(!user) {
+        if(!userInstance) {
             flash.message = "User not found with id ${params.id}"
             redirect(action:list)
         }
         else {
-            return [ user : user ]
+            return [ userInstance : userInstance ]
         }
     }
 
     def update = {
-        def user = User.get( params.id )
-        if(user) {
-            user.properties = params
-            if(!user.hasErrors() && user.save()) {
+        def userInstance = User.get( params.id )
+        if(userInstance) {
+            userInstance.properties = params
+            if(!userInstance.hasErrors() && userInstance.save()) {
                 flash.message = "User ${params.id} updated"
-                redirect(action:show,id:user.id)
+                redirect(action:show,id:userInstance.id)
             }
             else {
-                render(view:'edit',model:[user:user])
+                render(view:'edit',model:[userInstance:userInstance])
             }
         }
         else {
@@ -70,44 +64,19 @@ class UserController extends BaseController {
     }
 
     def create = {
-        def user = new User()
-        user.properties = params
-        return ['user':user]
+        def userInstance = new User()
+        userInstance.properties = params
+        return ['userInstance':userInstance]
     }
 
     def save = {
-        def user = new User(params)
-        if(!user.hasErrors() && user.save()) {
-            flash.message = "User ${user.id} created"
-            redirect(action:show,id:user.id)
+        def userInstance = new User(params)
+        if(!userInstance.hasErrors() && userInstance.save()) {
+            flash.message = "User ${userInstance.id} created"
+            redirect(action:show,id:userInstance.id)
         }
         else {
-            render(view:'create',model:[user:user])
+            render(view:'create',model:[userInstance:userInstance])
         }
     }
-        
-    def login = {
-    	if (request.method == "GET") {
-    		session.email = null
-    		session.fullname = null
-    		def user = new User()
-    	} else {
-    		def user = User.findByEmailAndPassword(params.email, params.password)
-    		if (user) {
-    			session.email = user.email
-    			session.fullname = user.fullName
-    			redirect(controller:'conference')
-    		} else {
-    			flash['message'] = 'Please enter a valid email and password'
-    		}
-    	}
-    }
-    
-    def logout = {
-    	session.email = null
-    	session.fullname = null
-    	session.invalidate()
-    	flash['message'] = 'Successfully logged out'
-    	redirect("/")
-    }    
 }

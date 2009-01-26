@@ -10,7 +10,6 @@
         <div class="nav">
             <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
             <span class="menuButton"><g:link class="create" action="create">New Conference</g:link></span>
-            <span class="menuButton"><g:link class="create" action="list" params="[past: 'true']">Show Past Conferences</g:link></span>
         </div>
         <div class="body">
             <h1>Conference List</h1>
@@ -21,43 +20,45 @@
                 <table>
                     <thead>
                         <tr>
+                        
+                   	        <g:sortableColumn property="id" title="Id" />
+                        
+                   	        <g:sortableColumn property="username" title="Username" />
+                        
                    	        <g:sortableColumn property="conferenceName" title="Conference Name" />
                         
-                   	        <g:sortableColumn property="conferenceNumber" title="Conference ID" />
+                   	        <g:sortableColumn property="conferenceNumber" title="Conference Number" />
                         
-                   	        <g:sortableColumn property="startDateTime" title="Start Date Time" />
+                   	        <g:sortableColumn property="dateCreated" title="Date Created" />
                         
-                   	        <g:sortableColumn property="lengthOfConference" title="Length Of Conference (hours)" />
-                        
-                   	        <g:sortableColumn property="numberOfAttendees" title="Number Of Attendees" />
+                   	        <g:sortableColumn property="lastUpdated" title="Last Updated" />
                         
                         </tr>
                     </thead>
                     <tbody>
-                    <g:each in="${conferenceList}" status="i" var="conference">
+                    <g:each in="${conferenceInstanceList}" status="i" var="conferenceInstance">
                         <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-
-                            <td><g:link action="show" id="${conference.id}">${conference.conferenceName?.encodeAsHTML()}</g:link></td>
                         
-                            <td>${conference.conferenceNumber?.encodeAsHTML()}#</td>
+                            <td><g:link action="show" id="${conferenceInstance.id}">${fieldValue(bean:conferenceInstance, field:'id')}</g:link></td>
                         
-                            <td><g:formatDate format="EEE, d MMMM yyyy 'at' h:mm a" date="${conference.startDateTime}"/></td>
+                            <td>${fieldValue(bean:conferenceInstance, field:'username')}</td>
                         
-                            <td>${conference.lengthOfConference?.encodeAsHTML()}</td>
+                            <td>${fieldValue(bean:conferenceInstance, field:'conferenceName')}</td>
                         
-                            <td>${conference.numberOfAttendees?.encodeAsHTML()}</td>
+                            <td>${fieldValue(bean:conferenceInstance, field:'conferenceNumber')}</td>
+                        
+                            <td>${fieldValue(bean:conferenceInstance, field:'dateCreated')}</td>
+                        
+                            <td>${fieldValue(bean:conferenceInstance, field:'lastUpdated')}</td>
                         
                         </tr>
                     </g:each>
                     </tbody>
                 </table>
             </div>
-            <!--div class="paginateButtons">
+            <div class="paginateButtons">
                 <g:paginate total="${Conference.count()}" />
-            </div-->
+            </div>
         </div>
-		<div class="body">
-			<g:render template="instructions" />
-		</div>
     </body>
 </html>

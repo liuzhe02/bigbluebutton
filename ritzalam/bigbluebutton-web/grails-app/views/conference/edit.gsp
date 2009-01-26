@@ -17,70 +17,77 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${conference}">
+            <g:hasErrors bean="${conferenceInstance}">
             <div class="errors">
-                <g:renderErrors bean="${conference}" as="list" />
+                <g:renderErrors bean="${conferenceInstance}" as="list" />
             </div>
             </g:hasErrors>
             <g:form method="post" >
-                <input type="hidden" name="id" value="${conference?.id}" />
+                <input type="hidden" name="id" value="${conferenceInstance?.id}" />
                 <div class="dialog">
                     <table>
                         <tbody>
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
+                                    <label for="username">Username:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'username','errors')}">
+                                    <input type="text" id="username" name="username" value="${fieldValue(bean:conferenceInstance,field:'username')}"/>
+                                </td>
+                            </tr> 
+                        
+                            <tr class="prop">
+                                <td valign="top" class="name">
                                     <label for="conferenceName">Conference Name:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:conference,field:'conferenceName','errors')}">
-                                    <input type="text" id="conferenceName" name="conferenceName" value="${fieldValue(bean:conference,field:'conferenceName')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'conferenceName','errors')}">
+                                    <input type="text" id="conferenceName" name="conferenceName" value="${fieldValue(bean:conferenceInstance,field:'conferenceName')}"/>
                                 </td>
                             </tr> 
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="startDateTime">Start Date Time:</label>
+                                    <label for="conferenceNumber">Conference Number:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:conference,field:'startDateTime','errors')}">
-                                    <g:datePicker name="startDateTime" value="${conference?.startDateTime}" years="${2008..2020}"></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="lengthOfConference">Length Of Conference:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:conference,field:'lengthOfConference','errors')}">
-                                    <g:select id="lengthOfConference" name="lengthOfConference" from="${conference.constraints.lengthOfConference.inList.collect{it.encodeAsHTML()}}" value="${fieldValue(bean:conference,field:'lengthOfConference')}" ></g:select>
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'conferenceNumber','errors')}">
+                                    <input type="text" id="conferenceNumber" name="conferenceNumber" value="${fieldValue(bean:conferenceInstance,field:'conferenceNumber')}" />
                                 </td>
                             </tr> 
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="numberOfAttendees">Number Of Attendees:</label>
+                                    <label for="dateCreated">Date Created:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:conference,field:'numberOfAttendees','errors')}">
-                                    <input type="text" id="numberOfAttendees" name="numberOfAttendees" value="${fieldValue(bean:conference,field:'numberOfAttendees')}" />
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'dateCreated','errors')}">
+                                    <g:datePicker name="dateCreated" value="${conferenceInstance?.dateCreated}" ></g:datePicker>
                                 </td>
                             </tr> 
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="email">Booked By:</label>
+                                    <label for="lastUpdated">Last Updated:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:conference,field:'email','errors')}">
-                                    ${conference?.email}
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'lastUpdated','errors')}">
+                                    <g:datePicker name="lastUpdated" value="${conferenceInstance?.lastUpdated}" ></g:datePicker>
                                 </td>
                             </tr> 
                         
-                            <!--tr class="prop">
+                            <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="owner">Owner:</label>
+                                    <label for="schedules">Schedules:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:conference,field:'owner','errors')}">
-                                    ${conference?.fullname}
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'schedules','errors')}">
+                                    
+<ul>
+<g:each var="s" in="${conferenceInstance?.schedules?}">
+    <li><g:link controller="schedule" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></li>
+</g:each>
+</ul>
+<g:link controller="schedule" params="['conference.id':conferenceInstance?.id]" action="create">Add Schedule</g:link>
+
                                 </td>
-                            </tr--> 
+                            </tr> 
                         
                         </tbody>
                     </table>
@@ -91,8 +98,5 @@
                 </div>
             </g:form>
         </div>
-
-		<g:render template="instructions" />
-
     </body>
 </html>

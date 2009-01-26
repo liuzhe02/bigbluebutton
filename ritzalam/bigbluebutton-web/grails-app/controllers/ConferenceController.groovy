@@ -1,7 +1,5 @@
           
-class ConferenceController extends BaseController {
-    def beforeInterceptor = [action:this.&auth]
-    
+class ConferenceController {
     def index = { redirect(action:list,params:params) }
 
     // the delete, save and update actions only accept POST requests
@@ -9,11 +7,8 @@ class ConferenceController extends BaseController {
 
     def list = {
         if(!params.max) params.max = 10
-        def email = session.email.toString()
-        if (params.past)
-        	return [ conferenceList: Conference.findAllByEmailAndStartDateTimeLessThan(email, new Date())]
-        else 
-        	return [ conferenceList: Conference.findAllByEmailAndStartDateTimeGreaterThanEquals(email, new Date() - 1)]        	
+        def username = session.username.toString()
+        return [ conferenceList: Conference.findAllByUsername(username)]       	
     }
 
     def show = {
@@ -24,11 +19,7 @@ class ConferenceController extends BaseController {
             redirect(action:list)
         }
         else { 
-			def startTime = conference.startDateTime
-			def endTime = new Date(new Long(conference.startDateTime.time) + new Long(conference.lengthOfConference)*60*60*1000)
-        	def attendeesList = 
-        		Attendees.findAllByConferenceNumberAndDateJoinedBetween(conference.conferenceNumber, startTime, endTime)
-        	return [ conference : conference, attendeesList : attendeesList ] 
+        	return [ conference : conference ] 
         }
     }
 
@@ -78,8 +69,7 @@ class ConferenceController extends BaseController {
     def create = {
         def conference = new Conference()
         conference.properties = params     
-        conference.email = session.email
-        conference.fullname = session.fullname
+        conference.username = session.username
         def now = new Date()
         conference.conferenceName = "$now Conference"   
         return ['conference':conference]
@@ -95,8 +85,7 @@ class ConferenceController extends BaseController {
             nextConfId = 8000 + 1
         }
         conference.conferenceNumber = nextConfId
-        conference.email = session.email
-        conference.fullname = session.fullname 
+        conference.username = session.username
         if(!conference.hasErrors() && conference.save()) {
             flash.message = "You have successfully created a conference."
             redirect(action:show,id:conference.id)
