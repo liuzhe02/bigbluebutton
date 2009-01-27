@@ -1,3 +1,5 @@
+import org.jsecurity.crypto.hash.Sha1Hash
+
 class UserController {
     
     def index = { redirect(action:list,params:params) }
@@ -45,7 +47,39 @@ class UserController {
         }
     }
 
+    def changepassword = {
+        def userInstance = User.get( params.id )
+
+        if(!userInstance) {
+            flash.message = "User not found with id ${params.id}"
+            redirect(action:list)
+        }
+        else {
+            return [ userInstance : userInstance ]
+        }
+    }
+
+    def updatepassword = {
+    	System.out.println("Changing password for ${params.id}")
+        def userInstance = User.get( params.id )
+        if(userInstance) {
+            userInstance.passwordHash = new Sha1Hash(params.newpassword).toHex()
+            if(!userInstance.hasErrors() && userInstance.save()) {
+                flash.message = "User password updated"
+                redirect(action:show,id:userInstance.id)
+            }
+            else {
+                render(view:'editpassword',model:[userInstance:userInstance])
+            }
+        }
+        else {
+            flash.message = "User not found with id ${params.id}"
+            redirect(action:edit,id:params.id)
+        }
+    }
+    
     def update = {
+    	System.out.println("Updating for ${params.id}")
         def userInstance = User.get( params.id )
         if(userInstance) {
             userInstance.properties = params
@@ -70,8 +104,12 @@ class UserController {
     }
 
     def save = {
-        def userInstance = new User(params)
-        if(!userInstance.hasErrors() && userInstance.save()) {
+    	def userRole = Role.findByName("User")
+    	def userInstance = new User(username: params.username, passwordHash: new Sha1Hash(params.password).toHex(),
+									email: params.email, fullName: params.fullName)
+		def userRoleRel = new UserRoleRel(user: userInstance, role: userRole)
+									
+        if(!userInstance.hasErrors() && userInstance.save() && userRoleRel.save()) {
             flash.message = "User ${userInstance.id} created"
             redirect(action:show,id:userInstance.id)
         }

@@ -1,4 +1,4 @@
-import org.jsecurity.crypto.hash.Sha1Hash;
+import org.jsecurity.crypto.hash.Sha1Hash
 
 class BootStrap {
 

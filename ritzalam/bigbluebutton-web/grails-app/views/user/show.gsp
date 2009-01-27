@@ -21,14 +21,6 @@
                 <table>
                     <tbody>
 
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Id:</td>
-                            
-                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'id')}</td>
-                            
-                        </tr>
-                    
                         <tr class="prop">
                             <td valign="top" class="name">Username:</td>
                             
@@ -50,18 +42,6 @@
                             
                         </tr>
                     
-                        <tr class="prop">
-                            <td valign="top" class="name">Conferences:</td>
-                            
-                            <td  valign="top" style="text-align:left;" class="value">
-                                <ul>
-                                <g:each var="c" in="${userInstance.conferences}">
-                                    <li><g:link controller="conference" action="show" id="${c.id}">${c?.encodeAsHTML()}</g:link></li>
-                                </g:each>
-                                </ul>
-                            </td>
-                            
-                        </tr>
                     
                         <tr class="prop">
                             <td valign="top" class="name">Date Created:</td>
@@ -77,13 +57,12 @@
                             
                         </tr>
                     
-                        <tr class="prop">
-                            <td valign="top" class="name">Password Hash:</td>
+                    	<tr class="prop">
+                            <td valign="top" class="name">Password</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:userInstance, field:'passwordHash')}</td>
+                            <td valign="top" class="value"><g:link action="changepassword" id="${userInstance.id}">Change</g:link></td>
                             
                         </tr>
-                    
                     </tbody>
                 </table>
             </div>
