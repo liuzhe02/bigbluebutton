@@ -9,7 +9,6 @@
     <body>
         <div class="nav">
             <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
-            <span class="menuButton"><g:link class="list" action="list">Schedule List</g:link></span>
         </div>
         <div class="body">
             <h1>Create Schedule</h1>
@@ -77,6 +76,7 @@
                 </div>
                 <div class="buttons">
                     <span class="button"><input class="save" type="submit" value="Create" /></span>
+                    <span class="button"><g:link controller="conference" action="show" id="${conferenceId}">Cancel</g:link></span>
                 </div>
             </g:form>
         </div>

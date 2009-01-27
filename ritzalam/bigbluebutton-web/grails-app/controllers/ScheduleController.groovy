@@ -26,7 +26,7 @@ class ScheduleController {
         def scheduleInstance = Schedule.get( params.id )
         if(scheduleInstance) {
             scheduleInstance.delete()
-            flash.message = "Schedule ${params.id} deleted"
+            flash.message = "Schedule ${scheduleInstance.scheduleName} deleted"
             redirect(controller:'conference', action:show,id:scheduleInstance.conferenceId)
         }
         else {
@@ -52,8 +52,8 @@ class ScheduleController {
         if(scheduleInstance) {
             scheduleInstance.properties = params
             if(!scheduleInstance.hasErrors() && scheduleInstance.save()) {
-                flash.message = "Schedule ${params.id} updated"
-                redirect(controller:'conference', action:show,id:scheduleInstance.conferenceId)
+                flash.message = "Schedule ${scheduleInstance.scheduleName} updated"
+                redirect(action:show,id:scheduleInstance.id)
             }
             else {
                 render(view:'edit',model:[scheduleInstance:scheduleInstance])
@@ -66,14 +66,12 @@ class ScheduleController {
     }
 
     def create = {
-    System.out.println("Conference ${params.conferenceId}")
         def scheduleInstance = new Schedule()
         scheduleInstance.properties = params
         return ['scheduleInstance':scheduleInstance, 'conferenceId':params.conferenceId]
     }
 
     def save = {
-    	System.out.println("Conference ${params.conferenceId}")
     	def conference = Conference.get(params.conferenceId)
     	params.conference = conference
         def scheduleInstance = new Schedule(params)
@@ -81,11 +79,11 @@ class ScheduleController {
         scheduleInstance.scheduledBy = session.username
         
         if(!scheduleInstance.hasErrors() && scheduleInstance.save()) {
-            flash.message = "Schedule ${scheduleInstance.id} created"
+            flash.message = "Schedule ${scheduleInstance.scheduleName} created"
             redirect(controller:'conference', action:show,id:scheduleInstance.conferenceId)
         }
         else {
-            render(view:'create',model:[scheduleInstance:scheduleInstance])
+            render(view:'create',model:[scheduleInstance:scheduleInstance, 'conferenceId':params.conferenceId])
         }
     }
 }
