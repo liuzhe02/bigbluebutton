@@ -1,3 +1,6 @@
+import org.jsecurity.SecurityUtils
+import org.jsecurity.session.Session
+import org.jsecurity.subject.Subject
           
 class ConferenceController {
     def index = { redirect(action:list,params:params) }
@@ -7,7 +10,11 @@ class ConferenceController {
 
     def list = {
         if(!params.max) params.max = 10
-        def username = session.username.toString()
+        
+		Subject currentUser = SecurityUtils.getSubject(); 
+		Session session = currentUser.getSession();  
+   		def username = session.getAttribute( "username");  
+
         return [ conferenceList: Conference.findAllByUsername(username)]       	
     }
 
@@ -69,14 +76,24 @@ class ConferenceController {
     def create = {
         def conference = new Conference()
         conference.properties = params     
-        conference.username = session.username
+        Subject currentUser = SecurityUtils.getSubject(); 
+		Session session = currentUser.getSession();  
+   		conference.username = session.getAttribute( "username"); 
         def now = new Date()
         conference.conferenceName = "$now Conference"   
         return ['conference':conference]
     }
 
     def save = {
+        Subject currentUser = SecurityUtils.getSubject(); 
+		Session session = currentUser.getSession();  
+   		params.username = session.getAttribute("username");
+   		def userid =  session.getAttribute( "userid");
+   		def user = User.get(userid)
+   		params.user = user
+   		
         def conference = new Conference(params)
+/*        
         def highestConfId = Conference.listOrderByConferenceNumber(max:1, order:"desc")
         def nextConfId
         if (highestConfId) {
@@ -85,12 +102,13 @@ class ConferenceController {
             nextConfId = 8000 + 1
         }
         conference.conferenceNumber = nextConfId
-        conference.username = session.username
+*/        
         if(!conference.hasErrors() && conference.save()) {
             flash.message = "You have successfully created a conference."
             redirect(action:show,id:conference.id)
         }
         else {
+        	System.out.println("Username ${conference.username}")
             render(view:'create',model:[conference:conference])
         }
     }

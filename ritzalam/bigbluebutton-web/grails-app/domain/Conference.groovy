@@ -7,6 +7,7 @@ class Conference implements Comparable {
 	SortedSet schedules
 	
 	static hasMany = [ schedules : Schedule ]
+	static belongsTo = [user : User]
 			
 	static constraints = {
 		username(blank:false)

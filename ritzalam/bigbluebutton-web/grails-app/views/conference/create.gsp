@@ -33,6 +33,15 @@
                                     <input type="text" id="conferenceName" name="conferenceName" value="${fieldValue(bean:conferenceInstance,field:'conferenceName')}"/>
                                 </td>
                             </tr> 
+
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="conferenceNumber">Conference Number:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:conferenceInstance,field:'conferenceNumber','errors')}">
+                                    <input type="text" id="conferenceNumber" name="conferenceNumber" value="${fieldValue(bean:conferenceInstance,field:'conferenceNumber')}"/>
+                                </td>
+                            </tr> 
                         </tbody>
                     </table>
                 </div>
