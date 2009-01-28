@@ -5,9 +5,11 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import org.bigbluebutton.modules.viewers.view.mediators.JoinWindowMediator;
 			import mx.managers.PopUpManager;
-			
+
+			private var _xPosition:int;
+			private var _yPosition:int;
+						
 			public static const TITLE:String = "Join Conference";
 			public var host : String = "localhost";
 			public var message:Boolean;
@@ -15,7 +17,22 @@
 			{
 				this.loginMessage.visible = true;
 			}
-					
+
+			public function get xPosition():int {
+				return _xPosition;
+			}
+			
+			public function get yPosition():int {
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void {
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void {
+				_yPosition = y;
+			}					
 		]]>
 	</mx:Script>
 		<mx:Label x="41" y="52" text="Name" id="nameLabel"/> 
@@ -24,7 +41,7 @@
 		<mx:TextInput x="98" y="89" id="confField" tabIndex="2"/>
 		<mx:Label x="22" y="132" text="Password" id="passwdLabel"/>
 		<mx:TextInput x="98" y="130" id="passwdField" displayAsPassword="true" tabIndex="3"/>
-		<mx:Button label="Join" x="243" y="169" click="dispatchEvent(new Event(JoinWindowMediator.LOGIN))" tabIndex="4"/>
+		<!--mx:Button label="Join" x="243" y="169" click="dispatchEvent(new Event(JoinWindowMediator.LOGIN))" tabIndex="4"/-->
 		<mx:Label x="21" y="10" text="Complete form to join conference." width="256" id="messageLbl"/>
 		<mx:Label x="22" y="208" width="270" id="lblNote"/>
 		<mx:Label id="loginMessage" x="22" y="200" 
