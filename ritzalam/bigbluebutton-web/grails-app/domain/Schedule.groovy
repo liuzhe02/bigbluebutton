@@ -8,6 +8,8 @@ class Schedule implements Comparable {
 	Date startDateTime = new Date()
 	Integer lengthOfConference
 	Boolean record = false
+	String hostPassword
+	String attendeePassword
 	
 	static belongsTo = [conference : Conference]
 			
@@ -16,6 +18,8 @@ class Schedule implements Comparable {
 		scheduleId(blank:false)
 		lengthOfConference(inList:[1, 2, 3, 4])
 		numberOfAttendees()
+		hostPassword(blank:false)
+		attendeePassword(blank:false)
 		scheduledBy(blank:false)
 	}
 

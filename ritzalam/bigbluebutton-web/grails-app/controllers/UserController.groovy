@@ -60,7 +60,6 @@ class UserController {
     }
 
     def updatepassword = {
-    	System.out.println("Changing password for ${params.id}")
         def userInstance = User.get( params.id )
         if(userInstance) {
             userInstance.passwordHash = new Sha1Hash(params.newpassword).toHex()
@@ -79,7 +78,6 @@ class UserController {
     }
     
     def update = {
-    	System.out.println("Updating for ${params.id}")
         def userInstance = User.get( params.id )
         if(userInstance) {
             userInstance.properties = params
