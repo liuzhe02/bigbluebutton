@@ -58,8 +58,8 @@ package org.bigbluebutton.modules.login
 		override public function listNotificationInterests():Array
 		{
 			return [
-				LoginModuleConstants.CONNECTED,
-				LoginModuleConstants.DISCONNECTED,
+				LoginModuleConstants.STARTED,
+				LoginModuleConstants.STOPPED,
 				LoginModuleConstants.ADD_WINDOW,
 				LoginModuleConstants.REMOVE_WINDOW
 			];
@@ -69,13 +69,13 @@ package org.bigbluebutton.modules.login
 		{
 			LogUtil.debug(NAME + "::LoginEndPoint MSG. " + notification.getName());	
 			switch(notification.getName()){
-				case LoginModuleConstants.CONNECTED:
+				case LoginModuleConstants.STARTED:
 					LogUtil.debug(NAME + "::Sending Login MODULE_STARTED message to main");
 					_endpoint.sendMessage(EndpointMessageConstants.MODULE_STARTED, 
 							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
 					facade.sendNotification(LoginModuleConstants.OPEN_WINDOW);
 					break;
-				case LoginModuleConstants.DISCONNECTED:
+				case LoginModuleConstants.STOPPED:
 					LogUtil.debug(NAME + '::Sending Login MODULE_STOPPED message to main');
 					facade.sendNotification(LoginModuleConstants.CLOSE_WINDOW);
 					var info:Object = notification.getBody();

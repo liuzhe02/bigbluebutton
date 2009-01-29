@@ -27,7 +27,7 @@ package org.bigbluebutton.modules.login.controller
 			LogUtil.debug('facade.registerProxy(new LoginProxy(m.uri));');
 			facade.registerProxy(new LoginProxy(m.uri));
 			LogUtil.debug('LoginModule COnnected');
-			facade.sendNotification(LoginModuleConstants.CONNECTED);
+			facade.sendNotification(LoginModuleConstants.STARTED);
 		}
 	}
 }

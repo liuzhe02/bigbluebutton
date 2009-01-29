@@ -38,8 +38,8 @@ package org.bigbluebutton.modules.presentation.model.services
 		public static const UPLOAD_IO_ERROR:String = "UPLOAD_IO_ERROR";
 		public static const UPLOAD_SECURITY_ERROR:String = "UPLOAD_SECURITY_ERROR";
 		
-		private var request : URLRequest = new URLRequest();
-		private var sendVars : URLVariables = new URLVariables();
+		private var request:URLRequest = new URLRequest();
+		private var sendVars:URLVariables = new URLVariables();
 		
 		private var _progressListener:Function;
 		
