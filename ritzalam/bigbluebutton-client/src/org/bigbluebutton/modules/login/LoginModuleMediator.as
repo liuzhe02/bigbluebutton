@@ -25,14 +25,9 @@ package org.bigbluebutton.modules.login
 	import org.puremvc.as3.multicore.patterns.mediator.Mediator;
 	import org.puremvc.as3.multicore.utilities.pipes.interfaces.IPipeMessage;
 	
-	/**
-	 * This class is a mediator for the ChatModule viewComponent
-	 * 
-	 * 
-	 */	
 	public class LoginModuleMediator extends Mediator implements IMediator
 	{
-		public static const NAME:String = 'ChatModuleMediator';
+		public static const NAME:String = 'LoginModuleMediator';
 		private var _module:IBigBlueButtonModule;
 
 

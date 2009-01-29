@@ -14,6 +14,7 @@ package org.bigbluebutton.main
 		private var listenerLoaded:Boolean = false;
 		private var viewerLoaded:Boolean = false;
 		private var videoLoaded:Boolean = false;
+		private var loginLoaded:Boolean = false;
 		
 		public function MainApplicationMediator(mediatorName:String=null, viewComponent:Object=null)
 		{
@@ -44,14 +45,20 @@ package org.bigbluebutton.main
 				case MainApplicationConstants.APP_MODEL_INITIALIZED:
 					LogUtil.debug(NAME + "::Received APP_MODEL_INITIALIZED");
 					//proxy.loadModule("VideoModule");
-					proxy.loadModule("ChatModule");
+					proxy.loadModule("LoginModule");
 					break;
 				case MainApplicationConstants.MODULE_LOADED:
-					LogUtil.debug(NAME + "::Received MODULE_LOADED");
+					
 					var ml:String = notification.getBody() as String;
+					LogUtil.debug(NAME + "::Received MODULE_LOADED - " + ml);
 					
 					if (ml == "ViewersModule") {
 						viewerLoaded = true;
+					}
+					
+					if (ml == "LoginModule") {
+						loginLoaded = true;
+						proxy.loadModule("ChatModule");
 					}
 					
 					if (ml == "ChatModule") {
@@ -76,8 +83,8 @@ package org.bigbluebutton.main
 					// SHortcircuit videomodule start. This is only for refactoring of videoModule.
 					//facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
 					
-					if (viewerLoaded && chatLoaded && presentLoaded && listenerLoaded) {
-						facade.sendNotification(MainApplicationConstants.MODULE_START, "ViewersModule");
+					if (videoLoaded && viewerLoaded && chatLoaded && presentLoaded && listenerLoaded && loginLoaded) {
+						facade.sendNotification(MainApplicationConstants.MODULE_START, "LoginModule");
 					}
 					
 					//proxy.startModule(notification.getBody() as String);
@@ -101,6 +108,7 @@ package org.bigbluebutton.main
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "ViewersModule");
 					break;
 			}
 		}		

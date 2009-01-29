@@ -45,7 +45,6 @@
 			}
 			
 			public function start(attributes:Object):void {	
-				LogUtil.debug("chat attr: " + attributes.username);
 				_attributes = attributes;	
 				LoginFacade.getInstance().startup(this);	
 			}

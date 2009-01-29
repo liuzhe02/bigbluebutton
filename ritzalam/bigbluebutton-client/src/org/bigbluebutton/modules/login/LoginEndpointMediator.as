@@ -30,13 +30,13 @@ package org.bigbluebutton.modules.login
 	
 	public class LoginEndpointMediator extends Mediator implements IMediator
 	{
-		public static const NAME:String = "ChatEndPointMediator";
+		public static const NAME:String = "LoginEndPointMediator";
 		
 		private var _module:IBigBlueButtonModule;
 		private var _router:Router;
 		private var _endpoint:Endpoint;		
-		private static const TO_CHAT_MODULE:String = "TO_CHAT_MODULE";
-		private static const FROM_CHAT_MODULE:String = "FROM_CHAT_MODULE";
+		private static const TO_LOGIN_MODULE:String = "TO_LOGIN_MODULE";
+		private static const FROM_LOGIN_MODULE:String = "FROM_LOGIN_MODULE";
 		
 		private static const PLAYBACK_MESSAGE:String = "PLAYBACK_MESSAGE";
 		private static const PLAYBACK_MODE:String = "PLAYBACK_MODE";
@@ -46,8 +46,8 @@ package org.bigbluebutton.modules.login
 			super(NAME,module);
 			_module = module;
 			_router = module.router
-			LogUtil.debug("Creating endpoint for ChatModule");
-			_endpoint = new Endpoint(_router, FROM_CHAT_MODULE, TO_CHAT_MODULE, messageReceiver);	
+			LogUtil.debug(NAME + "::Creating endpoint for LoginModule");
+			_endpoint = new Endpoint(_router, FROM_LOGIN_MODULE, TO_LOGIN_MODULE, messageReceiver);	
 		}
 		
 		override public function getMediatorName():String
@@ -67,16 +67,16 @@ package org.bigbluebutton.modules.login
 		
 		override public function handleNotification(notification:INotification):void
 		{
-			LogUtil.debug("ChatEndPoint MSG. " + notification.getName());	
+			LogUtil.debug(NAME + "::LoginEndPoint MSG. " + notification.getName());	
 			switch(notification.getName()){
 				case LoginModuleConstants.CONNECTED:
-					LogUtil.debug("Sending Chat MODULE_STARTED message to main");
+					LogUtil.debug(NAME + "::Sending Login MODULE_STARTED message to main");
 					_endpoint.sendMessage(EndpointMessageConstants.MODULE_STARTED, 
 							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
 					facade.sendNotification(LoginModuleConstants.OPEN_WINDOW);
 					break;
 				case LoginModuleConstants.DISCONNECTED:
-					LogUtil.debug('Sending Chat MODULE_STOPPED message to main');
+					LogUtil.debug(NAME + '::Sending Login MODULE_STOPPED message to main');
 					facade.sendNotification(LoginModuleConstants.CLOSE_WINDOW);
 					var info:Object = notification.getBody();
 					info["moduleId"] = _module.moduleId
@@ -84,12 +84,12 @@ package org.bigbluebutton.modules.login
 							EndpointMessageConstants.TO_MAIN_APP, info);
 					break;
 				case LoginModuleConstants.ADD_WINDOW:
-					LogUtil.debug('Sending Chat ADD_WINDOW message to main');
+					LogUtil.debug(NAME + '::Sending Login ADD_WINDOW message to main');
 					_endpoint.sendMessage(EndpointMessageConstants.ADD_WINDOW, 
 							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
 					break;
 				case LoginModuleConstants.REMOVE_WINDOW:
-					LogUtil.debug('Sending Chat REMOVE_WINDOW message to main');
+					LogUtil.debug(NAME + '::Sending Login REMOVE_WINDOW message to main');
 					_endpoint.sendMessage(EndpointMessageConstants.REMOVE_WINDOW, 
 							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
 					break;
