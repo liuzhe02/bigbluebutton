@@ -31,7 +31,14 @@
             public function showError(error:String):void
 			{
 				this.lblNote.visible = true;
-				this.lblNote.text = error;
+				switch(error){
+					case LoginModuleConstants.LOGIN_FAILED:
+						this.lblNote.text = "Connection Failed. Please try again.\n";
+						break;
+					case LoginModuleConstants.LOGIN_SUCCESS:
+						this.lblNote.text = "Connection Successful.\n";
+						break;
+				}
 			}
 			
 			public function clear():void {

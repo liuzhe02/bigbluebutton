@@ -73,7 +73,7 @@ package org.bigbluebutton.main.view
 			return [
 					MainApplicationConstants.ADD_WINDOW_MSG,
 					MainApplicationConstants.REMOVE_WINDOW_MSG,
-					MainApplicationConstants.USER_LOGGED_IN,
+					//MainApplicationConstants.USER_LOGGED_IN,
 					MainApplicationConstants.USER_LOGGED_OUT,
 					MainApplicationConstants.LOADED_MODULE,
 					MainApplicationConstants.MODULE_STOPPED,

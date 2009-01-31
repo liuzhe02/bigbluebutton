@@ -1,5 +1,6 @@
 <modules>
 	<module name="LoginModule" url="LoginModule.swf" uri="http://localhost:8080/bigbluebutton/join/signIn" />
+	<module name="JoinModule" url="JoinModule.swf" uri="http://localhost:8080/bigbluebutton/join/enter" />
 	<module name="VideoModule" url="VideoModule.swf" uri="rtmp://localhost/oflaDemo" />
 	<module name="ChatModule" url="ChatModule.swf" uri="rtmp://localhost/chatServer" />
 	<module name="ViewersModule" url="ViewersModule.swf" uri="rtmp://localhost/conference" />

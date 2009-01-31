@@ -17,15 +17,15 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 * 
 */
-package org.bigbluebutton.modules.login.view
+package org.bigbluebutton.modules.join.view
 {
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	
 	import org.bigbluebutton.common.IBigBlueButtonModule;
-	import org.bigbluebutton.modules.login.LoginModuleConstants;
-	import org.bigbluebutton.modules.login.model.LoginProxy;
-	import org.bigbluebutton.modules.login.view.components.LoginWindow;
+	import org.bigbluebutton.modules.join.JoinModuleConstants;
+	import org.bigbluebutton.modules.join.model.JoinProxy;
+	import org.bigbluebutton.modules.join.view.components.JoinWindow;
 	import org.puremvc.as3.multicore.interfaces.IMediator;
 	import org.puremvc.as3.multicore.interfaces.INotification;
 	import org.puremvc.as3.multicore.patterns.mediator.Mediator;
@@ -35,24 +35,24 @@ package org.bigbluebutton.modules.login.view
 	 * @author Denis Zgonjanin
 	 * 
 	 */	
-	public class LoginWindowMediator extends Mediator implements IMediator
+	public class JoinWindowMediator extends Mediator implements IMediator
 	{
 		public static const NAME:String = "JoinWindowMediator";
 		
 		private var _module:IBigBlueButtonModule;
-		private var _joinWindow:LoginWindow = new LoginWindow();
-		public static const LOGIN:String = "Attempt Login";
+		private var _joinWindow:JoinWindow = new JoinWindow();
+		public static const JOIN:String = "Attempt join";
 
 		/**
 		 * the constructor. registers this mediator with the JoinWindow gui component 
 		 * @param view
 		 * 
 		 */		
-		public function LoginWindowMediator(module:IBigBlueButtonModule)
+		public function JoinWindowMediator(module:IBigBlueButtonModule)
 		{
 			super(NAME, module);
 			_module = module;
-			_joinWindow.addEventListener(LOGIN, login);
+			_joinWindow.addEventListener(JOIN, join);
 			_joinWindow.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
 		}
 		
@@ -64,11 +64,11 @@ package org.bigbluebutton.modules.login.view
 		override public function listNotificationInterests():Array{
 
 			return [
-					LoginModuleConstants.LOGIN_FAILED,
-					LoginModuleConstants.LOGIN_SUCCESS,
-					LoginModuleConstants.OPEN_WINDOW,
-					LoginModuleConstants.CLOSE_WINDOW
-			];		
+					JoinModuleConstants.OPEN_WINDOW,
+					JoinModuleConstants.CLOSE_WINDOW
+			];
+
+		
 		}
 		
 		/**
@@ -80,7 +80,7 @@ package org.bigbluebutton.modules.login.view
 
 			switch(notification.getName())
 			{
-				case LoginModuleConstants.OPEN_WINDOW:
+				case JoinModuleConstants.OPEN_WINDOW:
 					LogUtil.debug('Received request to OPEN_JOIN_WINDOW');
 					
 					_joinWindow.width = 350;
@@ -89,32 +89,20 @@ package org.bigbluebutton.modules.login.view
 		   			_joinWindow.showCloseButton = false;
 		   			_joinWindow.xPosition = 450;
 		   			_joinWindow.yPosition = 150;
-		   			facade.sendNotification(LoginModuleConstants.ADD_WINDOW, _joinWindow); 
+		   			facade.sendNotification(JoinModuleConstants.ADD_WINDOW, _joinWindow); 
 					break;
 					
-				case LoginModuleConstants.CLOSE_WINDOW:
+				case JoinModuleConstants.CLOSE_WINDOW:
 					LogUtil.debug('Received request to CLOSE_JOIN_WINDOW');
 					_joinWindow.clear();
-					facade.sendNotification(LoginModuleConstants.REMOVE_WINDOW, _joinWindow);
-					break;
-					
-				case LoginModuleConstants.LOGIN_FAILED:
-					LogUtil.debug('Received request to LOGIN_FAILED');
-					_joinWindow.showError(notification.getBody()["message"]);
-					break;
-					
-				case LoginModuleConstants.LOGIN_SUCCESS:
-					LogUtil.debug('Received request to LOGIN_SUCCESS');
-					_joinWindow.clear();
-					facade.sendNotification(LoginModuleConstants.REMOVE_WINDOW, _joinWindow);
-					facade.sendNotification(LoginModuleConstants.USER_LOGGEDIN);
+					facade.sendNotification(JoinModuleConstants.REMOVE_WINDOW, _joinWindow);
 					break;
 			}
 
 		}
 		
 		protected function keyPressed(event:KeyboardEvent):void{
-			if (event.keyCode == 13) login(event);
+			if (event.keyCode == 13) join(event);
 		}
 		
 		/**
@@ -122,8 +110,8 @@ package org.bigbluebutton.modules.login.view
 		 * @return 
 		 * 
 		 */		
-		private function get loginWindow():LoginWindow{
-			return viewComponent as LoginWindow;
+		private function get joinWindow():JoinWindow{
+			return viewComponent as JoinWindow;
 		}
 		
 		/**
@@ -131,8 +119,8 @@ package org.bigbluebutton.modules.login.view
 		 * @param e
 		 * 
 		 */		
-		private function login(e:Event):void{
-			LogUtil.debug('Received login event');
+		private function join(e:Event):void{
+			LogUtil.debug('Received join event');
 			var name : String = _joinWindow.nameField.text; 
 		    var room : String = _joinWindow.confField.text;
 		    var password : String = _joinWindow.passwdField.text
@@ -143,12 +131,12 @@ package org.bigbluebutton.modules.login.view
 		    } 
 			_joinWindow.lblNote.text = "Attempting to Login.";
 			
-			proxy.login(name, room, password);
+			proxy.join();
 		}
 		
 		
-		private function get proxy():LoginProxy {
-			return facade.retrieveProxy(LoginProxy.NAME) as LoginProxy;
+		private function get proxy():JoinProxy {
+			return facade.retrieveProxy(JoinProxy.NAME) as JoinProxy;
 		}
 	}
 }

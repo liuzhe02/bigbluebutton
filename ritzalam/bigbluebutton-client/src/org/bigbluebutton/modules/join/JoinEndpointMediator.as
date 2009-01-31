@@ -17,7 +17,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 * 
 */
-package org.bigbluebutton.modules.login
+package org.bigbluebutton.modules.join
 {
 	import org.bigbluebutton.common.IBigBlueButtonModule;
 	import org.bigbluebutton.common.messaging.Endpoint;
@@ -28,26 +28,26 @@ package org.bigbluebutton.modules.login
 	import org.puremvc.as3.multicore.patterns.mediator.Mediator;
 	import org.puremvc.as3.multicore.utilities.pipes.interfaces.IPipeMessage;
 	
-	public class LoginEndpointMediator extends Mediator implements IMediator
+	public class JoinEndpointMediator extends Mediator implements IMediator
 	{
-		public static const NAME:String = "LoginEndPointMediator";
+		public static const NAME:String = "JoinEndpointMediator";
 		
 		private var _module:IBigBlueButtonModule;
 		private var _router:Router;
 		private var _endpoint:Endpoint;		
-		private static const TO_LOGIN_MODULE:String = "TO_LOGIN_MODULE";
-		private static const FROM_LOGIN_MODULE:String = "FROM_LOGIN_MODULE";
+		private static const TO_JOIN_MODULE:String = "TO_JOIN_MODULE";
+		private static const FROM_JOIN_MODULE:String = "FROM_JOIN_MODULE";
 		
 		private static const PLAYBACK_MESSAGE:String = "PLAYBACK_MESSAGE";
 		private static const PLAYBACK_MODE:String = "PLAYBACK_MODE";
 				
-		public function LoginEndpointMediator(module:IBigBlueButtonModule)
+		public function JoinEndpointMediator(module:IBigBlueButtonModule)
 		{
 			super(NAME,module);
 			_module = module;
 			_router = module.router
-			LogUtil.debug(NAME + "::Creating endpoint for LoginModule");
-			_endpoint = new Endpoint(_router, FROM_LOGIN_MODULE, TO_LOGIN_MODULE, messageReceiver);	
+			LogUtil.debug(NAME + "::Creating endpoint for JoinModule");
+			_endpoint = new Endpoint(_router, FROM_JOIN_MODULE, TO_JOIN_MODULE, messageReceiver);	
 		}
 		
 		override public function getMediatorName():String
@@ -58,11 +58,9 @@ package org.bigbluebutton.modules.login
 		override public function listNotificationInterests():Array
 		{
 			return [
-				LoginModuleConstants.USER_LOGGEDIN,
-				LoginModuleConstants.STARTED,
-				LoginModuleConstants.STOPPED,
-				LoginModuleConstants.ADD_WINDOW,
-				LoginModuleConstants.REMOVE_WINDOW
+				JoinModuleConstants.STARTED,
+				JoinModuleConstants.STOPPED,
+				JoinModuleConstants.JOIN_SUCCESS,
 			];
 		}
 		
@@ -70,34 +68,23 @@ package org.bigbluebutton.modules.login
 		{
 			LogUtil.debug(NAME + "::LoginEndPoint MSG. " + notification.getName());	
 			switch(notification.getName()){
-				case LoginModuleConstants.STARTED:
+				case JoinModuleConstants.JOIN_SUCCESS:
+					LogUtil.debug(NAME + "::Sending Login JOIN_SUCCESS message to main");
+					_endpoint.sendMessage(EndpointMessageConstants.JOIN_SUCCESS, 
+							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
+					break;
+				case JoinModuleConstants.STARTED:
 					LogUtil.debug(NAME + "::Sending Login MODULE_STARTED message to main");
 					_endpoint.sendMessage(EndpointMessageConstants.MODULE_STARTED, 
 							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
-					facade.sendNotification(LoginModuleConstants.OPEN_WINDOW);
 					break;
-				case LoginModuleConstants.STOPPED:
+				case JoinModuleConstants.STOPPED:
 					LogUtil.debug(NAME + '::Sending Login MODULE_STOPPED message to main');
-					facade.sendNotification(LoginModuleConstants.CLOSE_WINDOW);
-					var info:Object = notification.getBody();
+					facade.sendNotification(JoinModuleConstants.CLOSE_WINDOW);
+					var info:Object;
 					info["moduleId"] = _module.moduleId
 					_endpoint.sendMessage(EndpointMessageConstants.MODULE_STOPPED, 
 							EndpointMessageConstants.TO_MAIN_APP, info);
-					break;
-				case LoginModuleConstants.ADD_WINDOW:
-					LogUtil.debug(NAME + '::Sending Login ADD_WINDOW message to main');
-					_endpoint.sendMessage(EndpointMessageConstants.ADD_WINDOW, 
-							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
-					break;
-				case LoginModuleConstants.REMOVE_WINDOW:
-					LogUtil.debug(NAME + '::Sending Login REMOVE_WINDOW message to main');
-					_endpoint.sendMessage(EndpointMessageConstants.REMOVE_WINDOW, 
-							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
-					break;
-				case LoginModuleConstants.USER_LOGGEDIN:
-					LogUtil.debug(NAME + '::Sending Login LOGIN_SUCCESS message to main');
-					_endpoint.sendMessage(EndpointMessageConstants.USER_LOGGED_IN, 
-							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
 					break;
 			}
 		}
@@ -107,7 +94,7 @@ package org.bigbluebutton.modules.login
 			var msg : String = message.getHeader().MSG as String;
 			switch(msg){
 				case EndpointMessageConstants.CLOSE_WINDOW:
-					facade.sendNotification(LoginModuleConstants.CLOSE_WINDOW);
+					facade.sendNotification(JoinModuleConstants.CLOSE_WINDOW);
 					break;
 				case EndpointMessageConstants.OPEN_WINDOW:
 					//LogUtil.debug('Received OPEN_WINDOW message from ' + message.getHeader().SRC);

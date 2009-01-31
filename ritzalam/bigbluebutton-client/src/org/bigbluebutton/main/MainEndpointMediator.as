@@ -73,8 +73,8 @@ package org.bigbluebutton.main
 			{
 				case EndpointMessageConstants.USER_LOGGED_IN:
 					LogUtil.debug(NAME + "::Got USER_LOGGED_IN from " + message.getHeader().SRC as String);
-					modulesProxy.user = message.getBody();
-					sendNotification(MainApplicationConstants.USER_LOGGED_IN, message.getBody());
+//					modulesProxy.user = message.getBody();
+					sendNotification(MainApplicationConstants.USER_LOGGED_IN);
 					break;
 				case EndpointMessageConstants.USER_LOGGED_OUT:
 					LogUtil.debug(NAME + "::Got USER_LOGGED_OUT from " + message.getHeader().SRC as String);

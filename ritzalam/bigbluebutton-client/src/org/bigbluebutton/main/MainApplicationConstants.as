@@ -36,7 +36,11 @@ package org.bigbluebutton.main
 		public static const OPEN_WINDOW:String = 'OPEN_WINDOW';
 		public static const CLOSE_WINDOW:String = 'CLOSE_WINDOW';
 				
-		public static const LOGIN_COMPLETE:String = "LOGIN_COMPLETE";
+		public static const LOGIN_SUCCESS:String = "LOGIN_SUCCESS";
+		public static const LOGIN_FAILED:String = "LOGIN_FAILED";
+		public static const JOIN_SUCCESS:String = "JOIN_SUCCESS";
+		public static const JOIN_FAILED:String = "JOIN_FAILED";
+				
 		public static const CONNECTION_LOST:String = "CONNECTION_LOST"
 		
 		public static const LOADED_MODULE:String = 'LOADED_MODULE';
@@ -60,10 +64,14 @@ package org.bigbluebutton.main
 		public static const APP_MODEL_INITIALIZE:String = 'initialize app model';
 		public static const APP_MODEL_INITIALIZED:String = 'app model initialized';
 		public static const APP_VIEW_INITIALIZED:String = 'app view initialized';
+		
 		public static const USER_LOGIN:String = 'user logging in';
 		public static const USER_LOGGED_IN:String = 'user logged in'
 		public static const USER_LOGOUT:String = 'user logging out';
 		public static const USER_LOGGED_OUT:String = 'user logged out';
+		
+		public static const USER_JOINED:String = 'USER_JOINED';
+		public static const USER_LEFT:String = 'USER_LEFT';
 		
 		public static const LOGOUT_EVENT:String = "LOGOUT_EVENT"; 
 		public static const LOGOUT:String = "LOGOUT";		

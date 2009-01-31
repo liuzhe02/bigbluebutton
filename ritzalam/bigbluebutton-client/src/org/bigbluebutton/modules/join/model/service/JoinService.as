@@ -1,4 +1,4 @@
-package org.bigbluebutton.modules.login.model.services
+package org.bigbluebutton.modules.join.model.service
 {
 	import flash.events.*;
 	import flash.net.URLLoader;
@@ -6,7 +6,7 @@ package org.bigbluebutton.modules.login.model.services
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	        	
-	public class LoginService
+	public class JoinService
 	{  
 		private var request:URLRequest = new URLRequest();
 		private var vars:URLVariables = new URLVariables();
@@ -14,32 +14,23 @@ package org.bigbluebutton.modules.login.model.services
 		private var urlLoader:URLLoader;
 		private var _resultListener:Function;
 		
-		public function LoginService()
+		public function JoinService()
 		{
 		}
 		
-		/**
-		 * Load slides from an HTTP service. Response is received in the Responder class' onResult method 
-		 * @param url
-		 * 
-		 */		
-		public function load(url:String, fullname:String, conference:String, password:String) : void
+		public function load(url:String) : void
 		{
-			LogUtil.debug("LoginService:load(...) " + url);
+			LogUtil.debug("JoinService:load(...) " + url);
 			            
-            vars.fullname = fullname;
-            vars.conference = conference;
-            vars.password = password;
             request = new URLRequest(url);
-            request.data = vars;
-            request.method = URLRequestMethod.POST;		
+            request.method = URLRequestMethod.GET;		
             
             urlLoader = new URLLoader();
 			urlLoader.addEventListener(Event.COMPLETE, handleComplete);	
             urlLoader.load(request);	
 		}
 
-		public function addLoginResultListener(listener:Function):void {
+		public function addJoinResultListener(listener:Function):void {
 			_resultListener = listener;
 		}
 		
