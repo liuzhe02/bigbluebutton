@@ -118,10 +118,10 @@ package org.bigbluebutton.main
 					break;
 				case MainApplicationConstants.USER_JOINED:
 					LogUtil.debug(NAME + '::Received USER_JOINED');
-					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");
-					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");					
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
 					break;
 
 			}
