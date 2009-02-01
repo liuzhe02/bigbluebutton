@@ -173,6 +173,16 @@ public class Application extends ApplicationAdapter implements
     		conferenceRooms.remove(room.getName());
     	}
     }
+
+    private void setUserId(IConnection conn)
+    {
+		IServiceCapableConnection service = (IServiceCapableConnection) conn;
+		
+		log.info("Setting userId and role [" + conn.getClient().getId() + "]");
+		// remotely invoke client method with his/her role as on of the parameters
+		service.invoke("setUserId", new Object[] { conn.getClient().getId()},
+						this);
+    }
     
     /**
      * This method is called every time new client connects to the application. NetConnection.connect() call from client side, call this function in server side.
@@ -203,6 +213,8 @@ public class Application extends ApplicationAdapter implements
         	return true;
         }
       
+        setUserId(conn); 
+        
     	ISharedObject so = null;
     	// create ParticipantSO if it is not already created
     	if (!hasSharedObject(conn.getScope(), PARTICIPANTS_SO)) {
