@@ -35,9 +35,13 @@
 			}
 		
 			public function get uri():String {
-				return _attributes.uri + "/";
+				return _attributes.uri + "/" + _attributes.room;
 			}
 			
+			public function get role():String {
+				LogUtil.debug("ViewersModule userrole " + _attributes.userrole);
+				return _attributes.userrole;
+			}
 
 			public function get username():String {
 				return _attributes.username;

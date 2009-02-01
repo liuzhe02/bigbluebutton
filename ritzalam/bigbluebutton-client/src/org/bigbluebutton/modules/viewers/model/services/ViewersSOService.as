@@ -37,8 +37,8 @@ package org.bigbluebutton.modules.viewers.model.services
 			netConnectionDelegate.addConnectionFailedListener(connectionFailedListener);
 		}
 		
-		public function connect(uri:String, room:String, username:String, password:String ):void {
-			netConnectionDelegate.connect(_uri, room, username, password);
+		public function connect(uri:String, username:String, role:String):void {
+			netConnectionDelegate.connect(_uri, username, role);
 		}
 			
 		public function disconnect():void {

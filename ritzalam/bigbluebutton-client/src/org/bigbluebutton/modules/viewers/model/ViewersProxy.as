@@ -25,6 +25,7 @@ package org.bigbluebutton.modules.viewers.model
 		public function ViewersProxy(uri:String)
 		{
 			super(NAME);
+			_uri = uri;
 		}
 		
 		override public function getProxyName():String
@@ -32,14 +33,13 @@ package org.bigbluebutton.modules.viewers.model
 			return NAME;
 		}
 		
-		public function connect(uri:String, room:String, username:String, password:String ):void {
-			_uri = uri;
+		public function connect(username:String, role:String):void {
 			_participants = new Conference();
 			_viewersService = new ViewersSOService(_uri, _participants);
 			_viewersService.addConnectionStatusListener(connectionStatusListener);
 			_viewersService.addMessageSender(messageSender);
-			_participants.me.name = username;	
-			_viewersService.connect(_uri, room, username, password);		
+			LogUtil.debug(NAME + '::' + username + "," + role);
+			_viewersService.connect(_uri, username, role);		
 		}
 		
 		public function stop():void {

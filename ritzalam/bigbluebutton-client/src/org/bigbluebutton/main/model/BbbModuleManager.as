@@ -95,7 +95,7 @@ package org.bigbluebutton.main.model
 		public function loggedInUser(user:Object):void {
 			LogUtil.debug('loggedin user ' + user.username);
 			_user = new Object();
-			_user.userid = user.userid;
+			_user.conference = user.conference;
 			_user.username = user.username;
 			_user.userrole = user.userrole;
 			_user.room = user.room;
@@ -105,7 +105,7 @@ package org.bigbluebutton.main.model
 		public function addUserIntoAttributes(user:Object):void {
 			for (var key:Object in _modules) {				
 				var m:ModuleDescriptor = _modules[key] as ModuleDescriptor;
-				m.attributes.userid = user.userid;
+				m.attributes.conference = user.conference;
 				m.attributes.username = user.name;
 				m.attributes.userrole = user.role;
 				m.attributes.room = user.room;
@@ -156,7 +156,7 @@ package org.bigbluebutton.main.model
 				var bbb:IBigBlueButtonModule = m.module as IBigBlueButtonModule;
 				bbb.acceptRouter(router);
 				if (_user != null) {
-					m.attributes.userid = _user.userid;
+					m.attributes.conference = _user.conference;
 					m.attributes.username = _user.username;
 					m.attributes.userrole = _user.userrole;
 					m.attributes.room = _user.room;

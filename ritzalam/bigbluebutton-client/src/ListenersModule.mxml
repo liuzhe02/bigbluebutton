@@ -46,6 +46,10 @@
 				return _attributes.userid as Number;
 			}
 			
+			public function get role():String {
+				return _attributes.userrole as String;
+			}
+			
 			public function isModerator():Boolean {
 				LogUtil.debug("LISTENER-ROLE:" + _attributes.userrole);
 				return _attributes.userrole == "MODERATOR";

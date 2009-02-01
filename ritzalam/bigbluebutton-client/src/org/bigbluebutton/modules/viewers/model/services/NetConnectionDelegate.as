@@ -28,7 +28,7 @@ package org.bigbluebutton.modules.viewers.model.services
 		
 	public class NetConnectionDelegate
 	{
-		public static const NAME : String = "NetConnectionDelegate";
+		public static const NAME:String = "NetConnectionDelegate";
 		
 		public static const CONNECT_SUCCESS:String = "NetConnection.Connect.Success";
 		public static const CONNECT_FAILED:String = "NetConnection.Connect.Failed";
@@ -70,21 +70,17 @@ package org.bigbluebutton.modules.viewers.model.services
 			_connectionFailedListener = connectionListener;
 		}
 		
-		public function connect(uri:String, room:String, 
-					username:String, password:String) : void
-		{	
-			// Just store the room temporarily...later this will be returned by the server
-			// together with the authToken. (ralam - oct. 30, 2008)
-			_room = room;
-							
+		public function connect(uri:String, username:String, role:String):void
+		{						
 			_netConnection.client = this;
 			_netConnection.addEventListener( NetStatusEvent.NET_STATUS, netStatus );
 			_netConnection.addEventListener( AsyncErrorEvent.ASYNC_ERROR, netASyncError );
 			_netConnection.addEventListener( SecurityErrorEvent.SECURITY_ERROR, netSecurityError );
 			_netConnection.addEventListener( IOErrorEvent.IO_ERROR, netIOError );
 			
-			try {							
-				_netConnection.connect(_uri, room, username, password );				
+			try {					
+				LogUtil.debug(NAME + "::Connecting as " + username + " with role " + role);		
+				_netConnection.connect(_uri, username, role);				
 				
 			} catch( e : ArgumentError ) {
 				// Invalid parameters.

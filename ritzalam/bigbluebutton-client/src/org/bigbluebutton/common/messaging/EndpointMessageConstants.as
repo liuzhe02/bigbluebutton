@@ -36,7 +36,7 @@ package org.bigbluebutton.common.messaging
 		
 		public static const LOGIN_SUCCESS:String = 'LOGIN_SUCCESS';
 		public static const LOGIN_FAILED:String = 'LOGIN_FAILED';
-		public static const JOIN_SUCCESS:String = 'JOIN_SUCCESS';
+		public static const USER_JOINED:String = 'USER_JOINED';
 		public static const JOIN_FAILED:String = 'JOIN_FAILED';
 		public static const USER_LOGGED_IN:String = 'USER_LOGGED_IN'
 		public static const USER_LOGOUT:String = 'USER_LOGOUT';

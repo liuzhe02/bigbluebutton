@@ -32,6 +32,7 @@ package org.bigbluebutton.main
 					MainApplicationConstants.MODULE_STARTED,
 					MainApplicationConstants.RESTART_MODULE,
 					MainApplicationConstants.USER_LOGGED_IN,
+					MainApplicationConstants.USER_JOINED,
 					MainApplicationConstants.LOGOUT
 					];
 		}
@@ -113,12 +114,16 @@ package org.bigbluebutton.main
 				case MainApplicationConstants.USER_LOGGED_IN:
 					LogUtil.debug(NAME + '::Received USER_LOGGED_IN');
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "JoinModule");
+					break;
+				case MainApplicationConstants.USER_JOINED:
+					LogUtil.debug(NAME + '::Received USER_JOINED');
 //					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");
 //					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
 //					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
 //					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
-//					facade.sendNotification(MainApplicationConstants.MODULE_START, "ViewersModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "ViewersModule");
 					break;
+
 			}
 		}		
 		

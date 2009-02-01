@@ -66,20 +66,20 @@ package org.bigbluebutton.modules.join
 		
 		override public function handleNotification(notification:INotification):void
 		{
-			LogUtil.debug(NAME + "::LoginEndPoint MSG. " + notification.getName());	
+			LogUtil.debug(NAME + "::JoinEndPoint MSG. " + notification.getName());	
 			switch(notification.getName()){
 				case JoinModuleConstants.JOIN_SUCCESS:
-					LogUtil.debug(NAME + "::Sending Login JOIN_SUCCESS message to main");
-					_endpoint.sendMessage(EndpointMessageConstants.JOIN_SUCCESS, 
-							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
+					LogUtil.debug(NAME + "::Sending Join USER_JOINED message to main");
+					_endpoint.sendMessage(EndpointMessageConstants.USER_JOINED, 
+							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
 					break;
 				case JoinModuleConstants.STARTED:
-					LogUtil.debug(NAME + "::Sending Login MODULE_STARTED message to main");
+					LogUtil.debug(NAME + "::Sending Join MODULE_STARTED message to main");
 					_endpoint.sendMessage(EndpointMessageConstants.MODULE_STARTED, 
 							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
 					break;
 				case JoinModuleConstants.STOPPED:
-					LogUtil.debug(NAME + '::Sending Login MODULE_STOPPED message to main');
+					LogUtil.debug(NAME + '::Sending Join MODULE_STOPPED message to main');
 					facade.sendNotification(JoinModuleConstants.CLOSE_WINDOW);
 					var info:Object;
 					info["moduleId"] = _module.moduleId

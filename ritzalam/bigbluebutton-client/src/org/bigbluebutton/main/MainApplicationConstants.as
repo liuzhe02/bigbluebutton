@@ -66,7 +66,7 @@ package org.bigbluebutton.main
 		public static const APP_VIEW_INITIALIZED:String = 'app view initialized';
 		
 		public static const USER_LOGIN:String = 'user logging in';
-		public static const USER_LOGGED_IN:String = 'user logged in'
+		public static const USER_LOGGED_IN:String = 'user logged in';
 		public static const USER_LOGOUT:String = 'user logging out';
 		public static const USER_LOGGED_OUT:String = 'user logged out';
 		
