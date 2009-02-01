@@ -60,7 +60,8 @@ package org.bigbluebutton.main
 					
 					if (ml == "LoginModule") {
 						loginLoaded = true;
-						proxy.loadModule("JoinModule");
+					//	proxy.loadModule("JoinModule");
+						proxy.loadModule("ChatModule");
 					}
 					
 					if (ml == "JoinModule") {
@@ -104,7 +105,7 @@ package org.bigbluebutton.main
 					proxy.stopModule("VideoModule");
 					proxy.stopModule("ViewersModule");	
 					proxy.stopModule("LoginModule");
-					proxy.stopModule("JoinModule");				
+//					proxy.stopModule("JoinModule");				
 					break;
 				case MainApplicationConstants.RESTART_MODULE:
 					LogUtil.debug(NAME + '::Received RESTART_MODULE for ' + notification.getBody() as String);
@@ -113,15 +114,14 @@ package org.bigbluebutton.main
 					break;	
 				case MainApplicationConstants.USER_LOGGED_IN:
 					LogUtil.debug(NAME + '::Received USER_LOGGED_IN');
-					facade.sendNotification(MainApplicationConstants.MODULE_START, "JoinModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "ViewersModule");
 					break;
 				case MainApplicationConstants.USER_JOINED:
 					LogUtil.debug(NAME + '::Received USER_JOINED');
-//					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");
-//					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
-//					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
-//					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
-					facade.sendNotification(MainApplicationConstants.MODULE_START, "ViewersModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
 					break;
 
 			}

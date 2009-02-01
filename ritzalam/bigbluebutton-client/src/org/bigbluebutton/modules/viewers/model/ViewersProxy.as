@@ -6,6 +6,7 @@ package org.bigbluebutton.modules.viewers.model
 	import org.bigbluebutton.modules.viewers.model.business.Conference;
 	import org.bigbluebutton.modules.viewers.model.business.IViewers;
 	import org.bigbluebutton.modules.viewers.model.services.IViewersService;
+	import org.bigbluebutton.modules.viewers.model.services.JoinService;
 	import org.bigbluebutton.modules.viewers.model.services.ViewersSOService;
 	import org.bigbluebutton.modules.viewers.model.vo.Status;
 	import org.bigbluebutton.modules.viewers.model.vo.User;
@@ -15,17 +16,17 @@ package org.bigbluebutton.modules.viewers.model
 	public class ViewersProxy extends Proxy implements IProxy
 	{
 		public static const NAME:String = "ViewersProxy";
-
-		private var _uri:String;		
+		private var module:ViewersModule;		
 		private var _viewersService:IViewersService;
 		private var _participants:IViewers = null;
+		private var joinService:JoinService;
 		
 		private var isPresenter:Boolean = false;
 				
-		public function ViewersProxy(uri:String)
+		public function ViewersProxy(module:ViewersModule)
 		{
 			super(NAME);
-			_uri = uri;
+			this.module = module;
 		}
 		
 		override public function getProxyName():String
@@ -33,13 +34,42 @@ package org.bigbluebutton.modules.viewers.model
 			return NAME;
 		}
 		
-		public function connect(username:String, role:String):void {
-			_participants = new Conference();
-			_viewersService = new ViewersSOService(_uri, _participants);
+		public function connect():void {
+			_viewersService = new ViewersSOService(module.uri, _participants);
 			_viewersService.addConnectionStatusListener(connectionStatusListener);
 			_viewersService.addMessageSender(messageSender);
-			LogUtil.debug(NAME + '::' + username + "," + role);
-			_viewersService.connect(_uri, username, role);		
+			LogUtil.debug(NAME + '::' + module.username + "," + module.role);
+			_viewersService.connect(module.uri, module.username, module.role);		
+		}
+
+		public function join():void {
+			LogUtil.debug(NAME + "::joning in ");
+			joinService = new JoinService();
+			joinService.addJoinResultListener(joinListener);
+			joinService.load(module.host);
+
+		}
+		
+		private function joinListener(success:Boolean, result:Object):void {
+			if (success) {
+				LogUtil.debug(NAME + '::Sending ViewersModuleConstants.JOIN_SUCCESS' + result.role);
+				_participants = new Conference();
+				_participants.me.name = result.username;
+				_participants.me.role = result.role;
+				_participants.me.room = result.room;
+				_participants.me.authToken = result.authToken;
+				
+				module.conference = result.conference;
+				module.username = _participants.me.name;
+				module.role = _participants.me.role;
+				module.room = _participants.me.room;
+				module.authToken = _participants.me.authToken;
+				
+				connect();
+			} else {
+				LogUtil.debug(NAME + '::Sending ViewersModuleConstants.JOIN_FAILED');
+				sendNotification(ViewersModuleConstants.JOIN_FAILED, result);
+			}
 		}
 		
 		public function stop():void {
@@ -80,6 +110,8 @@ package org.bigbluebutton.modules.viewers.model
 		
 		private function connectionStatusListener(connected:Boolean, reason:String = null):void {
 			if (connected) {
+				// Set the module.userid, _participants.me.userid in the ViewersSOService.
+				module.userid = _participants.me.userid;
 				sendNotification(ViewersModuleConstants.LOGGED_IN);
 			} else {
 				_participants = null;

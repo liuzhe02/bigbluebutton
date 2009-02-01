@@ -112,8 +112,8 @@ package org.bigbluebutton.modules.viewers.model.services
 			{
 				case CONNECT_SUCCESS :
 					LogUtil.debug(NAME + ":Connection to viewers application succeeded.");
-					if ((_userid >= 0) && (_role != "unknown")) {
-						_connectionSuccessListener(true, {userid:_userid, role:_role, room:_room, authToken:_authToken});	
+					if (_userid >= 0) {
+						_connectionSuccessListener(true, {userid:_userid});	
 					}				
 					break;
 			
@@ -175,15 +175,13 @@ package org.bigbluebutton.modules.viewers.model.services
 		/**
 	 	*  Callback from server
 	 	*/
-		public function setUserIdAndRole(id:Number, role:String ):String
+		public function setUserId(id:Number):String
 		{
-			LogUtil.debug( "ViewersNetDelegate::setConnectionId: id=[" + id + ", " + role + "]");
+			LogUtil.debug( "ViewersNetDelegate::setConnectionId: id=[" + id + "]");
 			if (isNaN(id)) return "FAILED";
 			
 			// We should be receiving authToken and room from the server here.
-			_userid = id;
-			_role = role;
-								
+			_userid = id;								
 			return "OK";
 		}
 	}

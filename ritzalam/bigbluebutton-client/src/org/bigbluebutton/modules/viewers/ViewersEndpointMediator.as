@@ -14,7 +14,7 @@ package org.bigbluebutton.modules.viewers
 	{
 		public static const NAME:String = "ViewersEndpointMediator";
 		
-		private var _module:IBigBlueButtonModule;
+		private var _module:ViewersModule;
 		private var _router:Router;
 		private var _endpoint:Endpoint;		
 		private static const TO_VIEWERS_MODULE:String = "TO_VIEWERS_MODULE";
@@ -23,7 +23,7 @@ package org.bigbluebutton.modules.viewers
 		private static const PLAYBACK_MESSAGE:String = "PLAYBACK_MESSAGE";
 		private static const PLAYBACK_MODE:String = "PLAYBACK_MODE";
 				
-		public function ViewersEndpointMediator(module:IBigBlueButtonModule)
+		public function ViewersEndpointMediator(module:ViewersModule)
 		{
 			super(NAME,module);
 			_module = module;
@@ -40,6 +40,7 @@ package org.bigbluebutton.modules.viewers
 		override public function listNotificationInterests():Array
 		{
 			return [
+				ViewersModuleConstants.LOGGED_IN,
 				ViewersModuleConstants.LOGGED_OUT,
 				ViewersModuleConstants.STARTED,
 				ViewersModuleConstants.CONNECTED,
@@ -55,6 +56,12 @@ package org.bigbluebutton.modules.viewers
 		override public function handleNotification(notification:INotification):void
 		{
 			switch(notification.getName()){
+				case ViewersModuleConstants.LOGGED_IN:
+					var user:Object = {username:_module.name, conference:_module.conference, 
+										userrole:_module.role, room:_module.room, authToken:_module.authToken};
+					_endpoint.sendMessage(EndpointMessageConstants.USER_JOINED,
+							EndpointMessageConstants.TO_MAIN_APP, user);
+					break;
 				case ViewersModuleConstants.LOGGED_OUT:
 					_endpoint.sendMessage(EndpointMessageConstants.USER_LOGGED_OUT,
 							EndpointMessageConstants.TO_MAIN_APP, "LOGGED_OUT"); // just send a string

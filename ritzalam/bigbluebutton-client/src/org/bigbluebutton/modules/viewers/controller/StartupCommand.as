@@ -39,10 +39,10 @@ package org.bigbluebutton.modules.viewers.controller
 			
 			facade.registerMediator(new ViewersModuleMediator(m));
 			facade.registerMediator(new ViewersEndpointMediator(m));
-			facade.registerProxy(new ViewersProxy(m.uri));
+			facade.registerProxy(new ViewersProxy(m));
 			sendNotification(ViewersModuleConstants.STARTED);
 			LogUtil.debug("StartupCommand::" + m.username + "," + m.role);
-			proxy.connect(m.username, m.role);
+			proxy.join();
 		}
 		
 		private function get proxy():ViewersProxy {

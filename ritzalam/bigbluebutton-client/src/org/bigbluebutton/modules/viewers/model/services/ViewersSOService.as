@@ -56,11 +56,8 @@ package org.bigbluebutton.modules.viewers.model.services
 		
 		private function connectionSuccessListener(connected:Boolean, user:Object=null, failReason:String=""):void {
 			if (connected) {
-				LogUtil.debug(LOGNAME + ":Connected to the Viewers application " + user.userid + " " + user.role);
-				_participants.me.role = user.role;
+				LogUtil.debug(LOGNAME + ":Connected to the Viewers application " + user.userid);
 				_participants.me.userid = user.userid;
-				_participants.me.room = user.room;
-				_participants.me.authToken = user.authToken;
 				join();
 			} else {
 				leave();
