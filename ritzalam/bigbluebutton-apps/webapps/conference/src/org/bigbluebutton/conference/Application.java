@@ -98,22 +98,9 @@ public class Application extends ApplicationAdapter implements
         log.info( "Blindside.appStart" );
         appScope = app;
         
-        initialize();
-        
         return true;
     }
     
-    /**
-     * This method is called from appStart().
-     * Calls loadConferenceRooms() to read "conferences/conferences.xml" file and store conference room details in hashmap.
-     * 
-     * @see org.blindsideproject.conference.Application#loadConferenceRooms(String fileName)
-     */
-    private void initialize() 
-    {
-        conferenceRooms = this.loadConferenceRooms("conferences/conferences.xml");
-
-    }
     
     /**
      * This method is automatically called when conference Server application is stopped.
@@ -151,24 +138,7 @@ public class Application extends ApplicationAdapter implements
     	return conferenceRooms.get(room);
     }
 
-    /**
-     * This method is called from roomConnect() to update the connecting  client about his/her role in the conference.
-     * setUserIdAndRole() method in client is remotely called from conference server.
-     * 
-     * @param conn connection to the client who needs to be updated about his/her role in the conference
-     * @param role role of the client in the conference room
-     * 
-     * @see org.blindsideproject.conference.Role.java
-     */
-    private void setUserIdAndRole(IConnection conn, Role role)
-    {
-		IServiceCapableConnection service = (IServiceCapableConnection) conn;
-		
-		log.info("Setting userId and role [" + conn.getClient().getId() + "," + role.toString() + "]");
-		// remotely invoke client method with his/her role as on of the parameters
-		service.invoke("setUserIdAndRole", new Object[] { conn.getClient().getId(), role.toString() },
-						this);
-    }
+
 
     /**
      * @see org.red5.server.adapter.MultiThreadedApplicationAdapter#appDisconnect(org.red5.server.api.IConnection)
@@ -191,8 +161,17 @@ public class Application extends ApplicationAdapter implements
     	log.info( "Blindside.roomStart " );
     	if (!super.roomStart(room))
     		return false;
-
+    	Room r = new Room(room.getName());
+    	log.info( "Blindside.roomStart - " + room.getName() );
+    	conferenceRooms.put(r.getRoom(), r);
     	return true;
+    }
+    
+    public void roomStop(IScope room) {
+    	log.info( "Blindside.roomStart " );
+    	if (conferenceRooms.containsKey(room.getName())) {
+    		conferenceRooms.remove(room.getName());
+    	}
     }
     
     /**
@@ -209,41 +188,21 @@ public class Application extends ApplicationAdapter implements
      * @return true
      */
     public boolean roomConnect(IConnection conn, Object[] params) {
-    	log.info( "Blindside.roomConnect " + conn.getClient().getId() );
-    	// extract login info from client connect call
-    	String room = ((String) params[0]).toString();
-        String username = ((String) params[1]).toString();
-        String password = ((String) params[2]).toString();
+    	log.info( "Blindside.roomConnect - " + conn.getClient().getId() );
 
-        log.info("User logging [" + room + "," + username + "," + password + "]");
+        String username = ((String) params[0]).toString();
+        String role = ((String) params[1]).toString();
+        log.info("User logging [" + username + "," + role + "]" + conn.getScope().getName());
         // see if the room exists
-        Room confRoom = getRoom(room);        
+        Room confRoom = getRoom(conn.getScope().getName());        
         if (confRoom == null) {
         	// room does not exist
-        	log.info("Cannot find room[" + room + "]");
+        	log.info("Cannot find room[" + conn.getScope().getName() + "]");
         	// reject client with error message
         	rejectClient("Room not found.");
         	return true;
         }
-        // get moderator and viewer passwords for the conference room
-    	String modPass = confRoom.getModeratorPassword();
-    	String viewPass = confRoom.getViewerPassword();
-    	
-    	if (!(modPass.equals(password)) && !(viewPass.equals(password))) {
-    		log.info("Wrong password for [" + room + "," + password + "]");
-    		log.info("Passwords are [" + modPass + "," + viewPass + "]");
-    		// reject client with error message
-    		rejectClient("Wrong password.");
-    		return true;
-    	}
-    	
-    	Role role = Role.VIEWER;
-    	// determine participant's role
-    	if (modPass.equals(password)) role = Role.MODERATOR;
-    	else role = Role.VIEWER;
-    	// call serUserIdAndRole() to send user's role
-    	setUserIdAndRole(conn, role);        
-
+      
     	ISharedObject so = null;
     	// create ParticipantSO if it is not already created
     	if (!hasSharedObject(conn.getScope(), PARTICIPANTS_SO)) {
@@ -253,7 +212,7 @@ public class Application extends ApplicationAdapter implements
         	so = getSharedObject(conn.getScope(), PARTICIPANTS_SO, false);        	   		
     	}    	
     	
-    	Participant newParticipant = new Participant(new Integer(conn.getClient().getId()), username, role.toString());
+    	Participant newParticipant = new Participant(new Integer(conn.getClient().getId()), username, role);
     	// add new participant to the conference room
     	confRoom.addParticipant(newParticipant);
     	
@@ -265,8 +224,6 @@ public class Application extends ApplicationAdapter implements
     	so.setAttribute(newParticipant.userid.toString(), newParticipant);
     	
     	log.info("Blindside::roomConnect - Adding[" + newParticipant.userid + "," + participants.size() + "]");
-    	
-//    	so.setAttribute(PARTICIPANTS, participants);
     	so.endUpdate();
     	
     	return true;
@@ -293,7 +250,6 @@ public class Application extends ApplicationAdapter implements
     	so.beginUpdate();
     	so.removeAttribute(client.getId());
     	log.info("Blindside::roomLeave - Removing[" + client.getId() + "," + participants.size() + "]");
-//    	so.setAttribute(PARTICIPANTS, participants);
     	so.endUpdate();
     
     }
@@ -314,127 +270,6 @@ public class Application extends ApplicationAdapter implements
     	return true;
     }    
     
-    /**
-     * This method is called from initialize() to read the "conferences/conferences.xml" file and collect conference rooms details.
-     * It returns the conference rooms' details in HashMap
-     * 
-     * @param fileName XML fileName that contains conference rooms' details
-     * 
-     * @return HashMap with all the conference rooms details
-     */
-     public Map<String, Room> loadConferenceRooms(String fileName)
-     {
-    	 
-    	Map<String, Room> rooms = new HashMap<String, Room>();
-    	 
-     	try {
-     		log.debug("Loading conference rooms");    		
- 	    	
-     		Resource roomsXML = getResource(fileName);
- 			
-     		InputStream xmlinStream = roomsXML.getInputStream();
-     		BufferedReader xmldataStream = new BufferedReader(new InputStreamReader(xmlinStream));
-     		StringBuffer xmlStringBuf = new StringBuffer();
-     		
-     		String inputLine;
-     		// read conference.xml file and add it in xmlStringBuf
-     		while ((inputLine = xmldataStream.readLine()) != null) { 
-     			xmlStringBuf.append(inputLine);
-     		}
-     		
-     		xmldataStream.close();
-     		// convert xmlStringBuf content to Document dom
- 	    	Document dom = null;    	
- 	    	try {
- 				dom = this.stringToDoc(xmlStringBuf.toString());
- 			} 
- 	    	catch (IOException ioex) {
- 				log.error("IOException converting xml to dom", ioex);
- 			}
- 	
- 	    	//enables access to the document element of the document...
- 	        Element docElement = dom.getDocumentElement();
- 	
- 	        //get a nodelist of <playlist-item> elements
- 	        NodeList nl_level1 = docElement.getElementsByTagName("conference-room");
- 	        if(nl_level1 != null && nl_level1.getLength() > 0) {
- 	            String roomName;
- 	            String modPassword;
- 	            String viewPassword;
- 	            
- 	        	for(int i = 0 ; i < nl_level1.getLength();i++){	                
- 	                
- 	                Element roomItem_nl_level1 = (Element)nl_level1.item(i);
- 	                
- 	                //
- 	                // Get the values of the <name> and <length> tags within each <playlist-item> 
- 	                // and put them into the Map<String, Object> Object...
- 	                //
- 	                roomName = getTextValue(roomItem_nl_level1, "name");	                
- 	                modPassword = getTextValue(roomItem_nl_level1, "mod-password");	              
- 	                viewPassword = getTextValue(roomItem_nl_level1, "view-password");
- 	               
- 	                log.debug("Item no:"+i+", Name: "+ roomName + ", moderator: "+ modPassword + ", viewer: " + viewPassword);
- 	                // create Room instances from each Element
- 	                Room room = new Room(roomName, modPassword, viewPassword);
- 	                // add it in rooms HashMap 	     			
- 	     			rooms.put(roomName, room);
- 	            }
- 	        }
-     	}
-     	catch (IOException ioe){
-     		log.debug(ioe.toString());
-     	}
-
-     	return rooms;
-
-     }  
-     
-     /**
-      * This method returns the the string value within an Element's tag.
-      * 
-      * @param ele A DOM <code>Element</code>
-      * @param tagName The name of the DOM Element of type <code>String</code>
-      * 
-      * @return the text value
-      * 
-      * The value contained within the DOM Element. Return value is of type <code>String</code>.
-      */
-     private String getTextValue(Element ele, String tagName)
-     {
-         String textVal = null;
-         NodeList nl = ele.getElementsByTagName(tagName);
-         
-         if(nl != null && nl.getLength() > 0)
-         {
-             Element el = (Element)nl.item(0);
-             textVal = el.getFirstChild().getNodeValue();
-         }
-
-         return textVal;
-     }
-     
-     /**
-      * This method takes in an XML string and returns a DOM...
-      * 
-      * @param str the str
-      * 
-      * @return A DOM object created by the SAX parser
-      * 
-      * @throws IOException Signals that an I/O exception has occurred.
-      */
-     public Document stringToDoc(String str) throws IOException 
-     {
-     	try {
- 	    	DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
- 	    	return db.parse(new InputSource(new StringReader(str)));
- 	    }
-     	catch(Exception ex){
- 	    	log.debug("Error in stringToDoc() converting from xml sting to xml doc "+ex.toString());
- 	    	return null;
- 	    }
- 	 }     
-     
 	/* (non-Javadoc)
 	 * @see org.red5.server.api.service.IPendingServiceCallback#resultReceived(org.red5.server.api.service.IPendingServiceCall)
 	 */

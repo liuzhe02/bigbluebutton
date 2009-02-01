@@ -38,11 +38,10 @@ public class Participant {
 	/** The name. */
 	public String name;
 	
-	/** The role. */
-	public String role = Role.VIEWER.toString();
-	
 	/** The status. */
 	public String status = "";
+	
+	public String role = "VIEWER";
 	
 	/** The has stream. */
 	public Boolean hasStream = new Boolean(false);
@@ -62,33 +61,6 @@ public class Participant {
 	public Participant(Integer userid, String name, String role) {
 		this.userid = userid;
 		this.name = name;
-		this.role = role; 
-	}
-	
-	/**
-	 * Gets the userid.
-	 * 
-	 * @return the userid
-	 */
-	public Integer getUserid() {
-		return userid;
-	}
-	
-	/**
-	 * Gets the name.
-	 * 
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * Gets the role.
-	 * 
-	 * @return the role
-	 */
-	public String getRole() {
-		return role;
+		this.role = role;
 	}
 }

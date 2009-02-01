@@ -42,12 +42,6 @@ public class Room {
 	/** Conference room name. */
 	private String room;
 	
-	/** The moderator password. */
-	private String moderatorPassword;
-	
-	/** The viewer password. */
-	private String viewerPassword;
-	
 	/** List of participants of the conference room. */ 
 	private Map <Integer, Participant> participants = new HashMap<Integer, Participant>();
 	
@@ -58,21 +52,11 @@ public class Room {
 	 * @param modPass moderator password
 	 * @param viewPass viewer password
 	 */
-	public Room(String room, String modPass, String viewPass)
+	public Room(String room)
 	{
 		this.room = room;
-		this.moderatorPassword = modPass;
-		this.viewerPassword = viewPass;
 	}
 
-	/**
-	 * Gets the moderator password.
-	 * 
-	 * @return the moderator password
-	 */
-	public String getModeratorPassword() {
-		return moderatorPassword;
-	}
 
 	/**
 	 * Gets the room.
@@ -83,15 +67,6 @@ public class Room {
 		return room;
 	}
 
-	/**
-	 * Gets the viewer password.
-	 * 
-	 * @return the viewer password
-	 */
-	public String getViewerPassword() {
-		return viewerPassword;
-	}
-	
 	/**
 	 * This method adds new participants to the list of participants of the conference room.
 	 * 
