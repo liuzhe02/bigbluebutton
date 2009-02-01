@@ -44,7 +44,7 @@ public class ConversionUpdatesListener {
 	protected static Logger log = LoggerFactory.getLogger(ConversionUpdatesListener.class);
 	
 	/** The presentation s os. */
-	private static Map<Integer, ISharedObject> presentationSOs = new HashMap<Integer, ISharedObject>();
+	private static Map<String, ISharedObject> presentationSOs = new HashMap<String, ISharedObject>();
 
     /**
      * Adds the room.
@@ -52,7 +52,7 @@ public class ConversionUpdatesListener {
      * @param room the room
      * @param so the so
      */
-    public void addRoom(Integer room, ISharedObject so) {
+    public void addRoom(String room, ISharedObject so) {
     	presentationSOs.put(room, so);
     }
 
@@ -63,7 +63,7 @@ public class ConversionUpdatesListener {
      * @param code the code
      * @param message the message
      */
-    public void updateMessage(Integer room, Integer code, String message) {
+    public void updateMessage(String room, Integer code, String message) {
     	if (! presentationSOs.containsKey(room)) {
     		log.info("Getting updates message from unknown room [" + room + "]");
     		return;
@@ -96,7 +96,7 @@ public class ConversionUpdatesListener {
      * @param totalSlides the total slides
      * @param completedSlides the completed slides
      */
-    public void updateMessage(Integer room, Integer code, Integer totalSlides, Integer completedSlides) {
+    public void updateMessage(String room, Integer code, Integer totalSlides, Integer completedSlides) {
     	if (! presentationSOs.containsKey(room)) {
     		log.info("Getting updates message from unknown room [" + room + "]");
     		return;

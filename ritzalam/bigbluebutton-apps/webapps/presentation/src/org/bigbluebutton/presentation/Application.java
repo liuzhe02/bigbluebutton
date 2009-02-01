@@ -126,7 +126,7 @@ public class Application extends ApplicationAdapter implements
     	if (!hasSharedObject(conn.getScope(), "presentationSO")) {
     		createSharedObject(conn.getScope(), "presentationSO", false);
     		ISharedObject so = getSharedObject(conn.getScope(), "presentationSO", false);
-    		updatesListener.addRoom(new Integer(conn.getScope().getName()), so);
+    		updatesListener.addRoom(conn.getScope().getName(), so);
     	} else {        	
         	ISharedObject so = getSharedObject(conn.getScope(), "presentationSO", false);        	   		
     	}

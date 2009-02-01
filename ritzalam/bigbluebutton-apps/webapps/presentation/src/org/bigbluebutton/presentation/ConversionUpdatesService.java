@@ -109,9 +109,9 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 	        while (waitForMessage) {
 	        	Message msg = template.receive(destination);
 	        	
-	        	int room;
+	        	String room;
 				try {
-					room = msg.getIntProperty("room");
+					room = msg.getStringProperty(("room"));
 					int code = msg.getIntProperty("returnCode");
 					
 					if (msg.propertyExists("message")) {
