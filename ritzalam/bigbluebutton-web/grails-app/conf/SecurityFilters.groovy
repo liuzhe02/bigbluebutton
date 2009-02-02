@@ -5,7 +5,7 @@ class SecurityFilters {
         auth(controller: "*", action: "*") {
             before = {
                 // Exclude the "join" controller.
-                if (controllerName == "join") return true
+                if ((controllerName == "join") || (controllerName == "presentation")) return true
 
                 // This just means that the user must be authenticated. He does
                 // not need any particular role or permission.

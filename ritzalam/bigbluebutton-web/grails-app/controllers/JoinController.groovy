@@ -54,20 +54,62 @@ class JoinController {
 					</join> """
 	        	render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
 	        } else {
+	        	Subject currentUser = SecurityUtils.getSubject() 
+				Session session = currentUser.getSession()
+   				session.setAttribute( "fullname", params.fullname )  
+				session.setAttribute( "role", role )
+				session.setAttribute( "conference", params.conference )
+				session.setAttribute( "room", schedule.scheduleId )
+	        	
+	        	def fname = session.getAttribute("fullname")
+	        	def rl = session.getAttribute("role")
+	        	def cnf = session.getAttribute("conference")
+	        	def rm = session.getAttribute("room")
+	        	
 	        	def returnString = """
 				  	<join>
 						<returncode>SUCCESS</returncode>
+						<principal>${currentUser.principal}</principal>
 						<name>${schedule.scheduleName}</name>
-						<fullname>${params.fullname}</fullname>
-						<role>${role}</role>
-						<conference>${params.conference}</conference>
-						<room>${schedule.scheduleId}</room>
+						<fullname>${fname}</fullname>
+						<role>${rl}</role>
+						<conference>${cnf}</conference>
+						<room>${rm}</room>
 					</join> """
 	        	render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
 	        }
 		}   
+    }
     
+    def enter = {
+    	Subject currentUser = SecurityUtils.getSubject() 
+		Session session = currentUser.getSession()
 
+	    def fname = session.getAttribute("fullname")
+	    def rl = session.getAttribute("role")
+	    def cnf = session.getAttribute("conference")
+	    def rm = session.getAttribute("room")
+	        	
+	    if (!rm) {
+	    	def returnString = """
+				  	<join>
+						<returncode>FAILED</returncode>
+						<message>Either you typed the wrong password or you are early. Please
+						try 10 minutes before the scheduled conference.
+						</message>
+					</join> """
+	        render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
+	    } else {	        	
+	        def returnString = """
+				  	<join>
+						<returncode>SUCCESS</returncode>
+						<fullname>${fname}</fullname>
+						<role>${rl}</role>
+						<conference>${cnf}</conference>
+						<room>${rm}</room>
+					</join> """
+	        render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
+	    }    
     }
 
     def signOut = {
