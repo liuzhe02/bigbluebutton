@@ -16,11 +16,19 @@
 	                <div class="dialog">
 	                    <table>
 	                        <tbody>
+	                        	<tr class="prop">
+	                                <td valign="top" class="name">
+	                                    <label for="presentationName">Presentation Name:</label>
+	                                </td>
+	                                <td valign="top" class="name">
+	                                    <input type="text" name="presentationName" value="${presentationName}" />
+	                                </td>
+	                            </tr> 
 	                            <tr class="prop">
 	                                <td valign="top" class="name">
 	                                    <label for="fileUpload">Upload:</label>
 	                                </td>
-	                                <td valign="top" class="value ${hasErrors(bean:fileResourceInstance,field:'upload','errors')}">
+	                                <td valign="top" class="value ${hasErrors(presentationsList,field:'upload','errors')}">
 	                                    <input type="file" id="fileUpload" name="fileUpload" />
 	                                </td>
 	                            </tr> 
@@ -32,7 +40,7 @@
 	                </div>
 	            </g:form>
 
-            <h1>FileResource List</h1>
+            <h1>Presentations</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -46,12 +54,12 @@
                        </tr>
                     </thead>
                     <tbody>
-                    <g:each in="${fileResourceInstanceList}" status="i" var="fileResourceInstance">
+                    <g:each in="${presentationsList}" status="i" var="presentation">
                         <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-                            <td>${fileResourceInstance.decodeURL()}</td>
-                            <td> <input type="text" value="/images/${fileResourceInstance.decodeURL()}"></input></td>
-                            <td><a href="${createLinkTo( dir:'images' , file: fileResourceInstance.decodeURL(), absolute:true )}" target="_new">view</a></td>
-                            <td><g:link action="delete" id="${fileResourceInstance.replace('.','###')}" onclick="return confirm('Are you sure?');"> delete </g:link></td>
+                            <td>${presentation.decodeURL()}</td>
+                            <td><g:link action="thumbnails" id="${presentation.replace('.','###')}"> thumbnails </g:link></td>
+                            <td><g:link action="show" id="${presentation.replace('.','###')}"> show </g:link></td>
+                            <td><g:link action="delete" id="${presentation.replace('.','###')}" onclick="return confirm('Are you sure?');"> delete </g:link></td>
                         </tr>
                     </g:each>
                     </tbody>
