@@ -23,12 +23,14 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import javax.jms.MapMessage;
+
 import org.apache.activemq.command.ActiveMQQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.jms.core.JmsTemplate;
-
+import java.util.HashMap;
 
 /**
  * The Class provides conversion update service to the client uploading the slides. 
@@ -107,8 +109,19 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 	        logger.info("Will wait for document conversion updates messages.");
 	        
 	        while (waitForMessage) {
-	        	Message msg = template.receive(destination);
-	        	
+	        	Message message = template.receive(destination);
+
+	        	if (message instanceof MapMessage) {
+	                try {
+	                    System.out.println(((MapMessage) message).getString("message"));
+	                }
+	                catch (JMSException ex) {
+	                    throw new RuntimeException(ex);
+	                }
+	            }
+
+//	        	System.out.println("JMS msg: " + ((HashMap)message).get("message"));
+/*	        	
 	        	String room;
 				try {
 					room = msg.getStringProperty(("room"));
@@ -131,6 +144,7 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+*/
 	        }
 		}
 		
