@@ -1,11 +1,16 @@
+import javax.jms.Message
+import javax.jms.Session
+import javax.jms.JMSException
+import javax.jms.MapMessage
+import org.springframework.jms.core.JmsTemplate
+
 class PresentationService {
 
     boolean transactional = false
-	def ImageMagick
+	def jmsTemplate	
+	def imageMagick
 	
-//	public void setImageMagick(String m) {
-//		imageMagick = m
-//	}
+	private static String JMS_UPDATES_Q = 'UpdatesQueue'
 	
     def deletePresentation = {directory ->
 		System.out.println("delete = ${directory}")
@@ -67,17 +72,36 @@ class PresentationService {
 	
 	def convertUploadedPresentation = {presentation ->
         try {
-            def command = "pdf2swf -tT 9 " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slides.swf"         
-            Process p = Runtime.getRuntime().exec(command);
+        
+			def infoCmd = "pdf2swf -I " + presentation.getAbsolutePath()        
+          	Process p = Runtime.getRuntime().exec(infoCmd);
             
-            BufferedReader stdInput = new BufferedReader(new 
-                 InputStreamReader(p.getInputStream()));
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-            BufferedReader stdError = new BufferedReader(new 
-                 InputStreamReader(p.getErrorStream()));
 			def s
+			def msg = new HashMap()
+			System.out.println("Getting information about presentation:\n");
             while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
+            		msg.put("message", s)
+            		jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
+            }
+            
+            // read any errors from the attempted command
+            System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+            	System.out.println(s);
+            }
+                                     
+            def command = "pdf2swf -tT 9 " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slides.swf"         
+			p = Runtime.getRuntime().exec(command)
+			stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            
+			System.out.println("Converting slide:\n");
+            while ((s = stdInput.readLine()) != null) {
+            		msg.put("message", s)
+            		jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
             }
             
             // read any errors from the attempted command
