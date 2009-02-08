@@ -84,7 +84,7 @@ class PresentationService {
 			System.out.println("Getting information about presentation:\n");
             while ((s = stdInput.readLine()) != null) {
             		msg.put("message", s)
-            		jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
+            		jmsTemplate.convertAndSend("RecordQueue",s)
             }
             
             // read any errors from the attempted command
@@ -123,7 +123,7 @@ class PresentationService {
 		 	def thumbsDir = new File(presentation.getParent() + File.separatorChar + "thumbnails")
 		 	thumbsDir.mkdir()
             def command = imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"         
-            System.out.println("thumb command = " + command)
+            //System.out.println("thumb command = " + command)
             
             Process p = Runtime.getRuntime().exec(command);
             

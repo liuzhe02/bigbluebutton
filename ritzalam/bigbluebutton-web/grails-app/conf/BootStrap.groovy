@@ -1,7 +1,9 @@
 import org.jsecurity.crypto.hash.Sha1Hash
+//import org.springframework.jms.listener.DefaultMessageListenerContainer
 
 class BootStrap {
-
+	def jmsContainer
+	
      def init = { servletContext ->
      	// Administrator user and role.
 		def adminRole = new Role(name: "Administrator").save()
@@ -19,6 +21,14 @@ class BootStrap {
 		normalUser = new User(username: "alice", passwordHash: new Sha1Hash("changeit").toHex(),
 									email: "alice@test.com", fullName: "Alice").save()
 		new UserRoleRel(user: normalUser, role: userRole).save()
+		
+		/** Start the JMS Container defined in resources.groovy**/
+		
+		log.info "Starting JMS Container"
+		println "Starting JMS Container"
+		jmsContainer.initialize()
+		jmsContainer.start()
+		println "Started JMS Container"
      }
      
      def destroy = {
