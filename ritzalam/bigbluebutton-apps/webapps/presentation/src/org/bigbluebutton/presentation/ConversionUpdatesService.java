@@ -42,7 +42,8 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 	
 	/** The logger. */
 	protected static Logger logger = LoggerFactory.getLogger(ConversionUpdatesService.class);
-
+	protected static Logger recorder = LoggerFactory.getLogger("bigbluebuttonrecorder");
+	
     /** The template. */
     private JmsTemplate template = null;
     
@@ -113,7 +114,9 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 
 	        	if (message instanceof MapMessage) {
 	                try {
-	                    System.out.println(((MapMessage) message).getString("message"));
+	                	String msg = ((MapMessage) message).getString("message");
+	                    System.out.println(msg);
+	                    recorder.debug(msg);
 	                }
 	                catch (JMSException ex) {
 	                    throw new RuntimeException(ex);

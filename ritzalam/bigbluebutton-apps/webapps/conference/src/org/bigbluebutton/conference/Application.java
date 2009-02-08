@@ -68,6 +68,8 @@ public class Application extends ApplicationAdapter implements
 	/** Logger log is used for logging conference server messages in log file. */
 	protected static Logger log = LoggerFactory.getLogger( Application.class );
 
+	protected static Logger recorder = LoggerFactory.getLogger("bigbluebuttonrecorder");
+	
 	/** The app scope. */
 	private static IScope appScope;
 	
@@ -203,6 +205,7 @@ public class Application extends ApplicationAdapter implements
         String username = ((String) params[0]).toString();
         String role = ((String) params[1]).toString();
         log.info("User logging [" + username + "," + role + "]" + conn.getScope().getName());
+        recorder.debug("User logging [" + username + "," + role + "]" + conn.getScope().getName());
         // see if the room exists
         Room confRoom = getRoom(conn.getScope().getName());        
         if (confRoom == null) {
