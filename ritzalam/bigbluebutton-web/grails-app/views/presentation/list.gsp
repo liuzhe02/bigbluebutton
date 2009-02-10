@@ -28,7 +28,7 @@
 	                                <td valign="top" class="name">
 	                                    <label for="fileUpload">Upload:</label>
 	                                </td>
-	                                <td valign="top" class="value ${hasErrors(presentationsList,field:'upload','errors')}">
+	                                <td valign="top" class="value ${hasErrors(presentations,field:'upload','errors')}">
 	                                    <input type="file" id="fileUpload" name="fileUpload" />
 	                                </td>
 	                            </tr> 
@@ -54,7 +54,7 @@
                        </tr>
                     </thead>
                     <tbody>
-                    <g:each in="${presentationsList}" status="i" var="presentation">
+                    <g:each in="${presentations}" status="i" var="presentation">
                         <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
                             <td>${presentation.decodeURL()}</td>
                             <td><g:link action="thumbnails" id="${presentation.replace('.','###')}"> thumbnails </g:link></td>

@@ -2,16 +2,38 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="layout" content="main" />
-  <title>Login</title>
+  <title>Upload Presentation</title>
 </head>
 <body>
   <g:if test="${flash.message}">
     <div class="message">${flash.message}</div>
   </g:if>
-  <g:form controller="presentation" method="post" action="save" 
-  		enctype="multipart/form-data">
-    <input type="file" name="file"/>
-    <input type="submit"/>
-	</g:form>
+			 <g:form method="post"  enctype="multipart/form-data">
+	                <div class="dialog">
+	                    <table>
+	                        <tbody>
+	                        	<tr class="prop">
+	                                <td valign="top" class="name">
+	                                    <label for="presentationName">Presentation Name:</label>
+	                                </td>
+	                                <td valign="top" class="name">
+	                                    <input type="text" name="presentationName" value="${presentationName}" />
+	                                </td>
+	                            </tr> 
+	                            <tr class="prop">
+	                                <td valign="top" class="name">
+	                                    <label for="fileUpload">Upload:</label>
+	                                </td>
+	                                <td valign="top" class="name">
+	                                    <input type="file" id="fileUpload" name="fileUpload" />
+	                                </td>
+	                            </tr> 
+	                        </tbody>
+	                    </table>
+	                </div>
+	                <div class="buttons">
+	                    <span class="button"><g:actionSubmit class="upload" value="Upload" action="upload" /></span>
+	                </div>
+	            </g:form>
 </body>
 </html>

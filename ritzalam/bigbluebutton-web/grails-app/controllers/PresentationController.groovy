@@ -5,6 +5,8 @@ import org.jsecurity.session.Session
 import org.jsecurity.subject.Subject
 import org.springframework.util.FileCopyUtils
 
+import grails.converters.*
+
 class PresentationController {
     PresentationService presentationService
     
@@ -14,16 +16,33 @@ class PresentationController {
     def allowedMethods = []
 
     def list = {						      				
-		def presentationsList = []
-		flash.message = grailsApplication.config.images.location.toString()
-		def f = new File( confDir() )
-        [ presentationsList: presentationService.listPresentations(f)]
+		def f = confInfo()
+		println "conference info ${f.conference} ${f.room}"
+		def presentationsList = presentationService.listPresentations(f.conference, f.room)
+
+		if (presentationsList) {
+			withFormat {				
+				xml {
+					render(contentType:"text/xml") {
+						conference(id:f.conference, room:f.room) {
+							presentations {
+								for (s in presentationsList) {
+									presentation(name:s)
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			render(view:'upload')
+		}
     }
 
     def delete = {		
-		def filename = params.id.replace('###', '.')	
-		def file = new File( confDir() + File.separatorChar + filename )
-		presentationService.deletePresentation(file)
+		def filename = params.presentation_name
+		def f = confInfo()
+		presentationService.deletePresentation(f.conference, f.room, filename)
 		flash.message = "file ${filename} removed" 
 		redirect( action:list )
     }
@@ -42,12 +61,14 @@ class PresentationController {
 	}
 	
 	def show = {
-		def filename = params.id.replace('###', '.')
+		//def filename = params.id.replace('###', '.')
+		def filename = params.presentation_name
 		InputStream is = null;
 		System.out.println("showing ${filename}")
 		try {
 			def pres = presentationService.showPresentation(confDir() + File.separatorChar + filename)
 			if (pres.exists()) {
+				System.out.println("Found ${filename}")
 				def bytes = pres.readBytes()
 
 				response.contentType = 'application/x-shockwave-flash'
@@ -84,15 +105,14 @@ class PresentationController {
 		return [presSlides:filename, numThumbs:presentationService.numberOfThumbnails(confDir() + File.separatorChar + filename)]
 	}
 	
-	def confDir = {
+	def confInfo = {
     	Subject currentUser = SecurityUtils.getSubject() 
 		Session session = currentUser.getSession()
 
 	    def fname = session.getAttribute("fullname")
 	    def rl = session.getAttribute("role")
-	    def cnf = session.getAttribute("conference")
+	    def conf = session.getAttribute("conference")
 	    def rm = session.getAttribute("room")
-		grailsApplication.config.images.location.toString() + File.separatorChar +
-	      				cnf + File.separatorChar + rm
+		return [conference:conf, room:rm]
 	}
 }

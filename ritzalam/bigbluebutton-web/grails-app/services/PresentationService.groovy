@@ -9,10 +9,16 @@ class PresentationService {
     boolean transactional = false
 	def jmsTemplate	
 	def imageMagick
+	def presentationDir
 	
 	private static String JMS_UPDATES_Q = 'UpdatesQueue'
 	
-    def deletePresentation = {directory ->
+    def deletePresentation = {conf, room, filename ->
+    	def directory = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename)
+    	deleteDirectory(directory) 
+	}
+	
+	def deleteDirectory = {directory ->
 		System.out.println("delete = ${directory}")
 		/**
 		 * Go through each directory and check if it's not empty.
@@ -22,23 +28,24 @@ class PresentationService {
 		File[] files = directory.listFiles();				
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory()) {
-				deletePresentation(files[i])
+				deleteDirectory(files[i])
 			} else {
 				files[i].delete()
 			}
 		}
 		// Now that the directory is empty. Delete it.
-		directory.delete()
+		directory.delete()	
 	}
 	
-	def listPresentations = {directory ->
-		System.out.println("Imagemgic ${imageMagick}");
+	def listPresentations = {conf, room ->
 		def presentationsList = []
+		def directory = roomDirectory(conf, room)
+		println "directory ${directory.absolutePath}"
 		if( directory.exists() ){
 			directory.eachFile(){ file->
-			System.out.println(file.name)
-			if( file.isDirectory() )
-				presentationsList.add( file.name )
+				System.out.println(file.name)
+				if( file.isDirectory() )
+					presentationsList.add( file.name )
 			}
 		}	
 		return presentationsList
@@ -149,5 +156,9 @@ class PresentationService {
             System.out.println("exception happened - here's what I know: ");
             e.printStackTrace();
         }
+	}
+	
+	def roomDirectory = {conf, room ->
+		return new File(presentationDir + File.separatorChar + conf + File.separatorChar + room)
 	}
 }
