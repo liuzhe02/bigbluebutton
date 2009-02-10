@@ -9,12 +9,10 @@ import grails.converters.*
 
 class PresentationController {
     PresentationService presentationService
+    static transactional = true
     
-    def index = { redirect(action:list,params:params) }
-	static transactional = true
-    
-    def allowedMethods = []
-
+    def index = { render(view:'upload') }
+	
     def list = {						      				
 		def f = confInfo()
 		println "conference info ${f.conference} ${f.room}"
@@ -48,11 +46,11 @@ class PresentationController {
     }
 
 	def upload = {		
-		def f = request.getFile('fileUpload')
-	    if(!f.empty) {
+		def file = request.getFile('fileUpload')
+	    if(!file.empty) {
 	      flash.message = 'Your file has been uploaded'
-	      def dstDir = confDir() + File.separatorChar + params.presentationName
-		  presentationService.processUploadedPresentation(dstDir, f)								             			     	
+	      def f = confInfo()
+		  presentationService.processUploadedPresentation(f.conference, f.room, params.presentation_name, file)								             			     	
 		}    
 	    else {
 	       flash.message = 'file cannot be empty'
@@ -66,7 +64,8 @@ class PresentationController {
 		InputStream is = null;
 		System.out.println("showing ${filename}")
 		try {
-			def pres = presentationService.showPresentation(confDir() + File.separatorChar + filename)
+			def f = confInfo()
+			def pres = presentationService.showPresentation(f.conference, f.room, filename)
 			if (pres.exists()) {
 				System.out.println("Found ${filename}")
 				def bytes = pres.readBytes()

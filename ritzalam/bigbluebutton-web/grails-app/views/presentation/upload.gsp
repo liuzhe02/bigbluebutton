@@ -17,7 +17,7 @@
 	                                    <label for="presentationName">Presentation Name:</label>
 	                                </td>
 	                                <td valign="top" class="name">
-	                                    <input type="text" name="presentationName" value="${presentationName}" />
+	                                    <input type="text" name="presentation_name" value="${presentation_name}" />
 	                                </td>
 	                            </tr> 
 	                            <tr class="prop">

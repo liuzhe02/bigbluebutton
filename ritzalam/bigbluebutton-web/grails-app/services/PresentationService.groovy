@@ -51,18 +51,18 @@ class PresentationService {
 		return presentationsList
 	}
 	
-	def processUploadedPresentation = {destDir, presentation ->
-		  new File( destDir ).mkdirs()
-		  def pres = new File( destDir + File.separatorChar + presentation.getOriginalFilename() )
-		  presentation.transferTo( pres )
-		  convertUploadedPresentation(pres)	
-		  createThumbnails(pres)		
+	def processUploadedPresentation = {conf, room, name, presentation ->
+		def dir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name)
+		println "upload to directory ${dir.absolutePath}"
+		dir.mkdirs()
+		def pres = new File( dir.absolutePath + File.separatorChar + presentation.getOriginalFilename() )
+		presentation.transferTo( pres )
+		convertUploadedPresentation(pres)	
+		createThumbnails(pres)		
 	}
 	
-	def showPresentation = {destDir ->
-		System.out.println(destDir);
-		def pres = destDir + File.separatorChar + "slides.swf"
-		new File( pres )
+	def showPresentation = {conf, room, filename ->
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename + File.separatorChar + "slides.swf")
 	}
 	
 	def showThumbnail = {destDir, thumb ->
