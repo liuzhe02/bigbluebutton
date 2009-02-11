@@ -98,10 +98,40 @@ class PresentationController {
 		
 		return null;
 	}
-	
-	def thumbnails = {
-		def filename = params.id.replace('###', '.')
-		return [presSlides:filename, numThumbs:presentationService.numberOfThumbnails(confDir() + File.separatorChar + filename)]
+
+	def numberOfSlides = {
+		def filename = params.presentation_name
+		def f = confInfo()
+		/* Let's just use the thumbnail count */
+		def numThumbs = presentationService.numberOfThumbnails(f.conference, f.room, filename)
+			withFormat {				
+				xml {
+					render(contentType:"text/xml") {
+						conference(id:f.conference, room:f.room) {
+							presentation(name:filename) {
+								slides(count:numThumbs)
+							}
+						}
+					}
+				}
+			}		
+	}
+		
+	def numberOfThumbnails = {
+		def filename = params.presentation_name
+		def f = confInfo()
+		def numThumbs = presentationService.numberOfThumbnails(f.conference, f.room, filename)
+			withFormat {				
+				xml {
+					render(contentType:"text/xml") {
+						conference(id:f.conference, room:f.room) {
+							presentation(name:filename) {
+								thumbnails(count:numThumbs)
+							}
+						}
+					}
+				}
+			}		
 	}
 	
 	def confInfo = {

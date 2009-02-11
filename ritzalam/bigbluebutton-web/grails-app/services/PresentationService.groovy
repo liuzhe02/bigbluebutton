@@ -84,13 +84,102 @@ class PresentationService {
 		new File( pres )
 	}
 	
-	def numberOfThumbnails = {destDir ->
-		def thumbDir = new File(destDir + File.separatorChar + "thumbnails")
+	def numberOfThumbnails = {conf, room, name ->
+		def thumbDir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name + File.separatorChar + "thumbnails")
 		System.out.println(thumbDir.absolutePath + " " + thumbDir.listFiles().length)
 		thumbDir.listFiles().length
 	}
 	
 	def convertUploadedPresentation = {conf, room, presentation ->
+        try {
+        	
+        	/** Let's get how many pages this presentation has */
+			def infoCmd = swfTools + "/pdf2swf -I " + presentation.getAbsolutePath()        
+          	Process p = Runtime.getRuntime().exec(infoCmd);            
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+			def info
+			def numPages = 0
+            while ((info = stdInput.readLine()) != null) {
+            	/* The output would be something like this 'page=21 width=718.00 height=538.00'.
+            	 * We need to extract the page number (i.e. 21) from it.
+            	 */            	 
+            	def infoRegExp = /page=([0-9]+)(?: .+)/
+				def matcher = (info =~ infoRegExp)
+				if (matcher.matches()) {
+				    //if ((matcher[0][1]) > numPages) {
+				    	numPages = matcher[0][1]
+				    //	println "Number of pages = ${numPages}"
+				   // } else {
+				   // 	println "Number of pages = ${numPages} match=" + matcher[0][1]
+				   // }
+				} else {
+				    println "no match info: ${info}"
+				}
+            }
+            
+            while ((info = stdError.readLine()) != null) {
+            	System.out.println("Got error getting info from file):\n");
+            	System.out.println(s);
+            }
+            
+            def page
+	        for (page = 1; page <= new Integer(numPages); page++) {
+	            /* Now we convert the pdf file to swf 
+	             * We start the output with a page number starting at zero (0) so it's consistent
+	             * with the naming convention when we create the thumbnails. Looks like ImageMagick
+	             * uses zero-base when creating the thumbnails.	
+	            */                         
+	            def command = swfTools + "/pdf2swf -p " + page + " " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf"         
+				p = Runtime.getRuntime().exec(command)
+				stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+	            
+				System.out.println("Converting slide: ${page}\n");
+				def numSlidesProcessed = 0
+				def convertInfo
+	            while ((convertInfo = stdInput.readLine()) != null) {
+					def msg = new HashMap()
+					msg.put("room", room)
+					msg.put("returnCode", "CONVERT")
+					msg.put("totalSlides", numPages)
+					
+					/* The convert output is something like ''NOTICE  processing PDF page 2 (718x538:0:0) (move:-37:-37)'.
+					 * We extract the page number from it taking it as a successful conversion.
+					 */
+					def convertRegExp = /NOTICE (?: .+) page ([0-9]+)(?: .+)/
+					def matcher = (convertInfo =~ convertRegExp)
+					if (matcher.matches()) {
+					    //println matcher[0][1]
+					    numSlidesProcessed++ // increment the number of slides processed
+					    msg.put("slidesCompleted", numSlidesProcessed)
+	            	    jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
+					} else {
+					    println 'no match convert'
+					}
+
+	            }
+	            
+	            while ((convertInfo = stdError.readLine()) != null) {
+	            	System.out.println("Got error converting file):\n");
+	            	System.out.println(s);
+	            }
+	        }
+            stdInput.close();
+            stdError.close();
+        }
+        catch (IOException e) {
+            System.out.println("exception happened - here's what I know: ");
+            e.printStackTrace();
+        }		
+	}
+
+	/** THis converts PDF to SWF using new swftool where we don't need to explode the PDF into single file 
+	 * we dont' use this for now since it involves more changes on the client.
+	 * Will tackle this later on.
+	 */
+	def convertUploadedPresentation_New = {conf, room, presentation ->
         try {
         	
         	/** Let's get how many pages this presentation has */
