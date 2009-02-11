@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<project name="Red5" basedir="." default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="org.red5" basedir="." default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
 	
 	<!-- This build file requires Apache Ant >= 1.7 -->
 	<condition property="ant-at-least-7">
@@ -192,7 +192,8 @@
     </target>	
 
 	<target name="clean-local" description="--> cleans the local repository for the current module">
-	   <delete dir="${ivy.local.default.root}/${ant.project.name}"/>
+		<echo message="Deleting local repository: ${user.home}/.ivy2/local/${ant.project.name}"/>
+	   <delete dir="${user.home}/.ivy2/local/${ant.project.name}"/>
 	</target>
 		
 	<target name="compile" depends="-library.check, -java6.check, prepare" description="Compiles the server">
