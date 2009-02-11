@@ -9,6 +9,7 @@ class PresentationService {
     boolean transactional = false
 	def jmsTemplate	
 	def imageMagick
+	def swfTools
 	def presentationDir
 	
 	private static String JMS_UPDATES_Q = 'UpdatesQueue'
@@ -93,7 +94,7 @@ class PresentationService {
         try {
         	
         	/** Let's get how many pages this presentation has */
-			def infoCmd = "pdf2swf -I " + presentation.getAbsolutePath()        
+			def infoCmd = swfTools + "/pdf2swf -I " + presentation.getAbsolutePath()        
           	Process p = Runtime.getRuntime().exec(infoCmd);            
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -124,7 +125,7 @@ class PresentationService {
             }
             
             /* Now we convert the pdf file to swf */                         
-            def command = "pdf2swf -tT 9 " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slides.swf"         
+            def command = swfTools + "pdf2swf -tT 9 " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slides.swf"         
 			p = Runtime.getRuntime().exec(command)
 			stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
