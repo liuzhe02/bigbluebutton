@@ -61,6 +61,8 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
     /** The updates listener. */
     private ConversionUpdatesListener updatesListener;
     
+    private static String APP = "PRESENTATION ";
+    
 	/**
 	 * Starts the service.
 	 * @see org.bigbluebutton.presentation.IConversionUpdatesService#start()
@@ -124,17 +126,20 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 
 						if ("SUCCESS".equals(code)) {
 							String message = mapMessage.getStringProperty("message");
+							recorder.debug(APP + "PresentationUploadEvent room=" + room + " code=" + code + " message=" + message);
 							updatesListener.updateMessage(room, code, message);
 						} else if ("EXTRACT".equals(code) || "CONVERT".equals(code)) {
 							System.out.println("totalSlide = " + mapMessage.getString("totalSlides"));
 							int totalSlides = mapMessage.getInt("totalSlides");
 							int completedSlides = mapMessage.getInt("slidesCompleted");
+							recorder.debug(APP + "PresentationUploadEvent room=" + room + " code=" + code + 
+									" totalSlides=" + totalSlides + " completedSlides=" + completedSlides);
 							updatesListener.updateMessage(room, code, totalSlides, completedSlides);
 						} else {
 							logger.error("Cannot handle recieved message.");
 						}
 			        	System.out.println("Room = [" + room + "," + code + "]");	                    
-	                    recorder.debug(mapMessage.toString());
+			        	logger.debug(mapMessage.toString());
 	                }
 	                catch (JMSException ex) {
 	                    throw new RuntimeException(ex);

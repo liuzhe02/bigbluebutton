@@ -82,6 +82,7 @@ public class Application extends ApplicationAdapter implements
 	/** The Constant PARTICIPANTS_SO. */
 	private static final String PARTICIPANTS_SO = "participantsSO";
     
+	private static String APP = "CONFERENCE ";
    
     @Override
     /** 
@@ -205,7 +206,7 @@ public class Application extends ApplicationAdapter implements
         String username = ((String) params[0]).toString();
         String role = ((String) params[1]).toString();
         log.info("User logging [" + username + "," + role + "]" + conn.getScope().getName());
-        recorder.debug("User logging [" + username + "," + role + "]" + conn.getScope().getName());
+        recorder.debug(APP + "ConferenceJoinEvent [" + username + "," + role + "]" + conn.getScope().getName());
         // see if the room exists
         Room confRoom = getRoom(conn.getScope().getName());        
         if (confRoom == null) {
