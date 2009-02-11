@@ -83,15 +83,15 @@ package org.bigbluebutton.modules.presentation.model.business
 		 * @param fileToUpload - A FileReference class of the file we wish to upload
 		 * 
 		 */		
-		public function uploadPresentation(fileToUpload:FileReference) : void
+		public function uploadPresentation(presentationName:String, fileToUpload:FileReference) : void
 		{
 			LogUtil.debug("PresentationApplication::uploadPresentation()... ");
-			var fullUri : String = _module.host + "/bigbluebutton/file/upload";
+			var fullUri:String = _module.host + "/bigbluebutton/presentation/" + presentationName;
 						
-			var service:FileUploadService = new FileUploadService(fullUri, _module.room);
+			var service:FileUploadService = new FileUploadService(fullUri, presentationName);
 			service.addProgressListener(uploadProgressListener);
 			LogUtil.debug("using  FileUploadService..." + fullUri);
-			service.upload(fileToUpload);
+			service.upload(presentationName, fileToUpload);
 		}
 
 		/**
@@ -100,7 +100,8 @@ package org.bigbluebutton.modules.presentation.model.business
 		 */		
 		public function loadPresentation() : void
 		{
-			var fullUri : String = _module.host + "/bigbluebutton/file/xmlslides?room=" + _module.room;	
+			/* HArdcode from now the presentation name to "default".*/
+			var fullUri : String = _module.host + "/bigbluebutton/presentaion/default";	
 			LogUtil.debug("PresentationApplication::loadPresentation()... " + fullUri);
 
 			var service:PresentationService = new PresentationService();

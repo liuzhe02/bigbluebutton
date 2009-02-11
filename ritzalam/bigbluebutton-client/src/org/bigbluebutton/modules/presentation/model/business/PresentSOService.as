@@ -283,9 +283,9 @@ package org.bigbluebutton.modules.presentation.model.business
 			switch (returnCode)
 			{
 				case SUCCESS_RC:
+					LogUtil.debug("PresentationDelegate - SUCCESS_RC");
 					message = _presentationSO.data.updateMessage.message;
 					sendMessage(PresentModuleConstants.CONVERT_SUCCESS_EVENT, message);
-					//LogUtil.debug("PresentationDelegate - SUCCESS_RC");
 					break;
 					
 				case UPDATE_RC:
@@ -300,8 +300,7 @@ package org.bigbluebutton.modules.presentation.model.business
 				case EXTRACT_RC:
 					totalSlides = _presentationSO.data.updateMessage.totalSlides;
 					completedSlides = _presentationSO.data.updateMessage.completedSlides;
-					//LogUtil.debug( "EXTRACTING = [" + completedSlides + " of " + totalSlides + "]");
-					
+					LogUtil.debug( "EXTRACTING = [" + completedSlides + " of " + totalSlides + "]");					
 					sendMessage(PresentModuleConstants.EXTRACT_PROGRESS_EVENT,
 										new ProgressNotifier(totalSlides,completedSlides));
 					
@@ -309,8 +308,7 @@ package org.bigbluebutton.modules.presentation.model.business
 				case CONVERT_RC:
 					totalSlides = _presentationSO.data.updateMessage.totalSlides;
 					completedSlides = _presentationSO.data.updateMessage.completedSlides;
-					//LogUtil.debug( "CONVERTING = [" + completedSlides + " of " + totalSlides + "]");
-					
+					LogUtil.debug( "CONVERTING = [" + completedSlides + " of " + totalSlides + "]");					
 					sendMessage(PresentModuleConstants.CONVERT_PROGRESS_EVENT,
 										new ProgressNotifier(totalSlides, completedSlides));							
 					break;			

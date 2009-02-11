@@ -25,6 +25,7 @@ package org.bigbluebutton.modules.presentation.model.services
 	import flash.events.SecurityErrorEvent;
 	import flash.net.FileReference;
 	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	
 	import org.bigbluebutton.modules.presentation.PresentModuleConstants;
@@ -49,9 +50,9 @@ package org.bigbluebutton.modules.presentation.model.services
 		 * @param room - a room in the server we're connecting to
 		 * 
 		 */		
-		public function FileUploadService(url:String, room:String) : void
+		public function FileUploadService(url:String, presentationName:String) : void
 		{
-			sendVars.room = room;	
+			sendVars.presentation_name = presentationName;	
 			request.url = url;
 			request.data = sendVars;
 		}
@@ -65,7 +66,7 @@ package org.bigbluebutton.modules.presentation.model.services
 		 * @param file - The FileReference class of the file we wish to send
 		 * 
 		 */		
-		public function upload(file:FileReference):void
+		public function upload(presName:String, file:FileReference):void
 		{
 			var fileToUpload : FileReference = new FileReference();
 			fileToUpload = file;
@@ -75,8 +76,10 @@ package org.bigbluebutton.modules.presentation.model.services
 			fileToUpload.addEventListener(IOErrorEvent.IO_ERROR, onUploadIoError);
 			fileToUpload.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onUploadSecurityError);
 			
+			request.method = URLRequestMethod.POST;
+			
 			// "pres" is the variable name of the uploaded file in the server
-			fileToUpload.upload(request, "pres", false);	
+			fileToUpload.upload(request, "fileUpload", false);	
 		}
 		
 		/**
