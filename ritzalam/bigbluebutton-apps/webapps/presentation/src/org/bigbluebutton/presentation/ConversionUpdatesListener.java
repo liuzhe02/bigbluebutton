@@ -63,7 +63,7 @@ public class ConversionUpdatesListener {
      * @param code the code
      * @param message the message
      */
-    public void updateMessage(String room, Integer code, String message) {
+    public void updateMessage(String room, String code, String message) {
     	if (! presentationSOs.containsKey(room)) {
     		log.info("Getting updates message from unknown room [" + room + "]");
     		return;
@@ -74,10 +74,10 @@ public class ConversionUpdatesListener {
     	// update the atribute space of the sharedobject and clients sync with it.
     	so.beginUpdate();
     	
-    	if (code == ReturnCode.SUCCESS.value()) {
+    	if ("SUCCESS".equals(code)) {
     		update.put("returnCode", "SUCCESS");
         	update.put("message", message);
-    	} else if (code == ReturnCode.UPDATE.value()) {
+    	} else if ("UPDATE".equals(code)) {
     		update.put("returnCode", "UPDATE");
         	update.put("message", message);    		
     	} else {
@@ -96,24 +96,25 @@ public class ConversionUpdatesListener {
      * @param totalSlides the total slides
      * @param completedSlides the completed slides
      */
-    public void updateMessage(String room, Integer code, Integer totalSlides, Integer completedSlides) {
+    public void updateMessage(String room, String code, Integer totalSlides, Integer completedSlides) {
     	if (! presentationSOs.containsKey(room)) {
     		log.info("Getting updates message from unknown room [" + room + "]");
     		return;
     	}
     	
     	log.info("Getting updates message for room [" + room + "]");
+    	System.out.println("Getting updates message for room [" + room + "]");
     	
     	ISharedObject so = presentationSOs.get(room);
     	Map <String, Object> update = new HashMap<String, Object>();
     	// update the atribute space of the sharedobject and clients sync with it.
     	so.beginUpdate();
-    	if (code == ReturnCode.EXTRACT.value()) {
+    	if ("EXTRACT".equals(code)) {
     		System.out.println(room + " EXTRACT " + totalSlides + " " + completedSlides);
     		update.put("returnCode", "EXTRACT");
     		update.put("totalSlides", totalSlides);
     		update.put("completedSlides", completedSlides);
-    	} else if (code == ReturnCode.CONVERT.value()) {  
+    	} else if ("CONVERT".equals(code)) {  
     		System.out.println(room + " CONVERT " + totalSlides + " " + completedSlides);
     		update.put("returnCode", "CONVERT");
     		update.put("totalSlides", totalSlides);

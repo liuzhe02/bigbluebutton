@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.jms.core.JmsTemplate;
+
+import java.util.Enumeration;
 import java.util.HashMap;
 
 /**
@@ -110,44 +112,34 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 	        logger.info("Will wait for document conversion updates messages.");
 	        
 	        while (waitForMessage) {
-	        	Message message = template.receive(destination);
-
-	        	if (message instanceof MapMessage) {
+	        	Message jmsMessage = template.receive(destination);
+	        	
+	        	System.out.println("Got JMS message.");
+	        	
+	        	if (jmsMessage instanceof MapMessage) {
 	                try {
-	                	String msg = ((MapMessage) message).getString("message");
-	                    System.out.println(msg);
-	                    recorder.debug(msg);
+	                	MapMessage mapMessage = ((MapMessage) jmsMessage);
+						String room = mapMessage.getString("room");
+						String code = mapMessage.getString("returnCode");
+
+						if ("SUCCESS".equals(code)) {
+							String message = mapMessage.getStringProperty("message");
+							updatesListener.updateMessage(room, code, message);
+						} else if ("EXTRACT".equals(code) || "CONVERT".equals(code)) {
+							System.out.println("totalSlide = " + mapMessage.getString("totalSlides"));
+							int totalSlides = mapMessage.getInt("totalSlides");
+							int completedSlides = mapMessage.getInt("slidesCompleted");
+							updatesListener.updateMessage(room, code, totalSlides, completedSlides);
+						} else {
+							logger.error("Cannot handle recieved message.");
+						}
+			        	System.out.println("Room = [" + room + "," + code + "]");	                    
+	                    recorder.debug(mapMessage.toString());
 	                }
 	                catch (JMSException ex) {
 	                    throw new RuntimeException(ex);
 	                }
 	            }
-
-//	        	System.out.println("JMS msg: " + ((HashMap)message).get("message"));
-/*	        	
-	        	String room;
-				try {
-					room = msg.getStringProperty(("room"));
-					int code = msg.getIntProperty("returnCode");
-					
-					if (msg.propertyExists("message")) {
-						String message = msg.getStringProperty("message");
-						updatesListener.updateMessage(room, code, message);
-					} else if (msg.propertyExists("totalSlides")) {
-						int totalSlides = msg.getIntProperty("totalSlides");
-						int completedSlides = msg.getIntProperty("slidesCompleted");
-						updatesListener.updateMessage(room, code, totalSlides, completedSlides);
-					} else {
-						logger.error("Cannot handle recieved message.");
-					}
-		        	System.out.println("Room = [" + room + "," + code + "]");
-//		        	System.out.println("Message=[" + message + "]");
-		        	
-				} catch (JMSException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-*/
 	        }
 		}
 		
