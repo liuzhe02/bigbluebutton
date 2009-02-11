@@ -107,7 +107,12 @@ class PresentationService {
             	def infoRegExp = /page=([0-9]+)(?: .+)/
 				def matcher = (info =~ infoRegExp)
 				if (matcher.matches()) {
-				    if (numPages < (matcher[0][1])) numPages = matcher[0][1]
+				    //if ((matcher[0][1]) > numPages) {
+				    	numPages = matcher[0][1]
+				    //	println "Number of pages = ${numPages}"
+				   // } else {
+				   // 	println "Number of pages = ${numPages} match=" + matcher[0][1]
+				   // }
 				} else {
 				    println 'no match info'
 				}
