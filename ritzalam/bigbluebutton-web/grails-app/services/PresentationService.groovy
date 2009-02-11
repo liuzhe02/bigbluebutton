@@ -54,11 +54,23 @@ class PresentationService {
 	def processUploadedPresentation = {conf, room, name, presentation ->
 		def dir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name)
 		println "upload to directory ${dir.absolutePath}"
+		
+		/* If the presentation name already exist, delete it. We should provide a check later on to notify user
+			that there is already a presentation with that name. */
+		if (dir.exists()) deleteDirectory(dir)
+		
 		dir.mkdirs()
 		def pres = new File( dir.absolutePath + File.separatorChar + presentation.getOriginalFilename() )
 		presentation.transferTo( pres )
-		convertUploadedPresentation(pres)	
+		convertUploadedPresentation(conf, room, pres)	
 		createThumbnails(pres)		
+
+		/* We just assume that everything is OK. Send a SUCCESS message to the client */
+		def msg = new HashMap()
+		msg.put("room", room)
+		msg.put("returnCode", "SUCCESS")
+		msg.put("message", "The presentation is now ready.")
+		jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)		
 	}
 	
 	def showPresentation = {conf, room, filename ->
@@ -77,43 +89,67 @@ class PresentationService {
 		thumbDir.listFiles().length
 	}
 	
-	def convertUploadedPresentation = {presentation ->
+	def convertUploadedPresentation = {conf, room, presentation ->
         try {
-        
+        	
+        	/** Let's get how many pages this presentation has */
 			def infoCmd = "pdf2swf -I " + presentation.getAbsolutePath()        
-          	Process p = Runtime.getRuntime().exec(infoCmd);
-            
+          	Process p = Runtime.getRuntime().exec(infoCmd);            
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-			def s
-			def msg = new HashMap()
-			System.out.println("Getting information about presentation:\n");
-            while ((s = stdInput.readLine()) != null) {
-            		msg.put("message", s)
-            		jmsTemplate.convertAndSend("RecordQueue",s)
+			def info
+			def numPages = 0
+            while ((info = stdInput.readLine()) != null) {
+            	/* The output would be something like this 'page=21 width=718.00 height=538.00'.
+            	 * We need to extract the page number (i.e. 21) from it.
+            	 */            	 
+            	def infoRegExp = /page=([0-9]+)(?: .+)/
+				def matcher = (info =~ infoRegExp)
+				if (matcher.matches()) {
+				    if (numPages < (matcher[0][1])) numPages = matcher[0][1]
+				} else {
+				    println 'no match info'
+				}
             }
             
-            // read any errors from the attempted command
-            System.out.println("Here is the standard error of the command (if any):\n");
-            while ((s = stdError.readLine()) != null) {
+            while ((info = stdError.readLine()) != null) {
+            	System.out.println("Got error getting info from file):\n");
             	System.out.println(s);
             }
-                                     
+            
+            /* Now we convert the pdf file to swf */                         
             def command = "pdf2swf -tT 9 " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slides.swf"         
 			p = Runtime.getRuntime().exec(command)
 			stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             
 			System.out.println("Converting slide:\n");
-            while ((s = stdInput.readLine()) != null) {
-            		msg.put("message", s)
-            		jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
+			def numSlidesProcessed = 0
+			def convertInfo
+            while ((convertInfo = stdInput.readLine()) != null) {
+				def msg = new HashMap()
+				msg.put("room", room)
+				msg.put("returnCode", "CONVERT")
+				msg.put("totalSlides", numPages)
+				
+				/* The convert output is something like ''NOTICE  processing PDF page 2 (718x538:0:0) (move:-37:-37)'.
+				 * We extract the page number from it taking it as a successful conversion.
+				 */
+				def convertRegExp = /NOTICE (?: .+) page ([0-9]+)(?: .+)/
+				def matcher = (convertInfo =~ convertRegExp)
+				if (matcher.matches()) {
+				    //println matcher[0][1]
+				    numSlidesProcessed++ // increment the number of slides processed
+				} else {
+				    println 'no match convert'
+				}
+            	msg.put("slidesCompleted", numSlidesProcessed)
+            	jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
             }
             
-            // read any errors from the attempted command
-            System.out.println("Here is the standard error of the command (if any):\n");
-            while ((s = stdError.readLine()) != null) {
+            while ((convertInfo = stdError.readLine()) != null) {
+            	System.out.println("Got error converting file):\n");
             	System.out.println(s);
             }
             stdInput.close();
@@ -125,18 +161,15 @@ class PresentationService {
         }		
 	}
 	
-	def createThumbnails = {presentation -> 
+	def createThumbnails = {presentation ->
+		/* We create thumbnails for the uploaded presentation. */ 
 		try {
 		 	def thumbsDir = new File(presentation.getParent() + File.separatorChar + "thumbnails")
 		 	thumbsDir.mkdir()
             def command = imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"         
-            //System.out.println("thumb command = " + command)
-            
-            Process p = Runtime.getRuntime().exec(command);
-            
+            Process p = Runtime.getRuntime().exec(command);            
             BufferedReader stdInput = new BufferedReader(new 
                  InputStreamReader(p.getInputStream()));
-
             BufferedReader stdError = new BufferedReader(new 
                  InputStreamReader(p.getErrorStream()));
 			def s
