@@ -74,14 +74,17 @@ class PresentationService {
 		jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)		
 	}
 	
+	def showSlide(String conf, String room, String presentationName, String id) {
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + "slide-${id}.swf")
+	}
+	
 	def showPresentation = {conf, room, filename ->
 		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename + File.separatorChar + "slides.swf")
 	}
 	
-	def showThumbnail = {destDir, thumb ->
-		System.out.println(destDir);
-		def pres = destDir + File.separatorChar + "thumbnails" + File.separatorChar + "thumb-${thumb}.png"
-		new File( pres )
+	def showThumbnail = {conf, room, presentationName, thumb ->
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + 
+			"thumbnails" + File.separatorChar + "thumb-${thumb}.png")
 	}
 	
 	def numberOfThumbnails = {conf, room, name ->

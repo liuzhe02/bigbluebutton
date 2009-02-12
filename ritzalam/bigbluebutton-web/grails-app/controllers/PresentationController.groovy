@@ -49,13 +49,55 @@ class PresentationController {
 		def file = request.getFile('fileUpload')
 	    if(!file.empty) {
 	      flash.message = 'Your file has been uploaded'
-	      def f = confInfo()
-		  presentationService.processUploadedPresentation(f.conference, f.room, params.presentation_name, file)								             			     	
+	      	def f = confInfo()
+		  	presentationService.processUploadedPresentation(f.conference, f.room, params.presentation_name, file)							             			     	
 		}    
 	    else {
 	       flash.message = 'file cannot be empty'
 	    }
 		redirect( action:list)
+	}
+	
+	def showSlide = {
+		def presentationName = params.presentation_name
+		def slide = params.id
+		
+		InputStream is = null;
+		try {
+			def f = confInfo()
+			def pres = presentationService.showSlide(f.conference, f.room, presentationName, slide)
+			if (pres.exists()) {
+				def bytes = pres.readBytes()
+
+				response.contentType = 'application/x-shockwave-flash'
+				response.outputStream << bytes;
+			}	
+		} catch (IOException e) {
+			System.out.println("Error reading file.\n" + e.getMessage());
+		}
+		
+		return null;
+	}
+	
+	def showThumbnail = {
+		def presentationName = params.presentation_name
+		def thumb = params.id
+		
+		InputStream is = null;
+		try {
+			def f = confInfo()
+			def pres = presentationService.showThumbnail(f.conference, f.room, presentationName, thumb)
+			if (pres.exists()) {
+				def bytes = pres.readBytes()
+
+				response.contentType = 'image'
+				response.outputStream << bytes;
+			}	
+		} catch (IOException e) {
+			System.out.println("Error reading file.\n" + e.getMessage());
+		}
+		
+		return null;
 	}
 	
 	def show = {
@@ -109,7 +151,11 @@ class PresentationController {
 					render(contentType:"text/xml") {
 						conference(id:f.conference, room:f.room) {
 							presentation(name:filename) {
-								slides(count:numThumbs)
+								slides(count:numThumbs) {
+								  for (def i=0; i<numThumbs;i++) {
+								  	slide(name:"slide/${i}")
+								  }
+								}
 							}
 						}
 					}
@@ -126,7 +172,11 @@ class PresentationController {
 					render(contentType:"text/xml") {
 						conference(id:f.conference, room:f.room) {
 							presentation(name:filename) {
-								thumbnails(count:numThumbs)
+								thumbnails(count:numThumbs) {
+									for (def i=0;i<numThumbs;i++) {
+								  		thumb(name:"thumbnails/${i}")
+								  	}
+								}
 							}
 						}
 					}
