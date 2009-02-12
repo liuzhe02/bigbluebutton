@@ -63,7 +63,7 @@ class PresentationService {
 		dir.mkdirs()
 		def pres = new File( dir.absolutePath + File.separatorChar + presentation.getOriginalFilename() )
 		presentation.transferTo( pres )
-		Thread.start {
+		new Timer().runAfter(1000) {
 			convertUploadedPresentation(conf, room, pres)	
 			createThumbnails(pres)		
 	
