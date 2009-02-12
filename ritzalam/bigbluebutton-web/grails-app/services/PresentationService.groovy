@@ -63,15 +63,17 @@ class PresentationService {
 		dir.mkdirs()
 		def pres = new File( dir.absolutePath + File.separatorChar + presentation.getOriginalFilename() )
 		presentation.transferTo( pres )
-		convertUploadedPresentation(conf, room, pres)	
-		createThumbnails(pres)		
-
-		/* We just assume that everything is OK. Send a SUCCESS message to the client */
-		def msg = new HashMap()
-		msg.put("room", room)
-		msg.put("returnCode", "SUCCESS")
-		msg.put("message", "The presentation is now ready.")
-		jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)		
+		Thread.start {
+			convertUploadedPresentation(conf, room, pres)	
+			createThumbnails(pres)		
+	
+			/* We just assume that everything is OK. Send a SUCCESS message to the client */
+			def msg = new HashMap()
+			msg.put("room", room)
+			msg.put("returnCode", "SUCCESS")
+			msg.put("message", "The presentation is now ready.")
+			jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)		
+		}
 	}
 	
 	def showSlide(String conf, String room, String presentationName, String id) {
