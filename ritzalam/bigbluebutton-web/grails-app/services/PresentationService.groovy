@@ -72,6 +72,7 @@ class PresentationService {
 			msg.put("room", room)
 			msg.put("returnCode", "SUCCESS")
 			msg.put("message", "The presentation is now ready.")
+			System.out.println("Sending presentation conversion success.")
 			jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)		
 		}
 	}
@@ -158,10 +159,11 @@ class PresentationService {
 					if (matcher.matches()) {
 					    //println matcher[0][1]
 					    numSlidesProcessed++ // increment the number of slides processed
-					    msg.put("slidesCompleted", numSlidesProcessed)
+					    msg.put("slidesCompleted", page)
+	            	    println "number of slides completed ${numSlidesProcessed}"
 	            	    jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
 					} else {
-					    println 'no match convert'
+					    println "no match convert: ${convertInfo}"
 					}
 
 	            }
@@ -264,6 +266,7 @@ class PresentationService {
 	def createThumbnails = {presentation ->
 		/* We create thumbnails for the uploaded presentation. */ 
 		try {
+			System.out.println("Creating thumbnails:\n");
 		 	def thumbsDir = new File(presentation.getParent() + File.separatorChar + "thumbnails")
 		 	thumbsDir.mkdir()
             def command = imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"         
