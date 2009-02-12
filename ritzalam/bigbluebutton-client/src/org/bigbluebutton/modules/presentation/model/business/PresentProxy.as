@@ -101,7 +101,7 @@ package org.bigbluebutton.modules.presentation.model.business
 		public function loadPresentation() : void
 		{
 			/* HArdcode from now the presentation name to "default".*/
-			var fullUri : String = _module.host + "/bigbluebutton/presentaion/default";	
+			var fullUri : String = _module.host + "/bigbluebutton/presentation/default/slides";	
 			LogUtil.debug("PresentationApplication::loadPresentation()... " + fullUri);
 
 			var service:PresentationService = new PresentationService();

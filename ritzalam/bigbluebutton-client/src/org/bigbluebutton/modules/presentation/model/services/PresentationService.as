@@ -54,7 +54,7 @@ package org.bigbluebutton.modules.presentation.model.services
 		}
 		
 		public function parse(xml:XML):void{
-			var list:XMLList = xml.presentation.slide;
+			var list:XMLList = xml.presentation.slides.slide;
 			var item:XML;
 			
 			// Make sure we start with a clean set.
@@ -62,7 +62,7 @@ package org.bigbluebutton.modules.presentation.model.services
 			
 			for each(item in list){
 				//LogUtil.debug("Available Modules: " + item.name + " at ");
-				_slides.add(item.source);
+				_slides.add(item.name);
 			}		
 			
 			//LogUtil.debug("number of slide=" + _slides.size());

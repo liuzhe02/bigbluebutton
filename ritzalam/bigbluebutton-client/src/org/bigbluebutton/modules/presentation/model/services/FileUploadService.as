@@ -78,7 +78,7 @@ package org.bigbluebutton.modules.presentation.model.services
 			
 			request.method = URLRequestMethod.POST;
 			
-			// "pres" is the variable name of the uploaded file in the server
+			// "fileUpload" is the variable name of the uploaded file in the server
 			fileToUpload.upload(request, "fileUpload", false);	
 		}
 		
