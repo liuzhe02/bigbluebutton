@@ -102,11 +102,13 @@ package org.bigbluebutton.modules.presentation.model.business
 		{
 			/* HArdcode from now the presentation name to "default".*/
 			var fullUri : String = _module.host + "/bigbluebutton/presentation/default/slides";	
+			var slideUri:String = _module.host + "/bigbluebutton/presentation/default/slide";
+			
 			LogUtil.debug("PresentationApplication::loadPresentation()... " + fullUri);
 
 			var service:PresentationService = new PresentationService();
 			service.addLoadPresentationListener(loadPresentationListener);
-			service.load(fullUri, _slides);
+			service.load(fullUri, _slides, slideUri);
 			LogUtil.debug('number of slides=' + _slides.size());
 		}	
 		

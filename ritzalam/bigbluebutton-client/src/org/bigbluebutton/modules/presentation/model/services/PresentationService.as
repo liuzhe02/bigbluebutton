@@ -23,6 +23,7 @@ package org.bigbluebutton.modules.presentation.model.services
 		private var _slides:IPresentationSlides;
 		private var urlLoader:URLLoader;
 		private var _loadListener:Function;
+		private var slideUri:String;
 		
 		public function PresentationService()
 		{
@@ -34,9 +35,10 @@ package org.bigbluebutton.modules.presentation.model.services
 		 * @param url
 		 * 
 		 */		
-		public function load(url:String, slides:IPresentationSlides) : void
+		public function load(url:String, slides:IPresentationSlides, slideUri:String) : void
 		{
 			_slides = slides;
+			this.slideUri = slideUri;
 			service.url = url;			
 			urlLoader = new URLLoader();
 			urlLoader.addEventListener(Event.COMPLETE, handleComplete);	
@@ -56,13 +58,16 @@ package org.bigbluebutton.modules.presentation.model.services
 		public function parse(xml:XML):void{
 			var list:XMLList = xml.presentation.slides.slide;
 			var item:XML;
+			LogUtil.debug("Slides: " + xml);
 			
 			// Make sure we start with a clean set.
 			_slides.clear();			
 			
+			LogUtil.debug("Slides list: " + list);
+			
 			for each(item in list){
-				//LogUtil.debug("Available Modules: " + item.name + " at ");
-				_slides.add(item.name);
+				LogUtil.debug("Available slide: " + item.@name);
+				_slides.add(slideUri + "/" + item.name);
 			}		
 			
 			//LogUtil.debug("number of slide=" + _slides.size());
