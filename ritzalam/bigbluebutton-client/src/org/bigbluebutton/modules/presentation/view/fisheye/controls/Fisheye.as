@@ -67,7 +67,7 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 				pd.eomHeight = md.eomHeight = renderers[i].getExplicitOrMeasuredHeight();
 				pd.eomWidth = md.eomWidth = renderers[i].getExplicitOrMeasuredWidth();			
 			}
-			this[minor.measuredMin] = this[minor.measured] = 150;//minorMeasuredSize;
+			this[minor.measuredMin] = this[minor.measured] = minorMeasuredSize;
 
 			// now that we have newly measured sizes, we'll need to recaculate sizing, and mouse positoins.
 			animator.invalidateLayout();

@@ -66,8 +66,9 @@ package org.bigbluebutton.modules.presentation.model.services
 			LogUtil.debug("Slides list: " + list);
 			
 			for each(item in list){
-				LogUtil.debug("Available slide: " + item.@name);
-				_slides.add(slideUri + "/" + item.name);
+				
+				_slides.add(slideUri + "/" + item.@name);
+				LogUtil.debug("Available slide: " + slideUri + "/" + item.@name);
 			}		
 			
 			//LogUtil.debug("number of slide=" + _slides.size());

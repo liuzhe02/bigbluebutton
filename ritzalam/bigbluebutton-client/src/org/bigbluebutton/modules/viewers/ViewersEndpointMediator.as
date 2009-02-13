@@ -57,7 +57,7 @@ package org.bigbluebutton.modules.viewers
 		{
 			switch(notification.getName()){
 				case ViewersModuleConstants.LOGGED_IN:
-					var user:Object = {username:_module.name, conference:_module.conference, 
+					var user:Object = {username:_module.username, conference:_module.conference, 
 										userrole:_module.role, room:_module.room, authToken:_module.authToken};
 					_endpoint.sendMessage(EndpointMessageConstants.USER_JOINED,
 							EndpointMessageConstants.TO_MAIN_APP, user);

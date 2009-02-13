@@ -20,7 +20,6 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 	[Style(name="borderColor", type="Number", inherit="no")]
 	[Style(name="borderAlpha", type="Number", inherit="no")]
 	[Style(name="borderWidth", type="Number", inherit="no")]
-	[Style(name="slideNumber", type="Number", inherit="no")]
 	[Event("loaded")]
 	public class BitmapTile extends UIComponent implements IDataRenderer
 	{
@@ -28,10 +27,12 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 		private var _id:int;
 		private var _loader:Loader;
 		private var _loaded:Boolean = false;
-		private var _imageWidth:Number = 150;
-		private var _imageHeight:Number = 150;
+		private var _imageWidth:Number = 50;
+		private var _imageHeight:Number = 50;
 		private const BORDER_WIDTH:Number = 1;
 		private var _border:Shape;
+		
+		private var _slideNumber:Number = -1;
 		private var t:TextField = new TextField();
 		
 		[Bindable] public var progress:Number = 0;
@@ -86,6 +87,19 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 		}
 		
 		public function get data():Object { return _data;}
+		
+		public function set slideNumber(value:Number):void 
+		{
+			if (value > 0) {
+				_slideNumber = value;
+			}
+			LogUtil.debug("Setting slide number = " + _slideNumber);
+		}
+		
+		public function get slideNumber():Number 
+		{
+			return _slideNumber;
+		}
 		
 		public function set fadeValue(value:Number):void
 		{
@@ -161,13 +175,17 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 			g.lineTo(tX+borderWidth/2,tY+_loader.height-borderWidth/2);
 			g.lineTo(tX+borderWidth/2,tY+borderWidth/2);
 			
-			/**t.text = "";
 			t = new TextField();
-			t.text = "10";
-			var f:TextFormat = new TextFormat(
+			if (_slideNumber == -1) {
+				t.text = "";
+			} else {
+				t.text = _slideNumber as String;
+				//t.text = getStyle("slideNumber") as String;
+			}
+			var f:TextFormat = new TextFormat();
 			this.addChild(t);
 			t.x = this.width/2;
-			t.y = this.height/2; */
+			t.y = this.height/2; 
 
 		}
 	}

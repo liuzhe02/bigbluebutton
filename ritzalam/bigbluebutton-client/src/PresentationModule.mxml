@@ -56,6 +56,10 @@
 				return _attributes.room;
 			}
 			
+			public function get conference():String {
+				return _attributes.conference;
+			}
+			
 			public function start(attributes:Object):void {		
 				_attributes = attributes;
 				PresentationFacade.getInstance().startup(this);	

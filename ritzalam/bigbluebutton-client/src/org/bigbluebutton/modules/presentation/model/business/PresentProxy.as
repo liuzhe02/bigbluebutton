@@ -88,7 +88,7 @@ package org.bigbluebutton.modules.presentation.model.business
 			LogUtil.debug("PresentationApplication::uploadPresentation()... ");
 			var fullUri:String = _module.host + "/bigbluebutton/presentation/" + presentationName;
 						
-			var service:FileUploadService = new FileUploadService(fullUri, presentationName);
+			var service:FileUploadService = new FileUploadService(fullUri, presentationName, _module.conference, _module.room);
 			service.addProgressListener(uploadProgressListener);
 			LogUtil.debug("using  FileUploadService..." + fullUri);
 			service.upload(presentationName, fileToUpload);
@@ -102,7 +102,7 @@ package org.bigbluebutton.modules.presentation.model.business
 		{
 			/* HArdcode from now the presentation name to "default".*/
 			var fullUri : String = _module.host + "/bigbluebutton/presentation/default/slides";	
-			var slideUri:String = _module.host + "/bigbluebutton/presentation/default/slide";
+			var slideUri:String = _module.host + "/bigbluebutton/presentation/default";
 			
 			LogUtil.debug("PresentationApplication::loadPresentation()... " + fullUri);
 

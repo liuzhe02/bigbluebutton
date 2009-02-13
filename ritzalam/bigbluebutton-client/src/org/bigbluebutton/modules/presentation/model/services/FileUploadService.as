@@ -50,9 +50,11 @@ package org.bigbluebutton.modules.presentation.model.services
 		 * @param room - a room in the server we're connecting to
 		 * 
 		 */		
-		public function FileUploadService(url:String, presentationName:String) : void
+		public function FileUploadService(url:String, presentationName:String, conference:String, room:String) : void
 		{
 			sendVars.presentation_name = presentationName;	
+			sendVars.conference = conference;
+			sendVars.room = room;
 			request.url = url;
 			request.data = sendVars;
 		}
