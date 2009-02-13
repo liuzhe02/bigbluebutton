@@ -32,8 +32,7 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 		private const BORDER_WIDTH:Number = 1;
 		private var _border:Shape;
 		
-		private var _slideNumber:Number = -1;
-		private var t:TextField = new TextField();
+		private var slideNumber:TextField = new TextField();
 		
 		[Bindable] public var progress:Number = 0;
 		public function get loaded():Boolean
@@ -78,6 +77,8 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 			progress= 0;
 			_data = value;
 			var url:String = String((_data is String)? _data:_data.thumb);
+			trace("Loading thumbnail: " + url);
+			LogUtil.debug("Loading thumbnail: " + url);
 			_loader.load(new URLRequest(url));
 			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadComplete);	
 			_loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS,updateProgress);	
@@ -87,20 +88,7 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 		}
 		
 		public function get data():Object { return _data;}
-		
-		public function set slideNumber(value:Number):void 
-		{
-			if (value > 0) {
-				_slideNumber = value;
-			}
-			LogUtil.debug("Setting slide number = " + _slideNumber);
-		}
-		
-		public function get slideNumber():Number 
-		{
-			return _slideNumber;
-		}
-		
+				
 		public function set fadeValue(value:Number):void
 		{
 			_fadeValue = value;
@@ -175,17 +163,21 @@ package org.bigbluebutton.modules.presentation.view.fisheye.controls
 			g.lineTo(tX+borderWidth/2,tY+_loader.height-borderWidth/2);
 			g.lineTo(tX+borderWidth/2,tY+borderWidth/2);
 			
-			t = new TextField();
-			if (_slideNumber == -1) {
-				t.text = "";
+			if (_data.slideNumber == null) {
+				slideNumber.text = "";
 			} else {
-				t.text = _slideNumber as String;
-				//t.text = getStyle("slideNumber") as String;
+				slideNumber.text = "";
+				slideNumber.text = String((_data.slideNumber as Number) + 1);
 			}
-			var f:TextFormat = new TextFormat();
-			this.addChild(t);
-			t.x = this.width/2;
-			t.y = this.height/2; 
+			slideNumber.x = this.width / 2;
+			slideNumber.y = this.height / 2; 
+//			var format:TextFormat = new TextFormat();
+//            format.font = "Verdana";
+ //           format.color = 0xBBBBBB;
+ //           format.size = 10;
+		//	slideNumber.defaultTextFormat = format;
+			this.addChild(slideNumber);
+
 
 		}
 	}

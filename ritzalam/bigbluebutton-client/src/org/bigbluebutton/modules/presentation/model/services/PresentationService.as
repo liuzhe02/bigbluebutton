@@ -7,6 +7,7 @@ package org.bigbluebutton.modules.presentation.model.services
 	import mx.rpc.IResponder;
 	import mx.rpc.http.HTTPService;
 	
+	import org.bigbluebutton.modules.presentation.model.Slide;
 	import org.bigbluebutton.modules.presentation.model.business.IPresentationSlides;
 	        	
 	/**
@@ -65,10 +66,13 @@ package org.bigbluebutton.modules.presentation.model.services
 			
 			LogUtil.debug("Slides list: " + list);
 			
-			for each(item in list){
-				
-				_slides.add(slideUri + "/" + item.@name);
-				LogUtil.debug("Available slide: " + slideUri + "/" + item.@name);
+			for each(item in list){		
+				var sUri:String = slideUri + "/" + item.@name;
+				var thumbUri:String =  slideUri + "/" + item.@thumb;
+				var slide:Slide = new Slide(item.@number, sUri, thumbUri);						
+				_slides.add(slide);
+				LogUtil.debug("Available slide: " + sUri + " number = " + item.@number);
+				LogUtil.debug("Available thumb: " + thumbUri);
 			}		
 			
 			//LogUtil.debug("number of slide=" + _slides.size());
