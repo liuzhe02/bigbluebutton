@@ -50,7 +50,7 @@ class PresentationController {
 	    if(!file.empty) {
 	      flash.message = 'Your file has been uploaded'
 	      	def f = confInfo()
-		  	presentationService.processUploadedPresentation(f.conference, f.room, params.presentation_name, file)							             			     	
+		  	presentationService.processUploadedPresentation(params.conference, params.room, params.presentation_name, file)							             			     	
 		}    
 	    else {
 	       flash.message = 'file cannot be empty'
@@ -192,6 +192,7 @@ class PresentationController {
 	    def rl = session.getAttribute("role")
 	    def conf = session.getAttribute("conference")
 	    def rm = session.getAttribute("room")
+	    println "Conference info: ${conf} ${rm}"
 		return [conference:conf, room:rm]
 	}
 }

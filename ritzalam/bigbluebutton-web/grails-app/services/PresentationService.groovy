@@ -160,7 +160,7 @@ class PresentationService {
 					    //println matcher[0][1]
 					    numSlidesProcessed++ // increment the number of slides processed
 					    msg.put("slidesCompleted", page)
-	            	    println "number of slides completed ${numSlidesProcessed}"
+	            	    println "number of slides completed ${page}"
 	            	    jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
 					} else {
 					    println "no match convert: ${convertInfo}"
