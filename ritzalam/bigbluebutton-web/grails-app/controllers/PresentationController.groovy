@@ -153,7 +153,7 @@ class PresentationController {
 							presentation(name:filename) {
 								slides(count:numThumbs) {
 								  for (def i=0; i<numThumbs;i++) {
-								  	slide(name:"slide/${i}")
+								  	slide(number:"${i}", name:"slide/${i}", thumb:"thumbnail/${i}")
 								  }
 								}
 							}
