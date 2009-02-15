@@ -146,7 +146,8 @@ class PresentationController {
 		def f = confInfo()
 		/* Let's just use the thumbnail count */
 		def numThumbs = presentationService.numberOfThumbnails(f.conference, f.room, filename)
-			withFormat {				
+			response.addHeader("Cache-Control", "no-cache")
+			withFormat {						
 				xml {
 					render(contentType:"text/xml") {
 						conference(id:f.conference, room:f.room) {
