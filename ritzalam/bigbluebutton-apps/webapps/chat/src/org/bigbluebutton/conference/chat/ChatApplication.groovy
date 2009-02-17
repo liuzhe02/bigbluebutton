@@ -1,6 +1,6 @@
 package org.bigbluebutton.conference.chat
 
-import org.red5.server.adapter.IApplicationimport org.red5.server.api.IConnectionimport org.red5.server.api.IClientimport org.red5.server.api.IScopeimport org.red5.server.adapter.ApplicationAdapter
+import org.red5.server.adapter.IApplicationimport org.red5.server.api.IConnectionimport org.red5.server.api.IClientimport org.red5.server.api.IScopeimport org.red5.server.adapter.ApplicationAdapterimport org.red5.server.api.Red5
 public class ChatApplication implements IApplication {
 	
 	private ApplicationAdapter application;
@@ -43,6 +43,7 @@ public class ChatApplication implements IApplication {
 	@Override
 	public boolean roomConnect(IConnection connection, Object[] params) {
 		println "${APP}:roomConnect"
+		connection.setAttribute("conference", 12345)
 		return false;
 	}
 
@@ -54,7 +55,8 @@ public class ChatApplication implements IApplication {
 
 	@Override
 	public boolean roomJoin(IClient client, IScope scope) {
-		println "${APP}:roomJoin ${scope.name}"
+		println "${APP}:roomJoin ${scope.name} - ${scope.parent.name}"
+		println "${APP}: " + Red5.connectionLocal.getAttribute("conference")
 		return false;
 	}
 
