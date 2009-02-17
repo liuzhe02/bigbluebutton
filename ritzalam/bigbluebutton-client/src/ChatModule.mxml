@@ -33,7 +33,7 @@
 			}
 		
 			public function get uri():String {
-				return _attributes.uri + "/" + _attributes.room;
+				return _attributes.uri + "/" + _attributes.conference + "/" + _attributes.room;
 			}
 			
 			public function get username():String {
