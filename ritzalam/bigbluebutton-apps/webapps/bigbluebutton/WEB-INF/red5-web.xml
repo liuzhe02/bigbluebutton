@@ -26,4 +26,9 @@
 	<bean id="web.handler" 
 	    class="org.red5.server.adapter.ApplicationAdapter" 
 		singleton="true" />
+		
+	<bean id="chat.service" 
+	    class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
+		<property name="applicationAdapter"> <ref local="web.handler"/></property>
+	</bean>
 </beans>

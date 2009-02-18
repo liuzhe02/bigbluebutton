@@ -220,6 +220,8 @@
 		<echo message="Webapps build dir: ${full.classpath}"/>
 		
 		<build-groovy name="chat"/>
+		<build-groovy name="bigbluebutton"/>
+		<build-groovy name="conference"/>
 		<!-- build apps -->
 		<build-app name="astmeetme"/>
 		<build-app name="bigbluebutton"/>
