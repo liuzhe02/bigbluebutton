@@ -9,7 +9,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 import org.red5.server.adapter.ApplicationAdapter
-import org.red5.server.api.Red5
+import org.red5.server.api.Red5import java.util.Map
 public class ParticipantsService extends ApplicationAdapter implements IApplication{
 
 	protected static Logger log = LoggerFactory.getLogger( ParticipantsService.class );
@@ -99,6 +99,22 @@ public class ParticipantsService extends ApplicationAdapter implements IApplicat
     	}
 	}
 
+	public boolean participantJoin() {
+		ISharedObject so = getSharedObject(Red5.connectionLocal.scope, PARTICIPANTS_SO, false)
+		def userid = Red5.connectionLocal.client.id;
+		def username = Red5.connectionLocal.getAttribute("username")
+		List args = new ArrayList()
+		args.add(userid)
+		args.add(username)
+		
+		Map status = new HashMap()
+		status.put("role",Red5.connectionLocal.getAttribute("role"))
+		status.put("raiseHand", false)
+		args.add(status)
+		so.sendMessage("participantJoined", args)
+		return true;
+	}
+	
 	public void setApplicationAdapter(ApplicationAdapter a) {
 		application = a
 		application.addListener(this)
