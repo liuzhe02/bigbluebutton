@@ -1,15 +1,28 @@
-package org.bigbluebutton.conference.chat
 
-import org.red5.server.adapter.IApplicationimport org.red5.server.api.IConnectionimport org.red5.server.api.IClientimport org.red5.server.api.IScopeimport org.red5.server.adapter.ApplicationAdapterimport org.red5.server.api.Red5
-public class ChatApplication implements IApplication {
-	
+package org.bigbluebutton.conference.service.participants
+
+import org.red5.server.adapter.IApplication
+import org.red5.server.api.IClient
+import org.red5.server.api.IConnection
+import org.red5.server.api.IScope
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.red5.server.api.so.ISharedObject
+import org.red5.server.adapter.ApplicationAdapter
+import org.red5.server.api.Red5
+public class ParticipantsService extends ApplicationAdapter implements IApplication{
+
+	protected static Logger log = LoggerFactory.getLogger( ParticipantsService.class );
+
+	private static final String PARTICIPANTS = "PARTICIPANTS";	
+	private static final String PARTICIPANTS_SO = "participantsSO";   
+	private static final String APP = "PARTICIPANTS";
 	private ApplicationAdapter application;
-	def  static String APP = "ChatApplication"
-	
+		
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
 		println "${APP}:appConnect"
-		return false;
+		return true;
 	}
 
 	@Override
@@ -20,12 +33,13 @@ public class ChatApplication implements IApplication {
 	@Override
 	public boolean appJoin(IClient client, IScope scope) {
 		println "${APP}:appJoin ${scope.name}"
-		return false;
+		return true;
 	}
 
 	@Override
 	public void appLeave(IClient client, IScope scope) {
 		println "${APP}:appLeave ${scope.name}"
+
 	}
 
 	@Override
@@ -42,8 +56,8 @@ public class ChatApplication implements IApplication {
 	@Override
 	public boolean roomConnect(IConnection connection, Object[] params) {
 		println "${APP}:roomConnect"
-		connection.setAttribute("conference", 12345)
-		return false;
+
+    	return true;
 	}
 
 	@Override
@@ -56,7 +70,7 @@ public class ChatApplication implements IApplication {
 	public boolean roomJoin(IClient client, IScope scope) {
 		println "${APP}:roomJoin ${scope.name} - ${scope.parent.name}"
 		println "${APP}: " + Red5.connectionLocal.getAttribute("conference")
-		return false;
+		return true;
 	}
 
 	@Override
@@ -67,17 +81,26 @@ public class ChatApplication implements IApplication {
 
 	@Override
 	public boolean roomStart(IScope scope) {
-		println "${APP}:roomStart ${scope.name}"
-		return false;
+		println "${APP} - roomStart ${scope.name}"
+    	log.info( "${APP} - roomStart ${scope.name}" )
+		
+    	// create ParticipantSO if it is not already created
+    	if (!hasSharedObject(scope, PARTICIPANTS_SO)) {
+    		createSharedObject(scope, PARTICIPANTS_SO, false)
+    	}  	
+    	return true;
 	}
 
 	@Override
 	public void roomStop(IScope scope) {
 		println "${APP}:roomStop ${scope.name}"
+		if (!hasSharedObject(scope, PARTICIPANTS_SO)) {
+    		clearSharedObjects(scope, PARTICIPANTS_SO)
+    	}
 	}
 
 	public void setApplicationAdapter(ApplicationAdapter a) {
-		application = a;
-		application.addListener(this);
+		application = a
+		application.addListener(this)
 	}
 }

@@ -23,12 +23,15 @@
 		<property name="virtualHosts" value="${webapp.virtualHosts}" />
 	</bean>
 
-	<bean id="web.handler" 
-	    class="org.red5.server.adapter.ApplicationAdapter" 
-		singleton="true" />
+	<bean id="web.handler" class="org.bigbluebutton.conference.BigBlueButtonApplication" singleton="true" />
 		
-	<bean id="chat.service" 
+	<!--bean id="chat.service" 
 	    class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
+		<property name="applicationAdapter"> <ref local="web.handler"/></property>
+	</bean-->
+	
+	<bean id="participants.service" 
+	    class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
 		<property name="applicationAdapter"> <ref local="web.handler"/></property>
 	</bean>
 </beans>

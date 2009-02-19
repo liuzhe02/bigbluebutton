@@ -149,7 +149,6 @@ public class ParticipantsService implements IApplication, IPendingServiceCallbac
 	@Override
 	public void roomLeave(IClient client, IScope scope) {
 		println "${APP}:roomLeave ${scope.name}"
-    	super.roomLeave(client, room);
     	ISharedObject so = getSharedObject(room, PARTICIPANTS_SO, false);
     	
     	Room confRoom = getRoom(room.getName()); 
@@ -165,9 +164,8 @@ public class ParticipantsService implements IApplication, IPendingServiceCallbac
 
 	@Override
 	public boolean roomStart(IScope scope) {
+		println "Blindside.roomStart ${scope.name}"
     	log.info( "Blindside.roomStart ${scope.name}" );
-    	if (!super.roomStart(room))
-    		return false;
     	Room r = new Room(room.getName());
     	log.info( "Blindside.roomStart - " + room.getName() );
     	conferenceRooms.put(r.getRoom(), r);

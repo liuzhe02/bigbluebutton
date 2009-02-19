@@ -4,7 +4,7 @@ import org.red5.server.adapter.IApplication
 import org.red5.server.api.IClient
 import org.red5.server.api.IConnection
 import org.red5.server.api.IScope
-import org.red5.server.adapter.ApplicationAdapterimport org.slf4j.Loggerimport org.slf4j.LoggerFactory
+import org.red5.server.adapter.ApplicationAdapterimport org.slf4j.Loggerimport org.slf4j.LoggerFactoryimport org.red5.server.api.Red5
 
 public class ChatService implements IApplication{
 	

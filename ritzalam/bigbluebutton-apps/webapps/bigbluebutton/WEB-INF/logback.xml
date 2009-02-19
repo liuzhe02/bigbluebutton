@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<appender name="CONFERENCE" class="ch.qos.logback.core.FileAppender">
+	<appender name="BIGBLUEBUTTON" class="ch.qos.logback.core.FileAppender">
 		<File>log/bigbluebutton.log</File>
 		<Append>false</Append>
 		<Encoding>UTF-8</Encoding>
