@@ -1,5 +1,7 @@
 package org.bigbluebutton.modules.viewers.model
 {
+	import flash.net.NetConnection;
+	
 	import mx.collections.ArrayCollection;
 	
 	import org.bigbluebutton.modules.viewers.ViewersModuleConstants;
@@ -39,7 +41,7 @@ package org.bigbluebutton.modules.viewers.model
 			_viewersService.addConnectionStatusListener(connectionStatusListener);
 			_viewersService.addMessageSender(messageSender);
 			LogUtil.debug(NAME + '::' + module.username + "," + module.role);
-			_viewersService.connect(module.uri, module.username, module.role);		
+			_viewersService.connect(module.uri, module.username, module.role, module.conference, module.mode, module.room);		
 		}
 
 		public function join():void {
@@ -145,5 +147,10 @@ package org.bigbluebutton.modules.viewers.model
 					sendNotification(msg, body);
 			} 
 		}		
+		
+		public function get connection():NetConnection
+		{
+			return _viewersService.connection;
+		}
 	}
 }

@@ -31,6 +31,7 @@ package org.bigbluebutton.common
 		function get userid():Number;
 		function get uri():String;	
 		function get role():String;
+	
 		function start(attributes:Object):void;
 		function stop():void;
 	}

@@ -21,6 +21,7 @@ package org.bigbluebutton.modules.viewers.model.services
 {
 	import flash.events.*;
 	import flash.net.NetConnection;
+	import flash.net.Responder;
 	
 	import org.bigbluebutton.modules.viewers.ViewersFacade;
 	import org.bigbluebutton.modules.viewers.ViewersModuleConstants;
@@ -70,7 +71,16 @@ package org.bigbluebutton.modules.viewers.model.services
 			_connectionFailedListener = connectionListener;
 		}
 		
-		public function connect(uri:String, username:String, role:String):void
+		/**
+		 * Connect to the server.
+		 * uri: The uri to the conference application.
+		 * username: Fullname of the participant.
+		 * role: MODERATOR/VIEWER
+		 * conference: The conference room
+		 * mode: LIVE/PLAYBACK - Live:when used to collaborate, Playback:when being used to playback a recorded conference.
+		 * room: Need the room number when playing back a recorded conference. When LIVE, the room is taken from the URI.
+		 */
+		public function connect(uri:String, username:String, role:String, conference:String, mode:String, room:String):void
 		{						
 			_netConnection.client = this;
 			_netConnection.addEventListener( NetStatusEvent.NET_STATUS, netStatus );
@@ -79,8 +89,10 @@ package org.bigbluebutton.modules.viewers.model.services
 			_netConnection.addEventListener( IOErrorEvent.IO_ERROR, netIOError );
 			
 			try {					
-				LogUtil.debug(NAME + "::Connecting as " + username + " with role " + role);		
-				_netConnection.connect(_uri, username, role);				
+				LogUtil.debug(NAME + "::Connecting to " + _uri + " [" + username + "," + role + "," + conference + 
+						"," + mode + "," + room + "]");		
+				//_netConnection.connect(_uri, username, role);	
+				_netConnection.connect(_uri, username, role, conference, mode, room);			
 				
 			} catch( e : ArgumentError ) {
 				// Invalid parameters.
@@ -112,9 +124,27 @@ package org.bigbluebutton.modules.viewers.model.services
 			{
 				case CONNECT_SUCCESS :
 					LogUtil.debug(NAME + ":Connection to viewers application succeeded.");
-					if (_userid >= 0) {
-						_connectionSuccessListener(true, {userid:_userid});	
-					}				
+					_netConnection.call(
+							"getMyUserId",// Remote function name
+							new Responder(
+	        					// result - On successful result
+								function(result:Object):void { 
+									LogUtil.debug("Successful result: " + result); 
+									_userid = Number(result);
+									if (_userid >= 0) {
+										_connectionSuccessListener(true, {userid:_userid});	
+									}	
+								},	
+								// status - On error occurred
+								function(status:Object):void { 
+									LogUtil.error("Error occurred:"); 
+									for (var x:Object in status) { 
+										LogUtil.error(x + " : " + status[x]); 
+									} 
+								}
+							)//new Responder
+					); //_netConnection.call
+			
 					break;
 			
 				case CONNECT_FAILED :
@@ -175,9 +205,9 @@ package org.bigbluebutton.modules.viewers.model.services
 		/**
 	 	*  Callback from server
 	 	*/
-		public function setUserId(id:Number):String
+		public function setUserId(id:Number, role:String):String
 		{
-			LogUtil.debug( "ViewersNetDelegate::setConnectionId: id=[" + id + "]");
+			LogUtil.debug( "ViewersNetDelegate::setConnectionId: id=[" + id + "," + role + "]");
 			if (isNaN(id)) return "FAILED";
 			
 			// We should be receiving authToken and room from the server here.

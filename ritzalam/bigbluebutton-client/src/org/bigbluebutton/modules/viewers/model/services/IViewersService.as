@@ -1,10 +1,12 @@
 package org.bigbluebutton.modules.viewers.model.services
 {
+	import flash.net.NetConnection;
+	
 	import org.bigbluebutton.modules.viewers.model.vo.Status;
 	
 	public interface IViewersService
 	{
-		function connect(uri:String, username:String, role:String):void;
+		function connect(uri:String, username:String, role:String, conference:String, mode:String, room:String):void;
 		function disconnect():void;
 		function addConnectionStatusListener(connectionListener:Function):void;	
 		function iAmPresenter(userid:Number, presenter:Boolean):void;
@@ -16,5 +18,7 @@ package org.bigbluebutton.modules.viewers.model.services
 		function addMessageSender(msgSender:Function):void;
 		function assignPresenter(userid:Number, assignedBy:Number):void; 
 		function queryPresenter():void;	
+		
+		function get connection():NetConnection;
 	}
 }

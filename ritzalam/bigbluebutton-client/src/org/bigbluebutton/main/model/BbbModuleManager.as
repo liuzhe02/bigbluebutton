@@ -101,6 +101,8 @@ package org.bigbluebutton.main.model
 			_user.room = user.room;
 			_user.authToken = user.authToken;
 			_user.userid = user.userid;
+			_user.mode = user.mode;
+			_user.connection = user.connection;
 		}
 		
 		public function addUserIntoAttributes(user:Object):void {
@@ -111,7 +113,9 @@ package org.bigbluebutton.main.model
 				m.attributes.userrole = user.role;
 				m.attributes.room = user.room;
 				m.attributes.authToken = user.authToken;	
-				m.attributes.userid = user.userid;	
+				m.attributes.userid = user.userid;
+				m.attributes.mode = user.mode;
+				m.attributes.connection = user.connection;	
 			}				
 		}
 		
@@ -164,6 +168,8 @@ package org.bigbluebutton.main.model
 					m.attributes.room = _user.room;
 					m.attributes.authToken = _user.authToken;
 					m.attributes.userid = _user.userid;
+					m.attributes.mode = _user.mode;
+					m.attributes.connection = _user.connection;
 					LogUtil.debug(m.attributes.username + " _user.username=" + _user.username);
 				}		
 				

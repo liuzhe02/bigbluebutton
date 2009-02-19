@@ -3,6 +3,7 @@ package org.bigbluebutton.modules.viewers.model.services
 	import flash.events.AsyncErrorEvent;
 	import flash.events.NetStatusEvent;
 	import flash.events.SyncEvent;
+	import flash.net.NetConnection;
 	import flash.net.SharedObject;
 	
 	import org.bigbluebutton.modules.viewers.ViewersModuleConstants;
@@ -37,8 +38,8 @@ package org.bigbluebutton.modules.viewers.model.services
 			netConnectionDelegate.addConnectionFailedListener(connectionFailedListener);
 		}
 		
-		public function connect(uri:String, username:String, role:String):void {
-			netConnectionDelegate.connect(_uri, username, role);
+		public function connect(uri:String, username:String, role:String, conference:String, mode:String, room:String):void {
+			netConnectionDelegate.connect(_uri, username, role, conference, mode, room);
 		}
 			
 		public function disconnect():void {
@@ -385,6 +386,11 @@ package org.bigbluebutton.modules.viewers.model.services
 		{
 			LogUtil.debug(LOGNAME + "participantsSO asyncErrorHandler " + event.error);
 			notifyConnectionStatusListener(false);
+		}
+		
+		public function get connection():NetConnection
+		{
+			return netConnectionDelegate.connection;
 		}
 	}
 }
