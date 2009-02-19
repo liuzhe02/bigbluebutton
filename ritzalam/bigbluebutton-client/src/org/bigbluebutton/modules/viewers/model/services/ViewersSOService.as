@@ -4,6 +4,7 @@ package org.bigbluebutton.modules.viewers.model.services
 	import flash.events.NetStatusEvent;
 	import flash.events.SyncEvent;
 	import flash.net.NetConnection;
+	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
 	import org.bigbluebutton.modules.viewers.ViewersModuleConstants;
@@ -80,7 +81,28 @@ package org.bigbluebutton.modules.viewers.model.services
 			_participantsSO.client = this;
 			_participantsSO.connect(netConnectionDelegate.connection);
 			LogUtil.debug(LOGNAME + ":ViewersModules is connected to Shared object");
-			notifyConnectionStatusListener(true);			
+			var nc:NetConnection = netConnectionDelegate.connection;
+			nc.call(
+				"participants.participantJoin",// Remote function name
+				new Responder(
+	        		// result - On successful result
+					function(result:Object):void { 
+						LogUtil.debug("Successfully joined: " + result); 
+						if (result) {
+							notifyConnectionStatusListener(true);
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+						notifyConnectionStatusListener(false, "Failed to join the conference.");
+					}
+				)//new Responder
+			); //_netConnection.call
+						
 		}
 		
 	    private function leave():void
@@ -92,6 +114,9 @@ package org.bigbluebutton.modules.viewers.model.services
 			_connectionStatusListener = connectionListener;
 		}
 		
+		public function participantJoined(userId:String, username:String, status:Object):void {
+			LogUtil.info("Joined as [" + userId + "," + username + "," + status.raiseHand + "]"); 
+		}
 
 		public function newStatus(userid:Number, status:Status):void {
 			var aUser:User = _participants.getParticipant(userid);			
