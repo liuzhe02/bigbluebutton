@@ -81,16 +81,24 @@ package org.bigbluebutton.modules.viewers.model.services
 			_participantsSO.client = this;
 			_participantsSO.connect(netConnectionDelegate.connection);
 			LogUtil.debug(LOGNAME + ":ViewersModules is connected to Shared object");
+			queryForParticipants();
+		}
+		
+		private function queryForParticipants():void {
 			var nc:NetConnection = netConnectionDelegate.connection;
 			nc.call(
-				"participants.participantJoin",// Remote function name
+				"participants.getParticipants",// Remote function name
 				new Responder(
-	        		// result - On successful result
+	        		// participants - On successful result
 					function(result:Object):void { 
-						LogUtil.debug("Successfully joined: " + result); 
-						if (result) {
-							notifyConnectionStatusListener(true);
+						LogUtil.debug("Successfully queried participants: " + result.count); 
+						if (result.count > 0) {
+							for(var p:Object in result.participants) 
+							{
+								participantJoined(result.participants[p]);
+							}							
 						}	
+						notifyConnectionStatusListener(true);
 					},	
 					// status - On error occurred
 					function(status:Object):void { 
@@ -102,7 +110,6 @@ package org.bigbluebutton.modules.viewers.model.services
 					}
 				)//new Responder
 			); //_netConnection.call
-						
 		}
 		
 	    private function leave():void
@@ -114,8 +121,25 @@ package org.bigbluebutton.modules.viewers.model.services
 			_connectionStatusListener = connectionListener;
 		}
 		
-		public function participantJoined(userId:String, username:String, status:Object):void {
-			LogUtil.info("Joined as [" + userId + "," + username + "," + status.raiseHand + "]"); 
+		public function participantLeft(user:Object):void { 
+			_participants.removeParticipant(Number(user));
+		}
+		
+		public function participantJoined(joinedUser:Object):void { 
+			var userid:Number = Number(joinedUser.userid);
+			var username:String = joinedUser.username;
+			var status:Object = joinedUser.status;
+			LogUtil.info("Joined as [" + userid + "," + username + "," + status.raiseHand + "]");		
+
+			var user:User = new User();
+			user.userid = userid;
+			user.name = username;							
+			user.role = status.role;						
+			user.presenter = status.presenter;
+			user.hasStream = status.hasStream;
+			//user.streamName = status.streamName;
+			LogUtil.info(LOGNAME + "New user[" + 	user.name + "," + user.userid + "]");
+			_participants.addUser(user);
 		}
 
 		public function newStatus(userid:Number, status:Status):void {
@@ -243,14 +267,14 @@ package org.bigbluebutton.modules.viewers.model.services
 		 */		
 		private function sharedObjectSyncHandler( event : SyncEvent) : void
 		{
-			LogUtil.debug(LOGNAME + "Conference::sharedObjectSyncHandler " + event.changeList.length);
-			
-			for (var i : uint = 0; i < event.changeList.length; i++) 
-			{
-				LogUtil.debug(LOGNAME + "Conference::handlingChanges[" + event.changeList[i].name + "][" + i + "][" + event.changeList[i].code + "]");
-				handleChangesToSharedObject(event.changeList[i].code, 
-						event.changeList[i].name, event.changeList[i].oldValue);
-			}
+//			LogUtil.debug(LOGNAME + "Conference::sharedObjectSyncHandler " + event.changeList.length);
+//			
+//			for (var i : uint = 0; i < event.changeList.length; i++) 
+//			{
+//				LogUtil.debug(LOGNAME + "Conference::handlingChanges[" + event.changeList[i].name + "][" + i + "][" + event.changeList[i].code + "]");
+//				handleChangesToSharedObject(event.changeList[i].code, 
+//						event.changeList[i].name, event.changeList[i].oldValue);
+//			}
 		}
 
 		/**
