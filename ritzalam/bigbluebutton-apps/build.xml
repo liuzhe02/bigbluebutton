@@ -370,6 +370,7 @@
 
 	
 	<target name="test-compile" depends="jar">
+		<compile-groovy-tests/>
 	    <javac destdir="${test.classes.dir}"
 	           debug="true"
 	           includeAntRuntime="yes"
@@ -380,6 +381,14 @@
 		          classname="org.testng.TestNGAntTask" />
 	</target>
 
+	<macrodef name="compile-groovy-tests">
+		<sequential>
+		<mkdir dir="${test.classes.dir}"/>
+		<groovyc srcdir="test" destdir="${test.classes.dir}"
+				 classpathref="test.compile.classpath"/>
+		</sequential>
+	</macrodef>
+	
 	<target name="test-ng" depends="test-compile">
 	      <echo message="running tests"/>
 	      <testng classpathref="test.classpath" outputDir="${test.data.dir}">
