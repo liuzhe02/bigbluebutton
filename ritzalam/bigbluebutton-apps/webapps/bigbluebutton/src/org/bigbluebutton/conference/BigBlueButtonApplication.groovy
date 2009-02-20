@@ -10,12 +10,16 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 
+import org.bigbluebutton.conference.RoomsManager
+import org.bigbluebutton.conference.Room
+
 public class BigBlueButtonApplication extends ApplicationAdapter{
 
 	protected static Logger log = LoggerFactory.getLogger( BigBlueButtonApplication.class );
 
-	private static final String APP = "BigBlueButtonApplication";
-
+	private static final String APP = "BigBlueButtonApplication"
+	private RoomsManager roomsManager
+	
     public boolean appStart (IScope app )
     {
         log.info( "${APP} - appStart" )
@@ -44,9 +48,16 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
     
     public boolean roomStart(IScope room) {
     	log.info( "${APP} - roomStart " )
+    	roomsManager.addRoom(new Room(room.name))
     	return super.roomStart(room)
     }	
 	
+    public void roomStop(IScope room) {
+    	log.info( "${APP} - roomStop " )
+    	super.roomStop(room)
+    	roomsManager.removeRoom(room.name)
+    }
+    
 	public boolean roomConnect(IConnection connection, Object[] params) {
     	log.info( "${APP} - roomConnect - ")
 
@@ -72,5 +83,9 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 
 	public String getMyUserId() {
 		return Red5.connectionLocal.client.id;
+	}
+	
+	public void setRoomsManager(RoomsManager r) {
+		roomsManager = r
 	}
 }

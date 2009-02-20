@@ -23,7 +23,11 @@
 		<property name="virtualHosts" value="${webapp.virtualHosts}" />
 	</bean>
 
-	<bean id="web.handler" class="org.bigbluebutton.conference.BigBlueButtonApplication" singleton="true" />
+	<bean id="web.handler" class="org.bigbluebutton.conference.BigBlueButtonApplication" singleton="true">
+		<property name="roomsManager"> <ref local="roomsManager"/></property>
+	</bean>
+	
+	<bean id="roomsManager" class="org.bigbluebutton.conference.RoomsManager" singleton="true" />
 		
 	<!--bean id="chat.service" 
 	    class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
@@ -33,5 +37,6 @@
 	<bean id="participants.service" 
 	    class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
 		<property name="applicationAdapter"> <ref local="web.handler"/></property>
+		<property name="roomsManager"> <ref local="roomsManager"/></property>
 	</bean>
 </beans>
