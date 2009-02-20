@@ -14,7 +14,9 @@ import org.bigbluebutton.conference.Room
 public class ParticipantsService extends ApplicationAdapter implements IApplication{
 
 	protected static Logger log = LoggerFactory.getLogger( ParticipantsService.class );
-
+	
+	protected static Logger recorder = LoggerFactory.getLogger( "RECORD-BIGBLUEBUTTON" );
+	
 	private static final String PARTICIPANTS = "PARTICIPANTS";	
 	private static final String PARTICIPANTS_SO = "participantsSO";   
 	private static final String APP = "PARTICIPANTS";
@@ -122,6 +124,8 @@ public class ParticipantsService extends ApplicationAdapter implements IApplicat
 		
 		List args = new ArrayList()
 		args.add(userid)
+		
+		recorder.debug("${APP} - ParticipantLeftEvent - ${userid}")
 		so.sendMessage("participantLeft", args)
 		return true;
 	}
@@ -134,9 +138,9 @@ public class ParticipantsService extends ApplicationAdapter implements IApplicat
 		Map user = new HashMap()
 		user.put("userid", userid)
 		user.put("username", username)
+		user.put("role", Red5.connectionLocal.getAttribute("role"))
 		
 		Map status = new HashMap()
-		status.put("role",Red5.connectionLocal.getAttribute("role"))
 		status.put("raiseHand", false)
 		status.put("presenter", true)
 		status.put("hasStream", false)
@@ -149,6 +153,9 @@ public class ParticipantsService extends ApplicationAdapter implements IApplicat
 		
 		List args = new ArrayList()
 		args.add(user)
+		
+		recorder.debug("${APP} - ParticipantJoinEvent - ${userid}")
+		
 		so.sendMessage("participantJoined", args)
 		return true;
 	}
