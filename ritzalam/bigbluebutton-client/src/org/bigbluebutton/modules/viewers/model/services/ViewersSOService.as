@@ -77,7 +77,6 @@ package org.bigbluebutton.modules.viewers.model.services
 			_participantsSO = SharedObject.getRemote(SO_NAME, _uri, false);
 			_participantsSO.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			_participantsSO.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
-			_participantsSO.addEventListener(SyncEvent.SYNC, sharedObjectSyncHandler);
 			_participantsSO.client = this;
 			_participantsSO.connect(netConnectionDelegate.connection);
 			LogUtil.debug(LOGNAME + ":ViewersModules is connected to Shared object");
@@ -126,22 +125,15 @@ package org.bigbluebutton.modules.viewers.model.services
 		}
 		
 		public function participantJoined(joinedUser:Object):void { 
-			var userid:Number = Number(joinedUser.userid);
-			var username:String = joinedUser.username;
-			var status:Object = joinedUser.status;
-			LogUtil.info("Joined as [" + userid + "," + username + "," + status.raiseHand + "]");		
-
 			var user:User = new User();
-			user.userid = userid;
-			user.name = username;							
-			user.role = status.role;						
-			user.presenter = status.presenter;
-			user.hasStream = status.hasStream;
-			//user.streamName = status.streamName;
-			LogUtil.info(LOGNAME + "New user[" + 	user.name + "," + user.userid + "]");
+			user.userid = Number(joinedUser.userid);
+			user.name = joinedUser.username;	
+			user.role = joinedUser.role;						
+			user.status = joinedUser.status;						
+			LogUtil.info("Joined as [" + user.userid + "," + user.name + "," + user.role + "]");
 			_participants.addUser(user);
 		}
-
+/*
 		public function newStatus(userid:Number, status:Status):void {
 			var aUser:User = _participants.getParticipant(userid);			
 			if (aUser != null) {
@@ -207,13 +199,7 @@ package org.bigbluebutton.modules.viewers.model.services
 		}
 						
 		public function assignPresenter(userid:Number, assignedBy:Number):void {
-			//var aUser:User = _participants.getParticipant(userid);			
-			//if (aUser != null) {
-			//	LogUtil.debug('assigning presenter to ' + userid);
-			//	aUser.presenter = true;
-			//	_participantsSO.setProperty(userid.toString(), aUser);
-			//	_participantsSO.setDirty(userid.toString());
-			//}			
+	
 			_participantsSO.send("assignPresenterCallback", userid, assignedBy);
 		}
 		
@@ -222,15 +208,8 @@ package org.bigbluebutton.modules.viewers.model.services
 		}
 		
 		public function queryPresenter():void {
-//			var p:Object = _participantsSO.data[PRESENTER];
-//			LogUtil.debug('Got query presenter');
-//			if (p != null) {
-//				LogUtil.debug('responding to query presenter');
-//				sendMessage(ViewersModuleConstants.QUERY_PRESENTER_REPLY, {assignedTo:p.assignedTo, assignedBy:p.assignedBy});
-//			}			
+		
 		}
-
-
 
 		public function addStream(userid:Number, streamName:String):void {
 			var aUser : User = _participants.getParticipant(userid);						
@@ -259,128 +238,7 @@ package org.bigbluebutton.modules.viewers.model.services
 						+ aUser.hasStream + "," + aUser.streamName + "]");				
 			}
 		}
-		
-		/**
-		 * Called when a sync_event is received for the SharedObject 
-		 * @param event
-		 * 
-		 */		
-		private function sharedObjectSyncHandler( event : SyncEvent) : void
-		{
-//			LogUtil.debug(LOGNAME + "Conference::sharedObjectSyncHandler " + event.changeList.length);
-//			
-//			for (var i : uint = 0; i < event.changeList.length; i++) 
-//			{
-//				LogUtil.debug(LOGNAME + "Conference::handlingChanges[" + event.changeList[i].name + "][" + i + "][" + event.changeList[i].code + "]");
-//				handleChangesToSharedObject(event.changeList[i].code, 
-//						event.changeList[i].name, event.changeList[i].oldValue);
-//			}
-		}
-
-		/**
-		 * See flash.events.SyncEvent
-		 */
-		private function handleChangesToSharedObject(code:String, name:String, oldValue:Object) : void
-		{
-			switch (code)
-			{
-				case "clear":
-					/** From flash.events.SyncEvent doc
-					 * 
-					 * A value of "clear" means either that you have successfully connected 
-					 * to a remote shared object that is not persistent on the server or the 
-					 * client, or that all the properties of the object have been deleted -- 
-					 * for example, when the client and server copies of the object are so 
-					 * far out of sync that Flash Player resynchronizes the client object 
-					 * with the server object. In the latter case, SyncEvent.SYNC is dispatched 
-					 * and the "code" value is set to "change". 
-					 */
-					 LogUtil.debug(LOGNAME + "Got clear sync event for participants");
-					_participants.removeAllParticipants();
-													
-					break;	
-																			
-				case "success":
-					/** From flash.events.SyncEvent doc
-					 * 	 A value of "success" means the client changed the shared object. 		
-					 */
-					
-					// do nothing... just log it ;	
-					LogUtil.info(LOGNAME + "Conference::success =[" + code + "," + name + "," + oldValue + "]");
-					break;
-
-				case "reject":
-					/** From flash.events.SyncEvent doc
-					 * 	A value of "reject" means the client tried unsuccessfully to change the 
-					 *  object; instead, another client changed the object.		
-					 */
-					
-					// do nothing... just log it 
-					// Or...maybe we should check if the value is the same as what we wanted it
-					// to be..if not...change it?
-					LogUtil.warn(LOGNAME + "Conference::reject =[" + code + "," + name + "," + oldValue + "]");	
-					break;
-
-				case "change":
-					/** From flash.events.SyncEvent doc
-					 * 	A value of "change" means another client changed the object or the server 
-					 *  resynchronized the object.  		
-					 */
-					 
-					if (name != null) {					
-					/*	LogUtil.debug('seraching status ' + name.search(STATUS));	
-						var statusIndex:int = name.search(STATUS);
-						if (statusIndex > -1) {
-							var uid:String = name.slice(0,statusIndex);
-							if (_participants.hasParticipant(Number(uid))) {
-								var changedUser:User = _participants.getParticipant(Number(uid));
-								changedUser.status = new ArrayCollection(_participantsSO.data[name] as Array);
-								LogUtil.debug( "Conference::change =[" + name + "][" + changedUser.status.length + "]");
-								//sendMessage(ViewersModuleConstants.CHANGE_STATUS, changedUser.status);
-							} else {
-								LogUtil.debug('User id NULL');
-							}														
-						} else {
-					*/		if (_participants.hasParticipant(_participantsSO.data[name].userid)) {									
-								var cUser:User = _participants.getParticipant(Number(name));
-								cUser.presenter = _participantsSO.data[name].presenter;
-								cUser.hasStream = _participantsSO.data[name].hasStream;
-								cUser.streamName = _participantsSO.data[name].streamName;	
-								LogUtil.debug(LOGNAME + 'Changed user[' + cUser.name + "," + _participantsSO.data[name].userid + "]");												
-							} else {
-								// The server sent us a new user.
-								var user:User = new User();
-								user.userid = _participantsSO.data[name].userid;
-								user.name = _participantsSO.data[name].name;							
-								user.role = _participantsSO.data[name].role;						
-								user.presenter = _participantsSO.data[name].presenter;
-								user.hasStream = _participantsSO.data[name].hasStream;
-								user.streamName = _participantsSO.data[name].streamName;
-								LogUtil.info(LOGNAME + "New user[" + 	user.name + "," + user.userid + "]");
-								_participants.addUser(user);
-							}	
-					//	}					
-					} 
-																	
-					break;
-
-				case "delete":
-					/** From flash.events.SyncEvent doc
-					 * 	A value of "delete" means the attribute was deleted.  		
-					 */
-					
-					LogUtil.info(LOGNAME + "Removing user[" + code + "," + name + "," + oldValue + "]");	
-					
-					// The participant has left. Cast name (string) into a Number.
-					_participants.removeParticipant(Number(name));
-					break;
-										
-				default:	
-					LogUtil.debug(LOGNAME + "Conference::default[" + _participantsSO.data[name].userid
-								+ "," + _participantsSO.data[name].name + "]");		 
-					break;
-			}
-		}
+*/		
 
 		private function notifyConnectionStatusListener(connected:Boolean, reason:String = null):void {
 			if (_connectionStatusListener != null) {

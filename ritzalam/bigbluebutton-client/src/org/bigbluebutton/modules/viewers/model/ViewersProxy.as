@@ -95,19 +95,19 @@ package org.bigbluebutton.modules.viewers.model
 		}
 		
 		public function assignPresenter(assignTo:Number):void {
-			_viewersService.assignPresenter(assignTo, me.userid);
+//			_viewersService.assignPresenter(assignTo, me.userid);
 		}
 		
 		public function addStream(userid:Number, streamName:String):void {
-			_viewersService.addStream(userid, streamName);
+//			_viewersService.addStream(userid, streamName);
 		}
 		
 		public function removeStream(userid:Number, streamName:String):void {
-			_viewersService.removeStream(userid, streamName);
+//			_viewersService.removeStream(userid, streamName);
 		}
 		
 		public function queryPresenter():void {
-			_viewersService.queryPresenter();
+//			_viewersService.queryPresenter();
 		}
 		
 		private function connectionStatusListener(connected:Boolean, reason:String = null):void {
@@ -130,14 +130,14 @@ package org.bigbluebutton.modules.viewers.model
 						LogUtil.debug('I have become presenter');
 						isPresenter = true;
 						var newStatus:Status = new Status("presenter", body.assignedBy);
-						_viewersService.iAmPresenter(me.userid, true);
+//						_viewersService.iAmPresenter(me.userid, true);
 						var presenterInfo:Object = {presenterId:body.assignedTo, presenterName:me.name, assignedBy:body.assignedBy}
 						sendNotification(msg, presenterInfo);
 					} else {
 						// Somebody else has become presenter.
 						if (isPresenter) {
 							LogUtil.debug('Somebody else has become presenter.');
-							_viewersService.iAmPresenter(me.userid, false);
+//							_viewersService.iAmPresenter(me.userid, false);
 						}
 						isPresenter = false;
 						sendNotification(ViewersModuleConstants.BECOME_VIEWER, body);					

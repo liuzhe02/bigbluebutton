@@ -19,46 +19,25 @@
 */
 package org.bigbluebutton.modules.viewers.model.vo
 {
-	import mx.collections.ArrayCollection;
-	
 	import org.bigbluebutton.common.Role;
-		
+	
+	[Bindable]	
 	public class User
 	{
-		[Bindable] public var me:Boolean = false;
-		[Bindable] public var userid:Number;
-		[Bindable] public var name:String;
-		[Bindable] public var hasStream:Boolean = false;
-		[Bindable] public var streamName:String = "";
-		[Bindable] public var presenter:Boolean = false;
-		[Bindable] public var role:String = Role.VIEWER;	
-		[Bindable] public var room:String = "";
-		[Bindable] public var authToken:String = "";
+		public var me:Boolean = false;
+		public var userid:Number;
+		public var name:String;
+		public var status:Object;
+		public var role:String = Role.VIEWER;	
+		public var room:String = "";
+		public var authToken:String = "";
 		
-		private var _status:StatusCollection = new StatusCollection();
-				
-		public function get status():ArrayCollection {
-			return _status.getAll();
+		public function get hasStream():Boolean {
+			return status.hasStream;
 		}
 		
-		public function set status(s:ArrayCollection):void {
-			_status.status = s;
-		}	
-			
-		public function addStatus(status:Status):void {
-			_status.addStatus(status);
-		}
-		
-		public function changeStatus(status:Status):void {
-			_status.changeStatus(status);
-		}
-		
-		public function removeStatus(name:String):void {
-			_status.removeStatus(name);
-		}
-		
-		public function getStatus(name:String):Status {
-			return _status.getStatus(name);
+		public function get presenter():Boolean {
+			return status.presenter;
 		}
 	}
 }

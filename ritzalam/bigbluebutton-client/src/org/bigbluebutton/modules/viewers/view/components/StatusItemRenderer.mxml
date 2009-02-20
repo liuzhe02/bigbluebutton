@@ -12,7 +12,7 @@
 				
 			private function viewCamera():void
    			{
-				dispatchEvent(new ViewCameraEvent(data.streamName, data.name));
+				dispatchEvent(new ViewCameraEvent(data.status.streamName, data.name));
    			}			
 		
    			[Bindable] private var webcamIcon:Object = images.webcam;
