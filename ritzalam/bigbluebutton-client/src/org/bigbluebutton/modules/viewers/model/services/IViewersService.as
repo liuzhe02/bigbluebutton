@@ -16,7 +16,7 @@ package org.bigbluebutton.modules.viewers.model.services
 //		function addStream(userid:Number, streamName:String):void;
 //		function removeStream(userid:Number, streamName:String):void;
 		function addMessageSender(msgSender:Function):void;
-//		function assignPresenter(userid:Number, assignedBy:Number):void; 
+		function assignPresenter(userid:Number, assignedBy:Number):void; 
 //		function queryPresenter():void;	
 		
 		function get connection():NetConnection;

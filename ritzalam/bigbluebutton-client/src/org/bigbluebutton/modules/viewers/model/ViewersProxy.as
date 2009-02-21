@@ -95,7 +95,7 @@ package org.bigbluebutton.modules.viewers.model
 		}
 		
 		public function assignPresenter(assignTo:Number):void {
-//			_viewersService.assignPresenter(assignTo, me.userid);
+			_viewersService.assignPresenter(assignTo, me.userid);
 		}
 		
 		public function addStream(userid:Number, streamName:String):void {

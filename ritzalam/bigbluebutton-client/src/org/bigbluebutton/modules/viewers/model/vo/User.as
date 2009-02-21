@@ -27,17 +27,25 @@ package org.bigbluebutton.modules.viewers.model.vo
 		public var me:Boolean = false;
 		public var userid:Number;
 		public var name:String;
-		public var status:Object;
+		
 		public var role:String = Role.VIEWER;	
 		public var room:String = "";
 		public var authToken:String = "";
 		
-		public function get hasStream():Boolean {
-			return status.hasStream;
-		}
+		/**
+		 * This is a workaround until we figure out how to make 
+		 * status Bindable in StatusItemRenderer.mxml (ralam 2/20/2009)
+		 */
+		private var _status:Object;
+		public var streamName:String = "";
+		public var presenter:Boolean = false;
+		public var hasStream:Boolean = false;
 		
-		public function get presenter():Boolean {
-			return status.presenter;
+		public function set status(s:Object):void {
+			_status = s;
+			hasStream = s["hasStream"];
+			presenter = s["presenter"];
+			streamName = s["streamName"];
 		}
 	}
 }

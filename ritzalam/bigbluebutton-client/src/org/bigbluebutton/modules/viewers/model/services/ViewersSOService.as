@@ -129,7 +129,8 @@ package org.bigbluebutton.modules.viewers.model.services
 			user.userid = Number(joinedUser.userid);
 			user.name = joinedUser.username;	
 			user.role = joinedUser.role;						
-			user.status = joinedUser.status;						
+			user.status = joinedUser.status;	
+								
 			LogUtil.info("Joined as [" + user.userid + "," + user.name + "," + user.role + "]");
 			_participants.addUser(user);
 		}
@@ -197,12 +198,33 @@ package org.bigbluebutton.modules.viewers.model.services
 				_participantsSO.setDirty(userid.toString());
 			}
 		}
-						
+*/						
 		public function assignPresenter(userid:Number, assignedBy:Number):void {
 	
-			_participantsSO.send("assignPresenterCallback", userid, assignedBy);
+			var nc:NetConnection = netConnectionDelegate.connection;
+			nc.call(
+				"participants.assignPresenter",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully assigned presenter to: " + userid);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				userid,
+				assignedBy
+			); //_netConnection.call
 		}
-		
+/*		
 		public function assignPresenterCallback(userid:Number, assignedBy:Number):void {
 			sendMessage(ViewersModuleConstants.ASSIGN_PRESENTER, {assignedTo:userid, assignedBy:assignedBy});
 		}
