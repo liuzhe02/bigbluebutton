@@ -3,7 +3,7 @@ package org.bigbluebutton.conference
 
 public class Room {
 
-	private Map <String, Map> participants = new HashMap<String, Map>();
+	private Map <String, Participant> participants = new HashMap<String, Participant>();
 	
 	private String name;
 	
@@ -15,8 +15,8 @@ public class Room {
 		return name
 	}
 	
-	public void addParticipant(Map participant) {
-		participants.put(participant.get("userid"), participant);
+	public void addParticipant(Participant participant) {
+		participants.put(participant.userid, participant);
 	}
 	
 	public void removeParticipant(String userid) {
