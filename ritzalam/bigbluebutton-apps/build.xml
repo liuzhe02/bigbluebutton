@@ -49,8 +49,8 @@
 	
 	<property environment="env"/>
 	<property name="java.home" value="${env.JDK_HOME}"/>
-	<property name="red5.home" value="${env.RED5_HOME}"/>
-	<!--property name="red5.home" value="${red5_home}"/-->
+	<!--property name="red5.home" value="${env.RED5_HOME}"/-->
+	<property name="red5.home" value="${red5_home}"/>
 	<property name="webapp.src.dir" value="webapps"/>
 	<property name="lib.dir" value="lib"/>
 
@@ -224,11 +224,11 @@
 		<build-groovy name="bigbluebutton"/>
 		<!--build-groovy name="conference"/-->
 		<!-- build apps -->
-		<!--build-app name="astmeetme"/-->
+		<build-app name="astmeetme"/>
 		<build-app name="bigbluebutton"/>
-		<!--build-app name="conference"/>
+		<!--build-app name="conference"/-->
 		<build-app name="chatServer"/>
-		<build-app name="presentation"/-->
+		<build-app name="presentation"/>
 	</target>
 
 	<macrodef name="compile-jarapp">
@@ -247,12 +247,12 @@
 	
 	<target name="jar" description="Make Archive" depends="compile">
 		<!-- create jar files for apps -->
-		<!--compile-jarapp name="astmeetme"/-->
+		<compile-jarapp name="astmeetme"/>
 		<compile-jarapp name="bigbluebutton"/>
 		<!--compile-jarapp name="conference"/-->
 		<!--compile-jarapp name="chat"/-->
-		<!--compile-jarapp name="chatServer"/-->
-		<!--compile-jarapp name="presentation"/-->
+		<compile-jarapp name="chatServer"/>
+		<compile-jarapp name="presentation"/>
 	</target>
 
 	<macrodef name="deploy-app">
@@ -323,26 +323,57 @@
 					<include name="slf4j-api-1.4.3.jar"/>
 					<include name="logback-core-0.9.8.jar"/>
 					<include name="logback-classic-0.9.8.jar"/>
-					<!--Comment this out for now until we want to use default red5 release ralam(2/23/2009)-->
-					<!--include name="asterisk-java-0.3.1.jar"/>
-					<include name="activemq-core-5.1.0.jar"/>
-					<include name="groovy-all-1.5.6.jar"/>
-					<include name="geronimo-j2ee-management_1.0_spec-1.0.jar"/>
-					<include name="geronimo-jms_1.1_spec-1.0.jar"/-->
 				</fileset>
 			</copy>		
       	</sequential>
 	</macrodef>	
 	
+	<macrodef name="astmeetme-lib">
+	   		<attribute name="webapp"/>
+	   		<sequential>	
+				<copy todir="${dist.webapps.dir}/@{webapp}/WEB-INF/lib/">
+					<fileset dir="${lib.dir}">
+						<include name="asterisk-java-0.3.1.jar"/>
+					</fileset>
+				</copy>		
+	      	</sequential>
+	</macrodef>
+	
+	<macrodef name="presentation-lib">
+	   		<attribute name="webapp"/>
+	   		<sequential>		
+				<copy todir="${dist.webapps.dir}/@{webapp}/WEB-INF/lib/">
+					<fileset dir="${lib.dir}">
+						<include name="activemq-core-5.1.0.jar"/>
+						<include name="geronimo-j2ee-management_1.0_spec-1.0.jar"/>
+						<include name="geronimo-jms_1.1_spec-1.0.jar"/>
+					</fileset>
+				</copy>		
+	      	</sequential>
+	</macrodef>
+	
+	<macrodef name="bigbluebutton-lib">
+		   		<attribute name="webapp"/>
+		   		<sequential>		
+					<copy todir="${dist.webapps.dir}/@{webapp}/WEB-INF/lib/">
+						<fileset dir="${lib.dir}">
+							<include name="groovy-all-1.5.6.jar"/>
+						</fileset>
+					</copy>		
+		      	</sequential>
+		</macrodef>
+	
 	<target name="dist" description="Make Binary distribution" depends="jar">
-		<!--copy-app name="astmeetme">
+		<copy-app name="astmeetme">
 			<copy-assets>
 				<logback webapp="astmeetme"/>
+				<astmeetme-lib webapp="astmeetme"/>
 			</copy-assets>
-		</copy-app-->
+		</copy-app>
 		<copy-app name="bigbluebutton">
 			<copy-assets>
 				<logback webapp="bigbluebutton"/>
+				<bigbluebutton-lib webapp="bigbluebutton"/>
 			</copy-assets>
 		</copy-app>
 		<!--copy-app name="conference">
@@ -354,7 +385,7 @@
 			<copy-assets>
 				<logback webapp="chat"/>
 			</copy-assets>
-		</copy-app>
+		</copy-app-->
 		<copy-app name="chatServer">
 			<copy-assets>
 				<logback webapp="chatServer"/>
@@ -363,8 +394,9 @@
 		<copy-app name="presentation">
 			<copy-assets>
 				<logback webapp="presentation"/>
+				<presentation-lib webapp="presentation"/>
 			</copy-assets>
-		</copy-app-->
+		</copy-app>
 	</target>
 
 	<target name="create-bin-zipfile" depends="dist" description="create distributable file for windows">
@@ -374,7 +406,6 @@
 				prefix="${project.name-ver}"/>
 		</zip>
 	</target>
-
 	
 	<target name="test-compile" depends="jar">
 		<compile-groovy-tests/>
