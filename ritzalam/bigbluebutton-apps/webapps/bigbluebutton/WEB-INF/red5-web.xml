@@ -50,6 +50,7 @@
 	    class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 	</bean>
+	
 <!--	
 	<bean id="presentation.service" class="org.bigbluebutton.conference.service.presentation.PresentationService" singleton="true">
 		<property name="applicationAdapter"> <ref local="web.handler"/></property>

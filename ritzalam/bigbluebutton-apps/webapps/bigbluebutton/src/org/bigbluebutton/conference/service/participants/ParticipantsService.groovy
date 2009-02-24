@@ -20,7 +20,7 @@ public class ParticipantsService {
 		String roomName = Red5.connectionLocal.scope.name
 		log.debug("getting participants for ${roomName}")
 		Map p = application.getParticipants(roomName)
-		log.debug("${roomName} has ${participants.get('count')} participants")
+		log.debug("${roomName} has " + p.get("count") + " participants")
 		return p
 	}
 	

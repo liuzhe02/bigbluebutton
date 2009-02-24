@@ -21,8 +21,7 @@ public class ParticipantsApplication {
 		}
 		return false
 	}
-	
-	
+		
 	public Map getParticipants(String roomName) {
 		log.debug("${APP}:getParticipants")
 		Room room = roomsManager.getRoom(roomName)
@@ -58,17 +57,20 @@ public class ParticipantsApplication {
 	}
 	
 	public boolean participantJoin(String roomName, String userid, String username, String role, Map status) {
-	
+		log.debug("${APP}:participant joining room ${roomName}")
 		if (roomsManager.hasRoom(roomName)) {
 			Participant p = new Participant(userid, username, role, status)			
 			Room room = roomsManager.getRoom(roomName)
 			room.addParticipant(p)
+			log.debug("${APP}:participant joined room ${roomName}")
 			return true
 		}
-		return false;
+		log.debug("${APP}:participant failed to join room ${roomName}")
+		return false
 	}
 	
 	public void setRoomsManager(RoomsManager r) {
+		log.debug("Setting room manager.")
 		roomsManager = r
 	}
 }

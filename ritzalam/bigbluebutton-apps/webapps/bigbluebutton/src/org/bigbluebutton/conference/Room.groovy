@@ -1,8 +1,12 @@
 
 package org.bigbluebutton.conference
 
-public class Room {
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
+public class Room {
+	protected static Logger log = LoggerFactory.getLogger( Room.class )
+	
 	private Map <String, Participant> participants = new HashMap<String, Participant>()
 	private String name
 	private Set<IRoomListener> listeners = new HashSet<IRoomListener>()
@@ -16,21 +20,26 @@ public class Room {
 	}
 	
 	public void addRoomListener(IRoomListener listener) {
+		log.debug("adding room listener")
 		listeners.add(listener)
 	}
 	
 	public void removeRoomListener(IRoomListener listener) {
+		log.debug("removing room listener")
 		listeners.remove(listener)		
 	}
 	
 	public void addParticipant(Participant participant) {
+		log.debug("adding participant ${participant.userid}")
 		participants.put(participant.userid, participant)
+		log.debug("addparticipant - informing roomlisteners ${participant.userid}")
 		for (IRoomListener listener : listeners) {
-				listener.participantJoined(participants)
+			listener.participantJoined(participant)
 		}
 	}
 	
 	public void removeParticipant(String userid) {
+		log.debug("removing participant")
 		participants.remove(userid)
 		for (IRoomListener listener : listeners) {
 				listener.participantLeft(userid)
@@ -38,6 +47,7 @@ public class Room {
 	}
 	
 	public void changeParticipantStatus(String userid, String status, Object value) {
+		log.debug("change participant status")
 		if (participants.containsKey(userid)) {
 			Participant p = participants.get(userid)
 			p.setStatus(status, value)

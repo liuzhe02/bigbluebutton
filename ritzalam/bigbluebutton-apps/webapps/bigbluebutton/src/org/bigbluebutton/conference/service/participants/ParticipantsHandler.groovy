@@ -80,7 +80,7 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	@Override
 	public void roomLeave(IClient client, IScope scope) {
 		log.debug("${APP}:roomLeave ${scope.name}")
-		participantsApplication.participantLeft(Red5.connectionLocal.client.id)
+		participantsApplication.participantLeft(scope.name, Red5.connectionLocal.client.id)
 	}
 
 	@Override
@@ -108,16 +108,22 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	}
 	
 	public boolean participantJoin() {
-		ISharedObject so = getSharedObject(Red5.connectionLocal.scope, PARTICIPANTS_SO, false)
-		def userid = Red5.connectionLocal.client.id;
+		log.debug("${APP}:participantJoin")
+//		ISharedObject so = getSharedObject(Red5.connectionLocal.scope, PARTICIPANTS_SO, false)
+		log.debug("${APP}:participantJoin - getting userid")
+		def userid = Red5.connectionLocal.client.id
+		log.debug("${APP}:participantJoin - getting username")
 		def username = Red5.connectionLocal.getAttribute("username")
+		log.debug("${APP}:participantJoin - getting role")
 		def role = Red5.connectionLocal.getAttribute("role")
 
+		log.debug("${APP}:participantJoin")
 		Map status = new HashMap()
 		status.put("raiseHand", false)
 		status.put("presenter", false)
 		status.put("hasStream", false)
-	
+		
+		log.debug("${APP}:participantJoin setting status")		
 		return participantsApplication.participantJoin(Red5.connectionLocal.scope.name, userid, username, role, status)
 	}
 	
@@ -127,6 +133,7 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
+		log.debug("Setting participants application")
 		participantsApplication = a
 	}
 }
