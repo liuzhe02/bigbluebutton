@@ -1,6 +1,5 @@
 package org.bigbluebutton.conference
-
-import java.io.Serializablepublic class Participant implements Serializable {
+public class Participant  {
 
 	public String userid
 	public String name
@@ -12,6 +11,10 @@ import java.io.Serializablepublic class Participant implements Serializable {
 		this.name = name
 		this.role = role 
 		this.status = status
+	}
+	
+	public void setStatus(String status, Object value) {
+		status.put(status, value)
 	}
 	
 	public Map toMap() {

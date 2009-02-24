@@ -219,15 +219,15 @@
 		<echo message="Webapps build dir: ${webapps.build.dir}"/>
 		<echo message="Webapps build dir: ${full.classpath}"/>
 		
-		<build-groovy name="chat"/>
+		<!--build-groovy name="chat"/-->
 		<build-groovy name="bigbluebutton"/>
-		<build-groovy name="conference"/>
+		<!--build-groovy name="conference"/-->
 		<!-- build apps -->
-		<build-app name="astmeetme"/>
+		<!--build-app name="astmeetme"/-->
 		<build-app name="bigbluebutton"/>
-		<build-app name="conference"/>
+		<!--build-app name="conference"/>
 		<build-app name="chatServer"/>
-		<build-app name="presentation"/>
+		<build-app name="presentation"/-->
 	</target>
 
 	<macrodef name="compile-jarapp">
@@ -246,12 +246,12 @@
 	
 	<target name="jar" description="Make Archive" depends="compile">
 		<!-- create jar files for apps -->
-		<compile-jarapp name="astmeetme"/>
+		<!--compile-jarapp name="astmeetme"/-->
 		<compile-jarapp name="bigbluebutton"/>
-		<compile-jarapp name="conference"/>
-		<compile-jarapp name="chat"/>
-		<compile-jarapp name="chatServer"/>
-		<compile-jarapp name="presentation"/>
+		<!--compile-jarapp name="conference"/-->
+		<!--compile-jarapp name="chat"/-->
+		<!--compile-jarapp name="chatServer"/-->
+		<!--compile-jarapp name="presentation"/-->
 	</target>
 
 	<macrodef name="deploy-app">
@@ -328,17 +328,17 @@
 	</macrodef>	
 	
 	<target name="dist" description="Make Binary distribution" depends="jar">
-		<copy-app name="astmeetme">
+		<!--copy-app name="astmeetme">
 			<copy-assets>
 				<logback webapp="astmeetme"/>
 			</copy-assets>
-		</copy-app>
+		</copy-app-->
 		<copy-app name="bigbluebutton">
 			<copy-assets>
 				<logback webapp="bigbluebutton"/>
 			</copy-assets>
 		</copy-app>
-		<copy-app name="conference">
+		<!--copy-app name="conference">
 			<copy-assets>
 				<logback webapp="conference"/>
 			</copy-assets>
@@ -357,7 +357,7 @@
 			<copy-assets>
 				<logback webapp="presentation"/>
 			</copy-assets>
-		</copy-app>
+		</copy-app-->
 	</target>
 
 	<target name="create-bin-zipfile" depends="dist" description="create distributable file for windows">

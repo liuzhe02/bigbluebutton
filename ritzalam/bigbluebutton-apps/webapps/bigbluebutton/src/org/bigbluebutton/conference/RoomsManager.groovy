@@ -14,4 +14,10 @@ public class RoomsManager {
 	public Room getRoom(String name) {
 		rooms.get(name)
 	}
+	
+	public boolean hasRoom(String name) {
+		return rooms.containsKey(name)
+	}
+	
+	
 }
