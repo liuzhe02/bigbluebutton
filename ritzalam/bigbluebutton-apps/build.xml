@@ -50,6 +50,7 @@
 	<property environment="env"/>
 	<property name="java.home" value="${env.JDK_HOME}"/>
 	<property name="red5.home" value="${env.RED5_HOME}"/>
+	<!--property name="red5.home" value="${red5_home}"/-->
 	<property name="webapp.src.dir" value="webapps"/>
 	<property name="lib.dir" value="lib"/>
 
@@ -322,6 +323,12 @@
 					<include name="slf4j-api-1.4.3.jar"/>
 					<include name="logback-core-0.9.8.jar"/>
 					<include name="logback-classic-0.9.8.jar"/>
+					<!--Comment this out for now until we want to use default red5 release ralam(2/23/2009)-->
+					<!--include name="asterisk-java-0.3.1.jar"/>
+					<include name="activemq-core-5.1.0.jar"/>
+					<include name="groovy-all-1.5.6.jar"/>
+					<include name="geronimo-j2ee-management_1.0_spec-1.0.jar"/>
+					<include name="geronimo-jms_1.1_spec-1.0.jar"/-->
 				</fileset>
 			</copy>		
       	</sequential>
