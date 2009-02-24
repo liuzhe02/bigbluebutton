@@ -74,7 +74,7 @@ package org.bigbluebutton.modules.viewers.view
 		
 		private function onAssignPresenter(e:AssignPresenterEvent):void {
 			LogUtil.debug('Assigning presenter to ' + e.assignTo);
-			proxy.assignPresenter(e.assignTo);
+			sendNotification(ViewersModuleConstants.ASSIGN_PRESENTER, e.assignTo);
 		}
 		
 		/**
@@ -86,8 +86,7 @@ package org.bigbluebutton.modules.viewers.view
 			return [
 					ViewersModuleConstants.OPEN_VIEWERS_WINDOW,
 					ViewersModuleConstants.CLOSE_VIEWERS_WINDOW,
-					ViewersModuleConstants.BECOME_VIEWER,
-					ViewersModuleConstants.ASSIGN_PRESENTER
+					ViewersModuleConstants.BECOME_VIEWER					
 					];
 		}
 		
@@ -109,10 +108,10 @@ package org.bigbluebutton.modules.viewers.view
 					LogUtil.debug('Sending BECOME_VIEWER_EVENT');
 //					_viewersWindow.becomeViewer(notification.getBody());
 					break;
-				case ViewersModuleConstants.ASSIGN_PRESENTER:
-					LogUtil.debug('Sending ASSIGN_PRESENTER_EVENT');
+//				case ViewersModuleConstants.ASSIGN_PRESENTER:
+//					LogUtil.debug('Sending ASSIGN_PRESENTER_EVENT');
 //					_viewersWindow.becomePresenter(notification.getBody());
-					break;
+//					break;
 			}
 		}
 			

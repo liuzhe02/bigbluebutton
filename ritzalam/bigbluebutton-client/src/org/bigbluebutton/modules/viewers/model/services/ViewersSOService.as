@@ -127,7 +127,7 @@ package org.bigbluebutton.modules.viewers.model.services
 		public function participantJoined(joinedUser:Object):void { 
 			var user:User = new User();
 			user.userid = Number(joinedUser.userid);
-			user.name = joinedUser.username;	
+			user.name = joinedUser.name;	
 			user.role = joinedUser.role;						
 			user.status = joinedUser.status;	
 								

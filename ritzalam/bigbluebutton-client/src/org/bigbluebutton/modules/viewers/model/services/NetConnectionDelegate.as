@@ -38,10 +38,10 @@ package org.bigbluebutton.modules.viewers.model.services
 		public static const APP_SHUTDOWN:String = "NetConnection.Connect.AppShutDown";
 		public static const CONNECT_REJECTED:String = "NetConnection.Connect.Rejected";
 
-		private var _netConnection : NetConnection;	
-		private var _uri : String;
-		private var connectionId : Number;
-		private var connected : Boolean = false;
+		private var _netConnection:NetConnection;	
+		private var _uri:String;
+		private var connectionId:Number;
+		private var connected:Boolean = false;
 		private var _connectionSuccessListener:Function;
 		private var _connectionFailedListener:Function;
 		

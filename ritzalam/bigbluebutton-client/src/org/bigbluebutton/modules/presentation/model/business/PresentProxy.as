@@ -29,11 +29,10 @@ package org.bigbluebutton.modules.presentation.model.business
 		{
 			super(NAME);
 			_module = module as PresentationModule;
-			connect();
 		}
 
 		public function connect():void {
-			_presentService = new PresentSOService(_module.uri, _slides);
+			_presentService = new PresentSOService(_module, _slides);
 			_presentService.addConnectionStatusListener(connectionStatusListener);
 			_presentService.addMessageSender(messageSender);
 			manualDisconnect = false;
@@ -94,6 +93,10 @@ package org.bigbluebutton.modules.presentation.model.business
 			service.upload(presentationName, fileToUpload);
 		}
 
+		public function assignPresenter(assignTo:Number):void {
+			_presentService.assignPresenter(assignTo, _module.username, _module.userid);
+		}
+		
 		/**
 		 * Loads a presentation from the server. creates a new PresentationService class 
 		 * 

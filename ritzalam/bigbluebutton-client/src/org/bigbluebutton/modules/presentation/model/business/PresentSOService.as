@@ -3,6 +3,8 @@ package org.bigbluebutton.modules.presentation.model.business
 	import flash.events.AsyncErrorEvent;
 	import flash.events.NetStatusEvent;
 	import flash.events.SyncEvent;
+	import flash.net.NetConnection;
+	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
 	import org.bigbluebutton.modules.presentation.PresentModuleConstants;
@@ -27,28 +29,31 @@ package org.bigbluebutton.modules.presentation.model.business
 		private static const CONVERT_RC:String = "CONVERT";
 		
 		private var _presentationSO:SharedObject;
-		private var netConnectionDelegate:NetConnectionDelegate;
+//		private var netConnectionDelegate:NetConnectionDelegate;
 		
 		private var _slides:IPresentationSlides;
-		private var _uri:String;
+		private var _module:PresentationModule;
 		private var _connectionListener:Function;
 		private var _messageSender:Function;
 		private var _soErrors:Array;
 		
-		public function PresentSOService(uri:String, slides:IPresentationSlides)
+		public function PresentSOService(module:PresentationModule, slides:IPresentationSlides)
 		{			
-			_uri = uri;
+			_module = module;
 			_slides = slides;
-			netConnectionDelegate = new NetConnectionDelegate(uri, connectionListener);			
+//			netConnectionDelegate = new NetConnectionDelegate(uri, connectionListener);			
 		}
 		
 		public function connect():void {
-			netConnectionDelegate.connect();
+//			netConnectionDelegate.connect();
+			join();
+			notifyConnectionStatusListener(true);
 		}
 			
 		public function disconnect():void {
 			leave();
-			netConnectionDelegate.disconnect();
+			notifyConnectionStatusListener(false, ["Disconnected to presetation application"]);
+//			netConnectionDelegate.disconnect();
 		}
 		
 		private function connectionListener(connected:Boolean, errors:Array=null):void {
@@ -63,12 +68,12 @@ package org.bigbluebutton.modules.presentation.model.business
 		
 	    private function join() : void
 		{
-			_presentationSO = SharedObject.getRemote(SHAREDOBJECT, _uri, false);			
+			_presentationSO = SharedObject.getRemote(SHAREDOBJECT, _module.uri, false);			
 			_presentationSO.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			_presentationSO.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
 			_presentationSO.addEventListener(SyncEvent.SYNC, sharedObjectSyncHandler);			
 			_presentationSO.client = this;
-			_presentationSO.connect(netConnectionDelegate.connection);
+			_presentationSO.connect(_module.connection);
 			LogUtil.debug(NAME + ": PresentationModule is connected to Shared object");
 			notifyConnectionStatusListener(true);			
 		}
@@ -179,6 +184,43 @@ package org.bigbluebutton.modules.presentation.model.business
 		public function setPresenterName(presenterName:String):void {
 			_presentationSO.setProperty(PRESENTER, presenterName);
 		}
+		
+		
+		public function assignPresenter(userid:Number, name:String, assignedBy:Number):void {
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"presentation.assignPresenter",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully assigned presenter to: " + userid);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				userid,
+				name,
+				assignedBy
+			); //_netConnection.call
+		}
+		
+		public function assignPresenterCallback(userid:Number, name:String, assignedBy:Number):void {
+			LogUtil.debug(userid + "," + name + "," + assignedBy);
+			if (userid == _module.userid) {
+				sendMessage(PresentModuleConstants.PRESENTER_MODE, {userid:userid, presenterName:name, assignedBy:assignedBy});
+			} else {
+				sendMessage(PresentModuleConstants.VIEWER_MODE);
+			}
+		}
+		
 		/**
 		 * Send an event out to the server to go to a new page in the SlidesDeck 
 		 * @param page
