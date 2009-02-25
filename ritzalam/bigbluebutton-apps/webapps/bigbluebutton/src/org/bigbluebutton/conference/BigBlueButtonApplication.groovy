@@ -1,6 +1,6 @@
 package org.bigbluebutton.conference
 
-import org.red5.server.api.Red5
+import org.red5.server.api.Red5import org.bigbluebutton.conference.service.participants.ParticipantsApplication
 import org.red5.server.adapter.ApplicationAdapter
 import org.red5.server.adapter.IApplication
 import org.red5.server.api.IClient
@@ -10,15 +10,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 
-import org.bigbluebutton.conference.RoomsManager
-import org.bigbluebutton.conference.Room
-
 public class BigBlueButtonApplication extends ApplicationAdapter{
 
 	protected static Logger log = LoggerFactory.getLogger( BigBlueButtonApplication.class );
 
 	private static final String APP = "BigBlueButtonApplication"
-	private RoomsManager roomsManager
+	private ParticipantsApplication participantsApplication
 	
     public boolean appStart (IScope app )
     {
@@ -48,14 +45,14 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
     
     public boolean roomStart(IScope room) {
     	log.info( "${APP} - roomStart " )
-    	roomsManager.addRoom(new Room(room.name))
+    	participantsApplication.createRoom(room.name)
     	return super.roomStart(room)
     }	
 	
     public void roomStop(IScope room) {
     	log.info( "${APP} - roomStop " )
     	super.roomStop(room)
-    	roomsManager.removeRoom(room.name)
+    	participantsApplication.destroyRoom(room.name)
     }
     
 	public boolean roomConnect(IConnection connection, Object[] params) {
@@ -85,7 +82,8 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 		return Red5.connectionLocal.client.id;
 	}
 	
-	public void setRoomsManager(RoomsManager r) {
-		roomsManager = r
+	public void setParticipantsApplication(ParticipantsApplication a) {
+		log.debug("Setting participants application")
+		participantsApplication = a
 	}
 }

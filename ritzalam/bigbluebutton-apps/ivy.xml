@@ -26,6 +26,8 @@
 		<dependency org="geronimo" name="geronimo-j2ee-management_1.0_spec" rev="1.0"/>
 		<dependency org="geronimo" name="geronimo-jms_1.1_spec" rev="1.0"/>
 		<dependency org="javax" name="servlet-api" rev="2.5"/>
+		<dependency name="backport-util-concurrent" rev="2.1"/>
+		<dependency org="spring" name="spring-jms" rev="2.0.8" />
         <!-- Spring --> 
         <dependency org="spring" name="spring-dao" rev="2.0.8" />
         <dependency org="spring" name="spring-aop" rev="2.0.8" />

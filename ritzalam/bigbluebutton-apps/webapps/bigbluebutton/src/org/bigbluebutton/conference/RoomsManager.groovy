@@ -6,7 +6,11 @@ import org.slf4j.LoggerFactory
 public class RoomsManager {
 	protected static Logger log = LoggerFactory.getLogger( RoomsManager.class );
 	
-	private Map <String, Room> rooms = new HashMap<String, Room>();
+	private static final Map <String, Room> rooms = new HashMap<String, Room>()
+	
+	public RoomsManager() {
+		log.debug("In RoomsManager constructor")		
+	}
 	
 	public void addRoom(Room room) {
 		log.debug("In RoomsManager adding room ${room.name}")
@@ -28,5 +32,7 @@ public class RoomsManager {
 		return ((HashMap)rooms).containsKey(name)
 	}
 	
-	
+	public int numberOfRooms() {
+		return rooms.size()
+	}
 }

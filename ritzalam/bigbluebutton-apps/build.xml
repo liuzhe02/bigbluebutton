@@ -228,7 +228,7 @@
 		<build-app name="bigbluebutton"/>
 		<!--build-app name="conference"/-->
 		<build-app name="chatServer"/>
-		<build-app name="presentation"/>
+		<!--build-app name="presentation"/-->
 	</target>
 
 	<macrodef name="compile-jarapp">
@@ -252,7 +252,7 @@
 		<!--compile-jarapp name="conference"/-->
 		<!--compile-jarapp name="chat"/-->
 		<compile-jarapp name="chatServer"/>
-		<compile-jarapp name="presentation"/>
+		<!--compile-jarapp name="presentation"/-->
 	</target>
 
 	<macrodef name="deploy-app">
@@ -344,9 +344,12 @@
 	   		<sequential>		
 				<copy todir="${dist.webapps.dir}/@{webapp}/WEB-INF/lib/">
 					<fileset dir="${lib.dir}">
+						<include name="backport-util-concurrent-2.1.jar"/>
+						<include name="spring-jms-2.0.8.jar"/>
 						<include name="activemq-core-5.1.0.jar"/>
 						<include name="geronimo-j2ee-management_1.0_spec-1.0.jar"/>
 						<include name="geronimo-jms_1.1_spec-1.0.jar"/>
+						
 					</fileset>
 				</copy>		
 	      	</sequential>
@@ -374,6 +377,7 @@
 			<copy-assets>
 				<logback webapp="bigbluebutton"/>
 				<bigbluebutton-lib webapp="bigbluebutton"/>
+				<presentation-lib webapp="bigbluebutton"/>
 			</copy-assets>
 		</copy-app>
 		<!--copy-app name="conference">
@@ -391,12 +395,12 @@
 				<logback webapp="chatServer"/>
 			</copy-assets>
 		</copy-app>
-		<copy-app name="presentation">
+		<!--copy-app name="presentation">
 			<copy-assets>
 				<logback webapp="presentation"/>
 				<presentation-lib webapp="presentation"/>
 			</copy-assets>
-		</copy-app>
+		</copy-app-->
 	</target>
 
 	<target name="create-bin-zipfile" depends="dist" description="create distributable file for windows">

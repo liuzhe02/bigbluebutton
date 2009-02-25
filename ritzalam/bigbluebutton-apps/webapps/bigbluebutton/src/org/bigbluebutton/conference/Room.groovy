@@ -63,6 +63,7 @@ public class Room {
 	}	
 	
 	public int getNumberOfParticipants() {
+		log.debug("Returning number of participants: " + participants.size())
 		return participants.size()
 	}
 	

@@ -25,7 +25,7 @@ public class ParticipantsService {
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
-		log.debug("Setting ParticipantsApplications")
+		log.debug("Setting Participants Applications")
 		application = a
 	}
 }

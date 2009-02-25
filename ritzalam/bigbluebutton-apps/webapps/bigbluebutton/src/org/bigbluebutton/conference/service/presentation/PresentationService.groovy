@@ -9,7 +9,7 @@ import org.red5.server.api.IScope
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.red5.server.api.Red5
-import org.bigbluebutton.conference.Participant
+import org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.service.participants.ParticipantsApplication
 import org.bigbluebutton.conference.RoomsManagerimport org.bigbluebutton.conference.service.presentation.ConversionUpdatesListener
 
 public class PresentationService extends ApplicationAdapter implements IApplication {
@@ -22,7 +22,7 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 	private static final String PRESENTATION_SO = "presentationSO";   
 	private static final String APP = "PRESENTATION";
 	private ApplicationAdapter application
-	private RoomsManager roomsManager
+	private ParticipantsApplication participantsApplication
 	
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
@@ -49,7 +49,7 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 
 	@Override
 	public boolean appStart(IScope scope) {
-		log.debug("${APP}:appStart ${scope.name}")
+		log.debug("${APP}:appStart")
 		return true;
 	}
 
@@ -112,25 +112,28 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 		IScope scope = Red5.connectionLocal.scope
 		def presenter = [userid, name, assignedBy]
 		scope.setAttribute("presenter", presenter)
-		Participant p = roomsManager.getRoom(scope.name).getParticipant(userid)
-		if (p != null) {
-			p.setStatus("presenter", true)
-		}
+//		Participant p = roomsManager.getRoom(scope.name).getParticipant(userid)
+//		if (p != null) {
+//			p.setStatus("presenter", true)
+//		}
 		ISharedObject so = getSharedObject(scope, PRESENTATION_SO, false)
 		so.sendMessage("assignPresenterCallback", presenter)
 	}
 	
 	
 	public void setApplicationAdapter(ApplicationAdapter a) {
+		log.debug("Setting application adapter.")
 		application = a
 		application.addListener(this)
 	}
 	
-	public void setRoomsManager(RoomsManager r) {
-		roomsManager = r
+	public void setParticipantsApplication(ParticipantsApplication a) {
+		log.debug("Setting participants application")
+		participantsApplication = a
 	}
 	
 	public void setUpdatesListener(ConversionUpdatesListener updatesListener) {
+		log.debug("Setting updates listener")
 		this.updatesListener = updatesListener;
 	}
 }

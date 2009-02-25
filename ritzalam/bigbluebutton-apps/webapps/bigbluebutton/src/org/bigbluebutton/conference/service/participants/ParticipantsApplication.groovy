@@ -14,6 +14,18 @@ public class ParticipantsApplication {
 	private static final String APP = "PARTICIPANTS";
 	private RoomsManager roomsManager
 	
+	public boolean createRoom(String name) {
+		roomsManager.addRoom(new Room(name))
+		return true
+	}
+	
+	public boolean destroyRoom(String name) {
+		if (roomsManager.hasRoom(name)) {
+			roomsManager.removeRoom(name)
+		}
+		return true
+	}
+	
 	public boolean addRoomListener(String room, IRoomListener listener) {
 		if (roomsManager.hasRoom(room)){
 			roomsManager.getRoom(room).addRoomListener(listener)
@@ -23,11 +35,19 @@ public class ParticipantsApplication {
 	}
 		
 	public Map getParticipants(String roomName) {
-		log.debug("${APP}:getParticipants")
-		Room room = roomsManager.getRoom(roomName)
+		log.debug("${APP}:getParticipants - ${roomName}")
+		if (! roomsManager.hasRoom(roomName)) {
+			log.error("Could not find room ${roomName}")
+			return null
+		}
 		
+		Room room = roomsManager.getRoom(roomName)
+		log.debug("Found room ${roomName}")
 		Map participants = new HashMap()
+		log.debug("Getting number of participants.")
 		participants.put("count", room.numberOfParticipants)
+		log.debug("${APP}:gotParticipants ")
+		log.debug("${APP}:gotParticipants " + participants.get("count"))
 		if (room.numberOfParticipants > 0) {
 			/**
 			 * Somehow we need to convert to Map so the client will be
@@ -70,7 +90,7 @@ public class ParticipantsApplication {
 	}
 	
 	public void setRoomsManager(RoomsManager r) {
-		log.debug("Setting room manager.")
+		log.debug("Setting room manager")
 		roomsManager = r
 	}
 }

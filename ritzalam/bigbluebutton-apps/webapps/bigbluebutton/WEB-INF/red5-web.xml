@@ -24,7 +24,7 @@
 	</bean>
 
 	<bean id="web.handler" class="org.bigbluebutton.conference.BigBlueButtonApplication" singleton="true">
-		<property name="roomsManager"> <ref local="roomsManager"/></property>
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 	</bean>
 	
 	<bean id="roomsManager" class="org.bigbluebutton.conference.RoomsManager" singleton="true" />
@@ -44,17 +44,15 @@
 	    class="org.bigbluebutton.conference.service.participants.ParticipantsApplication" singleton="true" >
 		<property name="roomsManager"> <ref local="roomsManager"/></property>
 	</bean>
-
 	
 	<bean id="participants.service" 
 	    class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 	</bean>
-	
-<!--	
+		
 	<bean id="presentation.service" class="org.bigbluebutton.conference.service.presentation.PresentationService" singleton="true">
 		<property name="applicationAdapter"> <ref local="web.handler"/></property>
-		<property name="roomsManager"> <ref local="roomsManager"/></property>
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 		<property name="updatesListener"> <ref local="updatesListener"/> </property>
 	</bean>
 
@@ -83,5 +81,5 @@
 		<property name="destination"> <ref local="destination"/> </property> 
 		<property name="updatesListener"> <ref local="updatesListener"/> </property> 
 	</bean>
--->   
+  
 </beans>
