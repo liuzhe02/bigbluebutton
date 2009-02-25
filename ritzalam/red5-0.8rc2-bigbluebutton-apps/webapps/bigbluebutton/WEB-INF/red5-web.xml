@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	
+	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	    <property name="locations">
+	    	<list>
+	    	 	<value>/WEB-INF/red5-web.properties</value>
+	    	 	<value>/WEB-INF/bigbluebutton.properties</value>
+	    	</list>
+	    </property>
+	</bean>
+	
+	<bean id="web.context" class="org.red5.server.Context" autowire="byType" />
+	
+	<bean id="web.scope" class="org.red5.server.WebScope"
+		 init-method="register">
+		<property name="server" ref="red5.server" />
+		<property name="parent" ref="global.scope" />
+		<property name="context" ref="web.context" />
+		<property name="handler" ref="web.handler" />
+		<property name="contextPath" value="${webapp.contextPath}" />
+		<property name="virtualHosts" value="${webapp.virtualHosts}" />
+	</bean>
+
+	<bean id="web.handler" class="org.bigbluebutton.conference.BigBlueButtonApplication" singleton="true">
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+	</bean>
+	
+	<bean id="roomsManager" class="org.bigbluebutton.conference.RoomsManager" singleton="true" />
+		
+	<!--bean id="chat.service" 
+	    class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
+		<property name="applicationAdapter"> <ref local="web.handler"/></property>
+	</bean-->
+	
+	<bean id="participantsHandler" 
+	    class="org.bigbluebutton.conference.service.participants.ParticipantsHandler" singleton="true" >
+		<property name="applicationAdapter"> <ref local="web.handler"/></property>
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+	</bean>
+	
+	<bean id="participantsApplication" 
+	    class="org.bigbluebutton.conference.service.participants.ParticipantsApplication" singleton="true" >
+		<property name="roomsManager"> <ref local="roomsManager"/></property>
+	</bean>
+	
+	<bean id="participants.service" 
+	    class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+	</bean>
+		
+	<bean id="presentation.service" class="org.bigbluebutton.conference.service.presentation.PresentationService" singleton="true">
+		<property name="applicationAdapter"> <ref local="web.handler"/></property>
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+		<property name="updatesListener"> <ref local="updatesListener"/> </property>
+	</bean>
+
+	<bean id="updatesListener" class="org.bigbluebutton.conference.service.presentation.ConversionUpdatesListener" singleton="true"/>
+
+    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL">
+            <value>tcp://localhost:61616</value>
+        </property>
+    </bean>
+    
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <ref local="connectionFactory"/>
+        </property>
+    </bean>
+
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0">
+            <value>UpdatesQueue</value>
+        </constructor-arg>
+    </bean>
+    
+	<bean id="conversionUpdatesService" class="org.bigbluebutton.conference.service.presentation.ConversionUpdatesService" singleton="true">
+		<property name="jmsTemplate"> <ref local="jmsTemplate"/> </property>
+		<property name="destination"> <ref local="destination"/> </property> 
+		<property name="updatesListener"> <ref local="updatesListener"/> </property> 
+	</bean>
+  
+</beans>
