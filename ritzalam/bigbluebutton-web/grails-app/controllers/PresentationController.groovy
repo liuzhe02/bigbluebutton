@@ -68,7 +68,7 @@ class PresentationController {
 			def pres = presentationService.showSlide(f.conference, f.room, presentationName, slide)
 			if (pres.exists()) {
 				def bytes = pres.readBytes()
-
+				response.addHeader("Cache-Control", "no-cache")
 				response.contentType = 'application/x-shockwave-flash'
 				response.outputStream << bytes;
 			}	
@@ -89,7 +89,7 @@ class PresentationController {
 			def pres = presentationService.showThumbnail(f.conference, f.room, presentationName, thumb)
 			if (pres.exists()) {
 				def bytes = pres.readBytes()
-
+				response.addHeader("Cache-Control", "no-cache")
 				response.contentType = 'image'
 				response.outputStream << bytes;
 			}	
