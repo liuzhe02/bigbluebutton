@@ -135,17 +135,14 @@ package org.bigbluebutton.modules.viewers.model.business
 			users.removeAll();
 		}		
 	
-		public function newUserStatus(id:Number, newStatus:Status):void
+		public function newUserStatus(id:Number, status:String, value:Object):void
 		{
 			var aUser:User = getParticipant(id);
 			
 			if (aUser != null) {
-//				var s:Status = aUser.getStatus(newStatus.name);
-//				if (s != null) {
-///					aUser.changeStatus(newStatus);
-//				} else {
-//					aUser.addStatus(newStatus);
-//				}
+				if (status == "presenter") {
+					aUser.presenter = value;
+				}
 			}	
 			
 			sort();		

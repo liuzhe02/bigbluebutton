@@ -2,14 +2,11 @@ package org.bigbluebutton.modules.viewers.model.services
 {
 	import flash.events.AsyncErrorEvent;
 	import flash.events.NetStatusEvent;
-	import flash.events.SyncEvent;
 	import flash.net.NetConnection;
 	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
-	import org.bigbluebutton.modules.viewers.ViewersModuleConstants;
 	import org.bigbluebutton.modules.viewers.model.business.IViewers;
-	import org.bigbluebutton.modules.viewers.model.vo.Status;
 	import org.bigbluebutton.modules.viewers.model.vo.User;
 
 	public class ViewersSOService implements IViewersService
@@ -133,6 +130,11 @@ package org.bigbluebutton.modules.viewers.model.services
 								
 			LogUtil.info("Joined as [" + user.userid + "," + user.name + "," + user.role + "]");
 			_participants.addUser(user);
+		}
+		
+		public function participantStatusChange(userid:Number, status:String, value:Object):void {
+			LogUtil.debug("[" + userid + "," + status + "," + value + "]")
+			_participants.newUserStatus(userid, status, value);
 		}
 /*
 		public function newStatus(userid:Number, status:Status):void {
