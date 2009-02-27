@@ -20,8 +20,28 @@ public class ParticipantsService {
 		String roomName = Red5.connectionLocal.scope.name
 		log.debug("getting participants for ${roomName}")
 		Map p = application.getParticipants(roomName)
-		log.debug("${roomName} has " + p.get("count") + " participants")
-		return p
+		
+		Map participants = new HashMap()
+		if (p == null) {
+			participants.put("count", 0)
+		} else {		
+			participants.put("count", p.size())
+			if (p.size() > 0) {
+				/**
+				 * Somehow we need to convert to Map so the client will be
+				 * able to decode it. Need to figure out if we can send Participant
+				 * directly. (ralam - 2/20/2009)
+				 */
+				Collection pc = p.values()
+	    		Map pm = new HashMap()
+	    		for (Iterator it = pc.iterator(); it.hasNext();) {
+	    			Participant ap = (Participant) it.next();
+	    			pm.put(ap.userid, ap.toMap()); 
+	    		}  
+				participants.put("participants", pm)
+			}
+			return participants
+		}
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {

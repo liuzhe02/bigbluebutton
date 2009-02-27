@@ -10,7 +10,7 @@ public class RoomListener implements IRoomListener{
 		this.so = so 
 	}
 	
-	public void participantStatusChange(String userid, String status, Object value){
+	public void participantStatusChange(Long userid, String status, Object value){
 		so.sendMessage("participantStatusChange", [userid, status, value])
 	}
 	
@@ -20,7 +20,7 @@ public class RoomListener implements IRoomListener{
 		so.sendMessage("participantJoined", args)
 	}
 	
-	public void participantLeft(String userid) {		
+	public void participantLeft(Long userid) {		
 		List args = new ArrayList()
 		args.add(userid)
 		so.sendMessage("participantLeft", args)

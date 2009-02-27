@@ -1,20 +1,69 @@
 package org.bigbluebutton.conference
-public class Participant  {
 
-	public String userid
-	public String name
-	public String role = "VIEWER"
-	public Map status
+import net.jcip.annotations.ThreadSafeimport java.util.concurrent.ConcurrentHashMapimport java.util.Collectionsimport java.lang.Long
+/**
+ * Contains information for a Participant. Encapsulates status and the
+ * only way to change/add status is through setStatus;
+ */
+@ThreadSafepublic class Participant  {
+	private final Long userid
+	private final String name
+	private final String role = "VIEWER"
+	private final Map status
+	private final Map<String, Object> unmodifiableStatus
 	
-	public Participant(String userid, String name, String role, Map status) {
+	public Participant(Long userid, String name, String role, Map<String, Object> status) {
 		this.userid = userid
 		this.name = name
 		this.role = role 
-		this.status = status
+		this.status = new ConcurrentHashMap<String, Object>(status)
+		unmodifiableStatus = Collections.unmodifiableMap(status)
 	}
 	
-	public void setStatus(String status, Object value) {
-		status.put(status, value)
+	public String getName() {
+		return name
+	}
+	
+	public Long getUserid() {
+		return userid
+	}
+	
+	public String getRole() {
+		return role
+	}
+	
+	/**
+	 * Returns that status for this participant. However, the status cannot
+	 * be modified. To do that, setStatus(...) must be used.
+	 */
+	public Map getStatus() {
+		return unmodifiableStatus
+	}
+	
+	public void setStatus(String statusName, Object value) {
+		// Should we sychronize?
+		synchronized (this) {
+			status.put(statusName, value)
+			/**
+			 * Update unmodifiableStatus as it does not get synched with status.
+			 * Not sure it it should auto-syc, so just sync it. 
+			 * Not sure if this is the right way to do it (ralam 2/26/2009).
+			 */
+			unmodifiableStatus = Collections.unmodifiableMap(status)
+		}
+	}
+	
+	public void removeStatus(String statusName) {
+		// Should we sychronize?
+		synchronized (this) {
+			status.remove(statusName)
+			/**
+			 * Update unmodifiableStatus as it does not get synched with status.
+			 * Not sure it it should auto-syc, so just sync it. 
+			 * Not sure if this is the right way to do it (ralam 2/26/2009).
+			 */
+			unmodifiableStatus = Collections.unmodifiableMap(status)
+		}
 	}
 	
 	public Map toMap() {
@@ -22,7 +71,7 @@ package org.bigbluebutton.conference
 		m.put("userid", userid)
 		m.put("name", name)
 		m.put("role", role)
-		m.put("status", status)
+		m.put("status", unmodifiableStatus)
 		return m
 	}
 }

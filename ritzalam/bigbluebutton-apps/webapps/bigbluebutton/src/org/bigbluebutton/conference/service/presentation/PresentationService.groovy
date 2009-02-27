@@ -112,10 +112,7 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 		IScope scope = Red5.connectionLocal.scope
 		def presenter = [userid, name, assignedBy]
 		scope.setAttribute("presenter", presenter)
-//		Participant p = roomsManager.getRoom(scope.name).getParticipant(userid)
-//		if (p != null) {
-//			p.setStatus("presenter", true)
-//		}
+		participantsApplication.setParticipantStatus(scope.name, userid.toLong(), "presenter", true)
 		ISharedObject so = getSharedObject(scope, PRESENTATION_SO, false)
 		so.sendMessage("assignPresenterCallback", presenter)
 	}

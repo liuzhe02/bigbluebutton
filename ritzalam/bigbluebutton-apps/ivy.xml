@@ -6,6 +6,8 @@
 		<conf name="test" extends="default" description="Unit testing dependencies"/>
 	</configurations>
     <dependencies>
+    	<!-- Documentation -->
+    	<dependency org="net.jcip" name="jcip-annotations" rev="1.0" />
     	<!-- Testing support -->
         <dependency name="junit" rev="4.0"/>
         <dependency org="org.testng" name="testng" rev="5.8"/>

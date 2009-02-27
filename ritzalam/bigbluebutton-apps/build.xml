@@ -344,7 +344,7 @@
 	   		<sequential>		
 				<copy todir="${dist.webapps.dir}/@{webapp}/WEB-INF/lib/">
 					<fileset dir="${lib.dir}">
-						<include name="backport-util-concurrent-2.1.jar"/>
+						<!--include name="backport-util-concurrent-2.1.jar"/-->
 						<include name="spring-jms-2.0.8.jar"/>
 						<include name="activemq-core-5.1.0.jar"/>
 						<include name="geronimo-j2ee-management_1.0_spec-1.0.jar"/>

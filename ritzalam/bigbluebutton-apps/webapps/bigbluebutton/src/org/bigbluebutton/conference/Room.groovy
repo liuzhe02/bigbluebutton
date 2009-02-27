@@ -3,16 +3,25 @@ package org.bigbluebutton.conference
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
+import net.jcip.annotations.ThreadSafeimport java.util.concurrent.ConcurrentHashMapimport java.util.concurrent.CopyOnWriteArrayListimport java.util.Collections
+/**
+ * Contains information about a Room and it's Participants. 
+ * Encapsulates Participants and RoomListeners.
+ */
+@ThreadSafe
 public class Room {
 	protected static Logger log = LoggerFactory.getLogger( Room.class )
 	
-	private Map <String, Participant> participants = new HashMap<String, Participant>()
-	private String name
-	private Set<IRoomListener> listeners = new HashSet<IRoomListener>()
+	private final String name
+	private final Map <Long, Participant> participants	
+	private final Map <Long, Participant> unmodifiableMap
+	private final List<IRoomListener> listeners
 
 	public Room(String name) {
 		this.name = name
+		participants = new ConcurrentHashMap<Long, Participant>()
+		unmodifiableMap = Collections.unmodifiableMap(participants)
+		listeners   = new CopyOnWriteArrayList<IRoomListener>()
 	}
 	
 	public String getName() {
@@ -30,28 +39,46 @@ public class Room {
 	}
 	
 	public void addParticipant(Participant participant) {
-		log.debug("adding participant ${participant.userid}")
-		participants.put(participant.userid, participant)
-		log.debug("addparticipant - informing roomlisteners ${participant.userid}")
+//		synchronized (this) {
+			log.debug("adding participant ${participant.userid}")
+			participants.put(participant.userid, participant)
+//			unmodifiableMap = Collections.unmodifiableMap(participants)
+//		}
+		log.debug("addparticipant - informing roomlisteners ${listeners.size()}")
 		for (IRoomListener listener : listeners) {
+			log.debug("calling participantJoined on listener")
 			listener.participantJoined(participant)
 		}
 	}
 	
-	public void removeParticipant(String userid) {
-		log.debug("removing participant")
-		participants.remove(userid)
-		for (IRoomListener listener : listeners) {
+	public void removeParticipant(Long userid) {
+		def present = false
+		synchronized (this) {
+			present = participants.containsKey(userid)
+			if (present) {
+				log.debug("removing participant")
+				participants.remove(userid)
+			}
+		}
+		if (present) {
+			for (IRoomListener listener : listeners) {
 				listener.participantLeft(userid)
+			}
 		}
 	}
 	
-	public void changeParticipantStatus(String userid, String status, Object value) {
-		log.debug("change participant status")
-		if (participants.containsKey(userid)) {
-			Participant p = participants.get(userid)
-			p.setStatus(status, value)
-			
+	public void changeParticipantStatus(Long userid, String status, Object value) {
+		def present = false
+		synchronized (this) {
+			present = participants.containsKey(userid)
+			if (present) {
+				log.debug("change participant status")
+				Participant p = participants.get(userid)
+				p.setStatus(status, value)
+				unmodifiableMap = Collections.unmodifiableMap(participants)
+			}
+		}
+		if (present) {
 			for (IRoomListener listener : listeners) {
 				listener.participantStatusChange(userid, status, value)
 			}
@@ -59,7 +86,7 @@ public class Room {
 	}
 	
 	public Map getParticipants() {
-		return participants
+		return unmodifiableMap
 	}	
 	
 	public int getNumberOfParticipants() {

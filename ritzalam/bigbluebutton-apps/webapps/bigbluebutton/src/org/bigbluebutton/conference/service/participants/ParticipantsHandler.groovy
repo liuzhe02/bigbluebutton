@@ -111,7 +111,7 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		log.debug("${APP}:participantJoin")
 //		ISharedObject so = getSharedObject(Red5.connectionLocal.scope, PARTICIPANTS_SO, false)
 		log.debug("${APP}:participantJoin - getting userid")
-		def userid = Red5.connectionLocal.client.id
+		Long userid = new Long(Red5.connectionLocal.client.id.toLong())
 		log.debug("${APP}:participantJoin - getting username")
 		def username = Red5.connectionLocal.getAttribute("username")
 		log.debug("${APP}:participantJoin - getting role")

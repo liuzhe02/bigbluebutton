@@ -26,47 +26,34 @@ public class ParticipantsApplication {
 		return true
 	}
 	
+	public boolean hasRoom(String name) {
+		return roomsManager.hasRoom(name)
+	}
+	
 	public boolean addRoomListener(String room, IRoomListener listener) {
 		if (roomsManager.hasRoom(room)){
-			roomsManager.getRoom(room).addRoomListener(listener)
+			roomsManager.addRoomListener(room, listener)
 			return true
 		}
+		log.warn("Adding listener to a non-existant room ${room}")
 		return false
 	}
-		
+	
+	public void setParticipantStatus(String room, Long userid, String status, Object value) {
+		roomsManager.changeParticipantStatus(room, userid, status, value)
+	}
+	
 	public Map getParticipants(String roomName) {
 		log.debug("${APP}:getParticipants - ${roomName}")
 		if (! roomsManager.hasRoom(roomName)) {
-			log.error("Could not find room ${roomName}")
+			log.warn("Could not find room ${roomName}")
 			return null
 		}
-		
-		Room room = roomsManager.getRoom(roomName)
-		log.debug("Found room ${roomName}")
-		Map participants = new HashMap()
-		log.debug("Getting number of participants.")
-		participants.put("count", room.numberOfParticipants)
-		log.debug("${APP}:gotParticipants ")
-		log.debug("${APP}:gotParticipants " + participants.get("count"))
-		if (room.numberOfParticipants > 0) {
-			/**
-			 * Somehow we need to convert to Map so the client will be
-			 * able to decode it. Need to figure out if we can send Participant
-			 * directly. (ralam - 2/20/2009)
-			 */
-			Collection pc = room.participants.values()
-    		Map pm = new HashMap()
-    		for (Iterator it = pc.iterator(); it.hasNext();) {
-    			Participant ap = (Participant) it.next();
-    			pm.put(ap.userid, ap.toMap()); 
-    		}  
-			participants.put("participants", pm)
-		}
-		log.debug("${APP}:getParticipants " + participants.get("count"))
-		return participants
+
+		return roomsManager.getParticipants(roomName)
 	}
 	
-	public boolean participantLeft(String roomName, String userid) {
+	public boolean participantLeft(String roomName, Long userid) {
 		if (roomsManager.hasRoom(roomName)) {
 			Room room = roomsManager.getRoom(roomName)
 			room.removeParticipant(userid)
@@ -76,7 +63,7 @@ public class ParticipantsApplication {
 		return false;
 	}
 	
-	public boolean participantJoin(String roomName, String userid, String username, String role, Map status) {
+	public boolean participantJoin(String roomName, Long userid, String username, String role, Map status) {
 		log.debug("${APP}:participant joining room ${roomName}")
 		if (roomsManager.hasRoom(roomName)) {
 			Participant p = new Participant(userid, username, role, status)			
