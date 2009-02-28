@@ -9,7 +9,7 @@ import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Par
 public class ParticipantsApplication {
 
 	protected static Logger log = LoggerFactory.getLogger( ParticipantsApplication.class );	
-	protected static Logger recorder = LoggerFactory.getLogger( "RECORD-BIGBLUEBUTTON" );
+	
 	
 	private static final String APP = "PARTICIPANTS";
 	private RoomsManager roomsManager

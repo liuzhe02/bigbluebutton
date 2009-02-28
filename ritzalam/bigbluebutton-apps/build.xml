@@ -228,6 +228,7 @@
 		<build-app name="bigbluebutton"/>
 		<!--build-app name="conference"/-->
 		<build-app name="chatServer"/>
+		<build-app name="sip"/>
 		<!--build-app name="presentation"/-->
 	</target>
 
@@ -252,6 +253,7 @@
 		<!--compile-jarapp name="conference"/-->
 		<!--compile-jarapp name="chat"/-->
 		<compile-jarapp name="chatServer"/>
+		<compile-jarapp name="sip"/>
 		<!--compile-jarapp name="presentation"/-->
 	</target>
 
@@ -271,6 +273,7 @@
 		<delete dir="${red5.home}/webapps/conference"/>
 		<delete dir="${red5.home}/webapps/chatServer"/>
 		<delete dir="${red5.home}/webapps/chat"/>
+		<delete dir="${red5.home}/webapps/sip"/>
 		<delete dir="${red5.home}/webapps/presentation"/>
 		<copy todir="${red5.home}/webapps">
 			   	<fileset dir="${dist.webapps.dir}"/>
@@ -339,6 +342,17 @@
 	      	</sequential>
 	</macrodef>
 	
+	<macrodef name="sip-lib">
+		   	<attribute name="webapp"/>
+		   	<sequential>	
+				<copy todir="${dist.webapps.dir}/@{webapp}/WEB-INF/lib/">
+					<fileset dir="${lib.dir}">
+						<include name="jmf-2.1.1e.jar"/>
+					</fileset>
+				</copy>		
+		    </sequential>
+	</macrodef>
+	
 	<macrodef name="presentation-lib">
 	   		<attribute name="webapp"/>
 	   		<sequential>		
@@ -393,6 +407,12 @@
 		<copy-app name="chatServer">
 			<copy-assets>
 				<logback webapp="chatServer"/>
+			</copy-assets>
+		</copy-app>
+		<copy-app name="sip">
+			<copy-assets>
+				<logback webapp="sip"/>
+				<sip-lib webapp="sip"/>
 			</copy-assets>
 		</copy-app>
 		<!--copy-app name="presentation">

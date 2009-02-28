@@ -67,7 +67,7 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
         connection.setAttribute("role", role)
         connection.setAttribute("mode", mode)
         
-        String room = "No room 'cause LIVE"                
+        String room = "No room because LIVE"                
         if ("PLAYBACK".equals(mode)) {
         	room = ((String) params[4]).toString()
         	connection.setAttribute("room", room)

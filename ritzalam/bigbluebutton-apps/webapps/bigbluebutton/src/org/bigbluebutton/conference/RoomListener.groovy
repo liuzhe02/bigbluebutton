@@ -5,7 +5,7 @@ import org.red5.server.api.so.ISharedObject
 public class RoomListener implements IRoomListener{
 
 	private ISharedObject so;
-	
+
 	public RoomListener(ISharedObject so) {
 		this.so = so 
 	}
@@ -14,9 +14,9 @@ public class RoomListener implements IRoomListener{
 		so.sendMessage("participantStatusChange", [userid, status, value])
 	}
 	
-	public void participantJoined(Participant participant) {
+	public void participantJoined(Participant p) {
 		List args = new ArrayList()
-		args.add(participant.toMap())
+		args.add(p.toMap())
 		so.sendMessage("participantJoined", args)
 	}
 	
@@ -25,5 +25,4 @@ public class RoomListener implements IRoomListener{
 		args.add(userid)
 		so.sendMessage("participantLeft", args)
 	}
-	
 }

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 import org.red5.server.adapter.ApplicationAdapter
 import org.red5.server.api.Red5import java.util.Mapimport org.bigbluebutton.conference.RoomsManager
-import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListener
+import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListenerimport org.bigbluebutton.conference.service.archive.IRecordServiceimport org.bigbluebutton.conference.service.archive.IPlaybackService
 public class ParticipantsHandler extends ApplicationAdapter implements IApplication{
 
 	protected static Logger log = LoggerFactory.getLogger( ParticipantsHandler.class )
@@ -22,6 +22,8 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 
 	private ApplicationAdapter application
 	private ParticipantsApplication participantsApplication
+	private IRecordService recordService
+	private IPlaybackService playbackService
 
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
@@ -91,8 +93,13 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
     	if (!hasSharedObject(scope, PARTICIPANTS_SO)) {
     		if (createSharedObject(scope, PARTICIPANTS_SO, false)) {
     			ISharedObject so = getSharedObject(scope, PARTICIPANTS_SO)
-    			log.debug("Starting room ${scope.name}")
-    			return participantsApplication.addRoomListener(scope.name, new RoomListener(so))
+    			if ("PLAYBACK".equals(Red5.connectionLocal.getAttribute("mode"))) {
+    				
+    			} else {
+    				log.debug("Starting room ${scope.name}")
+        			return participantsApplication.addRoomListener(scope.name, new RoomListener(so))
+    			}
+    			
     		}    		
     	}  	
 		log.error("Failed to start room ${scope.name}")
@@ -135,5 +142,15 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	public void setParticipantsApplication(ParticipantsApplication a) {
 		log.debug("Setting participants application")
 		participantsApplication = a
+	}
+	
+	public void setRecordService(IRecordService r) {
+		log.debug("Setting record service")
+		recordService = r
+	}
+	
+	public void setPlaybackService(IPlaybackService p) {
+		log.debug("Setting plauback service")
+		playbackService = p
 	}
 }
