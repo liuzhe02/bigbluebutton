@@ -16,6 +16,7 @@ package org.bigbluebutton.main
 		private var videoLoaded:Boolean = false;
 		private var loginLoaded:Boolean = false;
 		private var joinLoaded:Boolean = false;
+		private var phoneLoaded:Boolean = false;
 		
 		public function MainApplicationMediator(mediatorName:String=null, viewComponent:Object=null)
 		{
@@ -62,6 +63,11 @@ package org.bigbluebutton.main
 						loginLoaded = true;
 						//proxy.loadModule("ViewersModule");
 					//	proxy.loadModule("JoinModule");
+						proxy.loadModule("PhoneModule");
+					}
+					
+					if (ml == "PhoneModule") {
+						phoneLoaded = true;
 						proxy.loadModule("ChatModule");
 					}
 					
@@ -94,7 +100,8 @@ package org.bigbluebutton.main
 					// SHortcircuit videomodule start. This is only for refactoring of videoModule.
 					//facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
 					
-					if (videoLoaded && viewerLoaded && chatLoaded && presentLoaded && listenerLoaded && loginLoaded) {
+					if (videoLoaded && viewerLoaded && chatLoaded && presentLoaded 
+							&& listenerLoaded && loginLoaded && phoneLoaded) {
 					//if (viewerLoaded && loginLoaded) {
 						facade.sendNotification(MainApplicationConstants.MODULE_START, "LoginModule");
 					}
@@ -109,7 +116,7 @@ package org.bigbluebutton.main
 					proxy.stopModule("VideoModule");
 					proxy.stopModule("ViewersModule");	
 					proxy.stopModule("LoginModule");
-//					proxy.stopModule("JoinModule");				
+					proxy.stopModule("PhoneModule");				
 					break;
 				case MainApplicationConstants.RESTART_MODULE:
 					LogUtil.debug(NAME + '::Received RESTART_MODULE for ' + notification.getBody() as String);
@@ -125,6 +132,7 @@ package org.bigbluebutton.main
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");					
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "PhoneModule");
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
 					break;
 
