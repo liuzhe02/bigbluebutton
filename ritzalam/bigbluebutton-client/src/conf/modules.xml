@@ -1,13 +1,17 @@
 <modules>
 	<module name="LoginModule" url="LoginModule.swf" uri="http://localhost:8080/bigbluebutton/join/signIn" />
-	<module name="VideoModule" url="VideoModule.swf" uri="rtmp://localhost/oflaDemo" />
+	<!--module name="VideoModule" url="VideoModule.swf" uri="rtmp://localhost/oflaDemo" /-->
 	<module name="ChatModule" url="ChatModule.swf" uri="rtmp://localhost/chatServer" />
 	<module name="ViewersModule" url="ViewersModule.swf" uri="rtmp://localhost/bigbluebutton" 
 			host="http://localhost:8080/bigbluebutton/join/enter"/>
-	<module name="PhoneModule" url="PhoneModule.swf" 
-			uri="rtmp://localhost/sip" sipUsername="1002" sipPassword="ff3j"
-			sipRealm="134.117.254.226" sipServer="134.117.254.226"
-			sipConfRoom="85115" />
+	<!--module name="PhoneModule" url="5PhoneModule.swf" 
+			uri="rtmp://localhost/sip" sipUsername="201" sipPassword=""
+			sipRealm="192.168.0.101" sipServer="192.168.0.101"
+			sipConfRoom="85115" /-->
+	<!--module name="Red5PhoneModule" url="Red5PhoneModule.swf" 
+			uri="rtmp://localhost/sip" sipUsername="201" sipPassword=""
+			sipRealm="192.168.0.101" sipServer="192.168.0.101"
+			sipConfRoom="85115" /-->
 	<module name="ListenersModule" url="ListenersModule.swf" uri="rtmp://localhost/astmeetme" />
 	<module name="PresentationModule" url="PresentationModule.swf" 
 		uri="rtmp://localhost/bigbluebutton" host="http://localhost:8080" />

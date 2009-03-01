@@ -62,11 +62,11 @@ package org.bigbluebutton.main
 					if (ml == "LoginModule") {
 						loginLoaded = true;
 						//proxy.loadModule("ViewersModule");
-					//	proxy.loadModule("JoinModule");
-						proxy.loadModule("PhoneModule");
+						proxy.loadModule("ChatModule");
+					//	proxy.loadModule("Red5PhoneModule");
 					}
 					
-					if (ml == "PhoneModule") {
+					if (ml == "Red5PhoneModule") {
 						phoneLoaded = true;
 						proxy.loadModule("ChatModule");
 					}
@@ -88,7 +88,8 @@ package org.bigbluebutton.main
 					}
 					if (ml == "ListenersModule") {
 						listenerLoaded = true;
-						proxy.loadModule("VideoModule");
+						proxy.loadModule("ViewersModule");
+						//proxy.loadModule("VideoModule");
 					}
 					if (ml == "VideoModule") {
 						videoLoaded = true;
@@ -100,8 +101,9 @@ package org.bigbluebutton.main
 					// SHortcircuit videomodule start. This is only for refactoring of videoModule.
 					//facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
 					
-					if (videoLoaded && viewerLoaded && chatLoaded && presentLoaded 
-							&& listenerLoaded && loginLoaded && phoneLoaded) {
+					//if (videoLoaded && viewerLoaded && chatLoaded && presentLoaded && phoneLoaded
+					if (viewerLoaded && chatLoaded && presentLoaded 
+							&& listenerLoaded && loginLoaded ) {
 					//if (viewerLoaded && loginLoaded) {
 						facade.sendNotification(MainApplicationConstants.MODULE_START, "LoginModule");
 					}
@@ -113,10 +115,10 @@ package org.bigbluebutton.main
 					proxy.stopModule("ChatModule");
 					proxy.stopModule("PresentationModule");
 					proxy.stopModule("ListenersModule");
-					proxy.stopModule("VideoModule");
+					//proxy.stopModule("VideoModule");
 					proxy.stopModule("ViewersModule");	
 					proxy.stopModule("LoginModule");
-					proxy.stopModule("PhoneModule");				
+					//proxy.stopModule("Red5PhoneModule");				
 					break;
 				case MainApplicationConstants.RESTART_MODULE:
 					LogUtil.debug(NAME + '::Received RESTART_MODULE for ' + notification.getBody() as String);
@@ -131,8 +133,8 @@ package org.bigbluebutton.main
 					LogUtil.debug(NAME + '::Received USER_JOINED');
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");					
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
-					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
-					facade.sendNotification(MainApplicationConstants.MODULE_START, "PhoneModule");
+					//facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
+					//facade.sendNotification(MainApplicationConstants.MODULE_START, "Red5PhoneModule");
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
 					break;
 

@@ -31,6 +31,7 @@ package org.bigbluebutton.main.view
 	import org.bigbluebutton.main.view.components.MainApplicationShell;
 	import org.bigbluebutton.main.view.components.ModuleStoppedWindow;
 	import org.bigbluebutton.main.view.events.StartModuleEvent;
+	import org.bigbluebutton.modules.red5phone.view.components.Red5PhoneWindow;
 	import org.puremvc.as3.multicore.interfaces.INotification;
 	import org.puremvc.as3.multicore.patterns.mediator.Mediator;
 
@@ -73,7 +74,7 @@ package org.bigbluebutton.main.view
 			return [
 					MainApplicationConstants.ADD_WINDOW_MSG,
 					MainApplicationConstants.REMOVE_WINDOW_MSG,
-					//MainApplicationConstants.USER_LOGGED_IN,
+					MainApplicationConstants.USER_LOGGED_IN,
 					MainApplicationConstants.USER_LOGGED_OUT,
 					MainApplicationConstants.LOADED_MODULE,
 					MainApplicationConstants.MODULE_STOPPED,
@@ -81,22 +82,36 @@ package org.bigbluebutton.main.view
 					];
 		}
 		
+		private var red5phoneAdded:Boolean = false;
+		private var red5PhoneWindow:Red5PhoneWindow = new Red5PhoneWindow();
+		
 		override public function handleNotification(notification:INotification):void{
 			switch(notification.getName()){	
 				case MainApplicationConstants.ADD_WINDOW_MSG:
 					var win:IBbbModuleWindow = notification.getBody() as IBbbModuleWindow;
 					//LogUtil.debug(NAME + "::putting window in " + win.xPosition + " " + win.yPosition);
 					shell.mdiCanvas.windowManager.add(win as MDIWindow);
-					shell.mdiCanvas.windowManager.absPos(win as MDIWindow, win.xPosition, win.yPosition);						
+					shell.mdiCanvas.windowManager.absPos(win as MDIWindow, win.xPosition, win.yPosition);										
 					break;			
 				case MainApplicationConstants.REMOVE_WINDOW_MSG:
 					var rwin:IBbbModuleWindow = notification.getBody() as IBbbModuleWindow;
 					//LogUtil.debug(NAME + "::removing window " + (rwin as MDIWindow).name);
 					shell.mdiCanvas.windowManager.remove(rwin as MDIWindow);						
 					break;
+				case MainApplicationConstants.USER_LOGGED_OUT:
+					if (red5phoneAdded) {
+						red5phoneAdded = false;
+						shell.mdiCanvas.windowManager.remove(red5PhoneWindow as MDIWindow);
+					}
+					break;
 				case MainApplicationConstants.USER_LOGGED_IN:
 					shell.loadedModules.text = "";
 					shell.loadProgress.text = "";
+					if (!red5phoneAdded) {
+						red5phoneAdded = true;
+						shell.mdiCanvas.windowManager.add(red5PhoneWindow as MDIWindow);
+						shell.mdiCanvas.windowManager.absPos(red5PhoneWindow as MDIWindow, red5PhoneWindow.xPosition, red5PhoneWindow.yPosition);
+					}	
 					break;
 				case MainApplicationConstants.MODULE_STOPPED:
 					var info:Object = notification.getBody();

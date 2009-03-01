@@ -22,12 +22,16 @@
 	private var isConnected:Boolean = false;
 	private var mic:Microphone = null;
 	public var red5URL:String = "rtmp:localhost/sip";
-	public var username:String = "1002";
-	public var password:String = "ff3j";
-	public var realm:String = "134.117.254.226";
-	public var server:String = "134.117.254.226";
-//	public var realm:String = "192.168.0.101";
-//	public var server:String = "192.168.0.101";
+	public var username:String = "201";
+	public var password:String = "";
+	public var realm:String = "192.168.0.101";
+	public var server:String = "192.168.0.101";
+
+//	public var username:String = "1002";
+//	public var password:String = "ff3j";
+//	public var realm:String = "134.117.254.226";
+//	public var server:String = "134.117.254.226";
+
 	public var confRoom:String = "85115";
 	
 	private var images:Images = new Images();

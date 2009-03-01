@@ -41,6 +41,7 @@
 <module application="src/BigBlueButton.mxml" destPath="LoginModule.swf" optimize="true" sourcePath="src/LoginModule.mxml"/>
 <module application="src/BigBlueButton.mxml" destPath="JoinModule.swf" optimize="true" sourcePath="src/JoinModule.mxml"/>
 <module application="src/BigBlueButton.mxml" destPath="PhoneModule.swf" optimize="true" sourcePath="src/PhoneModule.mxml"/>
+<module application="src/BigBlueButton.mxml" destPath="Red5PhoneModule.swf" optimize="true" sourcePath="src/Red5PhoneModule.mxml"/>
 </modules>
 <buildCSSFiles/>
 </actionScriptProperties>
