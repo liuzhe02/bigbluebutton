@@ -27,12 +27,31 @@
 
 			private var _xPosition:int = 675;
 			private var _yPosition:int = 230;
+
+			private function init():void {
+				var loader:URLLoader = new URLLoader();
+			    var request:URLRequest = new URLRequest("conf/sip-config.xml");	
+			    	
+				loader.load(request);
+				loader.addEventListener(Event.COMPLETE, onComplete);			
+			}
+			
+			private function onComplete(event:Event):void {
+				var configXML:XML = new XML(event.target.data);
+				red5Url 	= configXML.red5Url[0];
+				sipRealm 	= configXML.sipRealm[0];
+				sipServer 	= configXML.sipServer[0];
+
+				username = configXML.sipUsername[0];
+				password = configXML.sipPassword[0];
+				mailbox = configXML.sipMailbox[0];		
+			}
 			
 //			public var module:Red5PhoneModule;
 			
 			public var red5Manager:Red5Manager     = null;
 			
-			private function init():void {		
+//			private function init():void {		
 //				username = module.sipusername;
 //				password = module.sippassword;
 //				sipRealm = module.siprealm;
@@ -41,9 +60,9 @@
 //				autologin = false;
 //				mailbox = "";
 				
-				LogUtil.debug("Login: [" + username + "," + password + "," + sipRealm + "," + sipServer + "," + red5Url + "]"); 
+//				LogUtil.debug("Login: [" + username + "," + password + "," + sipRealm + "," + sipServer + "," + red5Url + "]"); 
 //				login(username, password, sipRealm, sipServer, red5Url, mailbox);														
-			}
+//			}
 			
 			public function login():void {
 //				this.username = username;
