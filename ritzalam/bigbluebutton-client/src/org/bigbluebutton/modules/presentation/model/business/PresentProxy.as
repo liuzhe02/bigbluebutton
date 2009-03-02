@@ -85,7 +85,7 @@ package org.bigbluebutton.modules.presentation.model.business
 		public function uploadPresentation(presentationName:String, fileToUpload:FileReference) : void
 		{
 			LogUtil.debug("PresentationApplication::uploadPresentation()... ");
-			var fullUri:String = _module.host + "/bigbluebutton/presentation/" + presentationName;
+			var fullUri:String = _module.host + "/bigbluebutton/presentation/upload";
 						
 			var service:FileUploadService = new FileUploadService(fullUri, presentationName, _module.conference, _module.room);
 			service.addProgressListener(uploadProgressListener);
