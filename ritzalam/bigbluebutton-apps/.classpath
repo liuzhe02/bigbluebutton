@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="webapps/chat/src"/>
-	<classpathentry kind="src" path="webapps/sip/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/asterisk-java-0.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-over-slf4j-1.4.3.jar"/>
@@ -35,6 +34,5 @@
 	<classpathentry kind="lib" path="lib/jcip-annotations-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/red5-sip-0.7.jar"/>
 	<classpathentry kind="lib" path="lib/mina-core-1.1.6.jar"/>
-	<classpathentry kind="lib" path="lib/jmf-2.1.1e.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
