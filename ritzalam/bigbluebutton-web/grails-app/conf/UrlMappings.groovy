@@ -1,6 +1,11 @@
 class UrlMappings {
     static mappings = {
-      "/presentation/$presentation_name"(controller:"presentation") {
+//    	"/presentation/$presentation_name"(controller:"presentation") {
+ //     	  println 'executing /presentation/default mapping'
+ //       	action = [GET:'show', POST:'upload', DELETE:'delete']
+ //       }
+      "/presentation/upload"(controller:"presentation") {
+    	  println 'executing /presentation/default mapping'
       	action = [GET:'show', POST:'upload', DELETE:'delete']
       }
       
@@ -21,6 +26,7 @@ class UrlMappings {
       }
       
       "/$controller/$action?/$id?"{
+    	  println "${controller} ${action} mapping"
 	      constraints {
 			 // apply constraints here
 		  }

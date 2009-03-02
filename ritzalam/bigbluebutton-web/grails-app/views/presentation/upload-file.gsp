@@ -8,7 +8,7 @@
   <g:if test="${flash.message}">
     <div class="message">${flash.message}</div>
   </g:if>
-			 <g:form method="post"  enctype="multipart/form-data">
+			 <g:form controller="presentation" method="post"  action="upload" enctype="multipart/form-data">
 	                <div class="dialog">
 	                    <table>
 	                        <tbody>
@@ -32,7 +32,8 @@
 	                    </table>
 	                </div>
 	                <div class="buttons">
-	                    <span class="button"><g:actionSubmit class="upload" value="Upload" action="upload" /></span>
+	                    <!--span class="button"><g:actionSubmit class="upload" value="Upload" action="upload" /></span-->
+	                    <input type="submit" value="Upload"/>
 	                </div>
 	            </g:form>
 </body>

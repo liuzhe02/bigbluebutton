@@ -11,7 +11,10 @@ class PresentationController {
     PresentationService presentationService
     static transactional = true
     
-    def index = { render(view:'upload-file') }
+    def index = {
+    	println 'in PresentationController index'
+    	render(view:'upload-file') 
+    }
 	
     def list = {						      				
 		def f = confInfo()
