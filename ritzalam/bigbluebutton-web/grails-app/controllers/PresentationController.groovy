@@ -11,7 +11,7 @@ class PresentationController {
     PresentationService presentationService
     static transactional = true
     
-    def index = { render(view:'upload') }
+    def index = { render(view:'upload-file') }
 	
     def list = {						      				
 		def f = confInfo()
@@ -33,7 +33,7 @@ class PresentationController {
 				}
 			}
 		} else {
-			render(view:'upload')
+			render(view:'upload-file')
 		}
     }
 
@@ -46,11 +46,12 @@ class PresentationController {
     }
 
 	def upload = {		
+		println 'PresentationController:upload'
 		def file = request.getFile('fileUpload')
 	    if(!file.empty) {
 	      flash.message = 'Your file has been uploaded'
-	      	def f = confInfo()
-		  	presentationService.processUploadedPresentation(params.conference, params.room, params.presentation_name, file)							             			     	
+	      def f = confInfo()
+		  presentationService.processUploadedPresentation(params.conference, params.room, params.presentation_name, file)							             			     	
 		}    
 	    else {
 	       flash.message = 'file cannot be empty'
