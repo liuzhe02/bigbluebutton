@@ -416,7 +416,7 @@
 	    <javac destdir="${test.classes.dir}"
 	           debug="true"
 	           includeAntRuntime="yes"
-	           srcdir="test">
+	           srcdir="test/src">
 	      <classpath refid="test.compile.classpath"/>
 	    </javac>
 		<taskdef name="testng" classpathref="compile.classpath"
@@ -426,7 +426,7 @@
 	<macrodef name="compile-groovy-tests">
 		<sequential>
 		<mkdir dir="${test.classes.dir}"/>
-		<groovyc srcdir="test" destdir="${test.classes.dir}"
+		<groovyc srcdir="test/src" destdir="${test.classes.dir}"
 				 classpathref="test.compile.classpath"/>
 		</sequential>
 	</macrodef>
