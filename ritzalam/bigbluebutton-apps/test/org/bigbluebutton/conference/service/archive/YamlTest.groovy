@@ -18,10 +18,12 @@ public class YamlTest{
 	}
 	
 	@Test
-	public void sipleYamlTest() {
+	public void simpleYamlTest() {
 			def player = Yaml.load(new File(f.absolutePath))
 			assert player[0].Birthplace == "Las Vegas, Nevada, USA"
 			assert player[0]['Turned Pro'] == 1986
+			assert player.size() == 5
+			println Yaml.dump(player)
 	}
 
 	public void anotherSipleYamlTest() {
