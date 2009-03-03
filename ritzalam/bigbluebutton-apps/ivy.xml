@@ -30,6 +30,7 @@
 		<dependency org="javax" name="servlet-api" rev="2.5"/>
 		<dependency name="backport-util-concurrent" rev="2.1"/>
 		<dependency org="spring" name="spring-jms" rev="2.0.8" />
+		<dependency org="org/ho" name="jyaml" rev="1.3" />
         <!-- Spring --> 
         <dependency org="spring" name="spring-dao" rev="2.0.8" />
         <dependency org="spring" name="spring-aop" rev="2.0.8" />
