@@ -99,19 +99,19 @@ package org.bigbluebutton.main.view
 					shell.mdiCanvas.windowManager.remove(rwin as MDIWindow);						
 					break;
 				case MainApplicationConstants.USER_LOGGED_OUT:
-					if (red5phoneAdded) {
-						red5phoneAdded = false;
-						shell.mdiCanvas.windowManager.remove(red5PhoneWindow as MDIWindow);
-					}
+					//if (red5phoneAdded) {
+					//	red5phoneAdded = false;
+					//	shell.mdiCanvas.windowManager.remove(red5PhoneWindow as MDIWindow);
+					//}
 					break;
 				case MainApplicationConstants.USER_LOGGED_IN:
 					shell.loadedModules.text = "";
 					shell.loadProgress.text = "";
-					if (!red5phoneAdded) {
-						red5phoneAdded = true;
-						shell.mdiCanvas.windowManager.add(red5PhoneWindow as MDIWindow);
-						shell.mdiCanvas.windowManager.absPos(red5PhoneWindow as MDIWindow, red5PhoneWindow.xPosition, red5PhoneWindow.yPosition);
-					}	
+					//if (!red5phoneAdded) {
+					//	red5phoneAdded = true;
+					//	shell.mdiCanvas.windowManager.add(red5PhoneWindow as MDIWindow);
+					//	shell.mdiCanvas.windowManager.absPos(red5PhoneWindow as MDIWindow, red5PhoneWindow.xPosition, red5PhoneWindow.yPosition);
+					//}	
 					break;
 				case MainApplicationConstants.MODULE_STOPPED:
 					var info:Object = notification.getBody();
