@@ -1,5 +1,5 @@
 
-package org.bigbluebutton.conference.service.archive
+package org.bigbluebutton.conference.service.archive.playback
 
 
 public interface IPlaybackPlayer{
@@ -8,6 +8,5 @@ public interface IPlaybackPlayer{
 	public void stop();	
 	public void pause();
 	public void resume();
-	public void addMessageNotifier(IPlayMessageNotifier notifier);
 	public void playMessage();
 }

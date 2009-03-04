@@ -1,4 +1,4 @@
-package org.bigbluebutton.conference.service.archive
+package org.bigbluebutton.conference.service.archive.playback
 import java.util.concurrent.ConcurrentHashMap
 public class PlaybackSession{
 
@@ -8,9 +8,10 @@ public class PlaybackSession{
 	private final Map<String, IPlaybackNotifier> notifiers
 	private final IPlaybackJobScheduler scheduler
 	private final IPlaybackPlayer player
+	private Map messageToSend
 	
-	public PlaybackSession(String conference, String room, String session) {
-		name = session
+	public PlaybackSession(String conference, String room, String name) {
+		this.name = name
 		this.room = room
 		this.conference = conference
 		notifiers = new ConcurrentHashMap<String, IPlaybackNotifier>()
@@ -34,6 +35,7 @@ public class PlaybackSession{
 	}
 	
 	public void startPlayback() {
+		player.initialize()
 		player.start()
 	}
 	
@@ -43,8 +45,13 @@ public class PlaybackSession{
 	
 	public void pausePlayback() {
 		player.pause()
+	}	
+	
+	private Map initializingMessage() {
+		Map m = new HashMap()
+		m.put("date", new Date() + 1000)
+		m.put("application", "PLAYBACK")
+		m.put("event", "InitializeEvent")
+		m.put("message", "Initializing...")
 	}
-	
-	
-	
 }

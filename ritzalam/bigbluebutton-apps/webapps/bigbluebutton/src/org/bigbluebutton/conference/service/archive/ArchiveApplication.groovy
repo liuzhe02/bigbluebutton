@@ -3,13 +3,13 @@ package org.bigbluebutton.conference.service.archive
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.concurrent.ConcurrentHashMap
-public class ArchiveApplication{
+import java.util.concurrent.ConcurrentHashMapimport org.bigbluebutton.conference.service.archive.playback.*
+public class ArchiveApplication {
 	protected static Logger log = LoggerFactory.getLogger( ArchiveApplication.class )
 	
 	private final Map<String, PlaybackSession> playbackSessions
 	private final Map<String, RecordSession> recordSessions
-	
+		
 	public ArchiveApplication() {
 		playbackSessions = new ConcurrentHashMap<String, PlaybackSession>()
 		recordSessions = new ConcurrentHashMap<String, RecordSession>()
@@ -31,4 +31,15 @@ public class ArchiveApplication{
 		recordSession.put(session.name, session)
 	}
 	
+	public void setJobPlaybackScheduler(IPlaybackJobScheduler scheduler) {
+		playbackScheduler = scheduler
+	}
+	
+	public void startup() {
+		executor = Executors.newFixedThreadPool(NTHREADS)
+	}
+		
+	public void shutdown() {
+		executor.shutdown()
+	}
 }

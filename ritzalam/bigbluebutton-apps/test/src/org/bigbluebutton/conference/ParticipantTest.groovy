@@ -3,7 +3,7 @@ package org.bigbluebutton.conference
 
 import org.testng.annotations.*
 import org.testng.Assertimport java.lang.UnsupportedOperationException
-public class ParticipantTest{
+public class ParticipantTest {
 	Participant p
 	
 	/**

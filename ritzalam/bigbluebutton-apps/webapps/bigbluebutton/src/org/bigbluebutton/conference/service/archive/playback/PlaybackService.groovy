@@ -1,4 +1,4 @@
-package org.bigbluebutton.conference.service.archive
+package org.bigbluebutton.conference.service.archive.playback
 
 public class PlaybackService implements IPlaybackService{
 

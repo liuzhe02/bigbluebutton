@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 import org.red5.server.adapter.ApplicationAdapter
 import org.red5.server.api.Red5import java.util.Mapimport org.bigbluebutton.conference.RoomsManager
-import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListenerimport org.bigbluebutton.conference.service.archive.IRecordServiceimport org.bigbluebutton.conference.service.archive.IPlaybackService
+import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListener
 public class ParticipantsHandler extends ApplicationAdapter implements IApplication{
 
 	protected static Logger log = LoggerFactory.getLogger( ParticipantsHandler.class )
@@ -22,8 +22,6 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 
 	private ApplicationAdapter application
 	private ParticipantsApplication participantsApplication
-	private IRecordService recordService
-	private IPlaybackService playbackService
 
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
@@ -144,13 +142,4 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		participantsApplication = a
 	}
 	
-	public void setRecordService(IRecordService r) {
-		log.debug("Setting record service")
-		recordService = r
-	}
-	
-	public void setPlaybackService(IPlaybackService p) {
-		log.debug("Setting plauback service")
-		playbackService = p
-	}
 }

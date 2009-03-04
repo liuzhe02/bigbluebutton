@@ -1,5 +1,5 @@
 
-package org.bigbluebutton.conference.service.archive
+package org.bigbluebutton.conference.service.archive.playback
 
 
 public interface IPlaybackService{
