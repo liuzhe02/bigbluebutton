@@ -3,8 +3,8 @@
   <test name="Conference tests">
     <packages>
     	<!--package name="org.bigbluebutton.conference" />
-    	<package name="org.bigbluebutton.conference.service.participants"/>
-    	<package name="org.bigbluebutton.conference.service.archive"/-->
+    	<package name="org.bigbluebutton.conference.service.participants"/-->
+    	<package name="org.bigbluebutton.conference.service.archive"/>
     	<package name="org.bigbluebutton.conference.service.archive.playback"/>
     	<!--package name="org.bigbluebutton.conference.voice"/>
     	<package name="org.bigbluebutton.conference.voice.asterisk"/-->

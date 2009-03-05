@@ -4,9 +4,11 @@ package org.bigbluebutton.conference.service.archive.playback
 
 public interface IPlaybackPlayer{
 
-	public void start();	
-	public void stop();	
-	public void pause();
-	public void resume();
-	public void playMessage();
+	public void initialize()
+	
+	public Map getMessage()
+	
+	public boolean isReady()
+	
+	public void reset() 
 }

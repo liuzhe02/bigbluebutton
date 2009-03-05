@@ -25,28 +25,26 @@ import java.util.concurrent.atomic.AtomicIntegerpublic class FileReaderPlaybac
 	}
 	
 	public Map getMessage() {
-		Map m = recordedEvents[eventNumber.andIncrement]
-		return m
+		if ((int)eventNumber < recordedEvents.size()){
+			return recordedEvents[eventNumber.andIncrement]
+		}
+		return null
 	}
 	
-	public void start(){		
+	public boolean isReady() {
+		return playerReady
+	}
+	
+	public void reset() {
 		eventNumber.set(0)
 	}
 	
-	public void stop(){
-		eventNumber.set(0)
+	public int getEventNumber() {
+		eventNumber
 	}
 	
-	public void pause(){
-		// TODO Auto-generated method stub
-	}
-	
-	public void resume() {
-		
-	}
-	
-	public void playMessage() {
-		
+	public int numberOfEvents() {
+		return recordedEvents.size()
 	}
 	
 	public void setRecordingsBaseDirectory(String directory) {

@@ -10,8 +10,7 @@ public class RecordedEvent implements Delayed {
 	   private final PlaybackSession session
 	   
 	   public RecordedEvent(PlaybackSession session) {
-	      this.event = session
-	      this.requestTime = new Date()
+	      this.session = session
 	   }
 
 	   public long getDelay(TimeUnit timeUnit) {
@@ -26,9 +25,16 @@ public class RecordedEvent implements Delayed {
 	         return 1;
 	      return this.requestTime.compareTo(request.requestTime);
 	   }
-
-	   public PlaybackSession getPlaybackSession() {
-	      return session;
+	   
+	   public long getEndOfDelay() {
+		   endOfDelay
 	   }
-
+	   
+	   public void playMessage() {
+		   session.playMessage()
+	   }
+	   
+	   public boolean scheduleNextEvent() {
+		   session.hasNextMessage()
+	   }
 }

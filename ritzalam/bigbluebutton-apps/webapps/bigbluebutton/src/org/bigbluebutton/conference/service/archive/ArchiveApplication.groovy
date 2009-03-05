@@ -30,16 +30,4 @@ public class ArchiveApplication {
 	public void addRecordSession(RecordSession session) {
 		recordSession.put(session.name, session)
 	}
-	
-	public void setJobPlaybackScheduler(IPlaybackJobScheduler scheduler) {
-		playbackScheduler = scheduler
-	}
-	
-	public void startup() {
-		executor = Executors.newFixedThreadPool(NTHREADS)
-	}
-		
-	public void shutdown() {
-		executor.shutdown()
-	}
 }

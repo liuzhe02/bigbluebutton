@@ -1,7 +1,7 @@
 
 package org.bigbluebutton.conference.service.archive.playback
 
-import org.testng.annotations.BeforeMethodimport org.testng.annotations.Test
+import org.testng.annotations.BeforeMethodimport org.testng.annotations.Testimport org.testng.Assert
 public class FileReaderPlaybackPlayerTest{
 
 	def FileReaderPlaybackPlayer fPlayer
@@ -14,15 +14,17 @@ public class FileReaderPlaybackPlayerTest{
 		File f2 = new File(f.absolutePath)
 		fPlayer.setRecordingsBaseDirectory(f2.parent)
 		fPlayer.initialize()
-		println "file ${f2.absolutePath} ${f2.parent}"
 	}
 
 	@Test
 	public void getMessageTest() {
-		println fPlayer.getMessage()
-		println fPlayer.getMessage()
-		println fPlayer.getMessage()
-		println fPlayer.getMessage()
+		Assert.assertTrue(fPlayer.isReady(), "The player should be ready.")
+		Map m = fPlayer.getMessage()
+		Assert.assertNotNull(m)
+		Assert.assertEquals(m["application"], "PARTICIPANT", "This should be a PARTICIPANT application.")
+		Assert.assertTrue(fPlayer.getEventNumber() == 1, "This should be 1 as it got incremented when we called getMessage()")
+		fPlayer.reset()
+		Assert.assertTrue(fPlayer.getEventNumber() == 0, "This should be 1 as it got incremented when we called getMessage()")
 	}	
 	
 }

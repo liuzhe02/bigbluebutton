@@ -1,14 +1,17 @@
 package org.bigbluebutton.conference.service.archive.playback
 import java.util.concurrent.ConcurrentHashMap
-public class PlaybackSession{
+public class PlaybackSession {
 
 	private final String conference
 	private final String room
 	private final String name
 	private final Map<String, IPlaybackNotifier> notifiers
-	private final IPlaybackJobScheduler scheduler
 	private final IPlaybackPlayer player
-	private Map messageToSend
+	private Map currentMessage
+	private Map nextMessage
+	private boolean playing = false
+	private boolean initialMessage = true
+	private long playbackTime = 0
 	
 	public PlaybackSession(String conference, String room, String name) {
 		this.name = name
@@ -30,26 +33,47 @@ public class PlaybackSession{
 		notifiers.remove(name)
 	}
 	
-	public void setPlaybackJobScheduler(IPlaybackJobScheduler scheduler) {
-		this.scheduler = scheduler
-	}
-	
 	public void startPlayback() {
 		player.initialize()
-		player.start()
+		playing = true
+		initialMessage = true
+		currentMessage = initialMessage()
+		nextMessage = player.getMessage()
+		// Let's wait 1 second to play this message
+		playbackTime = 1000L
 	}
 	
 	public void stopPlayback() {
-		player.stop()
+		player.reset()
+		playing = false
+	}
+	
+	public void playMessage() {
+		if (playing) {
+			IPlaybackNotifier n = notifiers.get(currentMessage.application)
+			n.sendMessage(currentMessage)
+			currentMessage = nextMessage
+			nextMessage = player.getMessage()
+			playbackTime = new Long(currentMessage["date"].longValue()) - 
+								new Long(nextMessage["date"].longValue())
+		}
 	}
 	
 	public void pausePlayback() {
-		player.pause()
+		playing = false
 	}	
 	
+	public void resumePlayback() {
+		playing = true
+	}
+		
+	public long playMessageIn() {
+		playbackTime
+	}
+		
 	private Map initializingMessage() {
 		Map m = new HashMap()
-		m.put("date", new Date() + 1000)
+		m.put("date", new Date() + 1000L)
 		m.put("application", "PLAYBACK")
 		m.put("event", "InitializeEvent")
 		m.put("message", "Initializing...")

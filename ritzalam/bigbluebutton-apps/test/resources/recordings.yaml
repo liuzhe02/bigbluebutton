@@ -1,30 +1,25 @@
 -
-  Date: 1
-  Name: Andre Agassi
-  Height: 5'11'' (180 cm)
-  Birthplace: "Las Vegas, Nevada, USA"
-  Turned Pro: 1986
+  date: 1236202122980
+  application: PARTICIPANT
+  event: ParticipantJoinedEvent
+  message: "Las Vegas, Nevada, USA"
 -
-  Date: 2
-  Name: Andre Agassi
-  Height: 5'11'' (180 cm)
-  Birthplace: "Las Vegas, Nevada, USA"
-  Turned Pro: 1986
+  date: 1236202132980
+  application: PARTICIPANT
+  event: ParticipantJoinedEvent
+  message: "Las Vegas, Nevada, USA"
 -
-  Date: 3
-  Name: Andre Agassi
-  Height: 5'11'' (180 cm)
-  Birthplace: "Las Vegas, Nevada, USA"
-  Turned Pro: 1986
+  date: 1236202142980
+  application: PARTICIPANT
+  event: ParticipantLeftEvent
+  message: "Las Vegas, Nevada, USA"
 -
-  Date: 4
-  Name: Andre Agassi
-  Height: 5'11'' (180 cm)
-  Birthplace: "Las Vegas, Nevada, USA"
-  Turned Pro: 1986
+  date: 1236202152980
+  application: PARTICIPANT
+  event: ParticipantChangeStatusEvent
+  message: "Las Vegas, Nevada, USA"
 -
-  Date: 5
-  Name: Andre Agassi
-  Height: 5'11'' (180 cm)
-  Birthplace: "Las Vegas, Nevada, USA"
-  Turned Pro: 1986
+  date: 1236202162980
+  application: PARTICIPANT
+  event: ParticipantChangeStatusEvent
+  message: "Las Vegas, Nevada, USA"
