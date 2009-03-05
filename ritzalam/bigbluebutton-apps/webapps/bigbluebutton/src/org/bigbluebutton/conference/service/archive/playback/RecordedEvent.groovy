@@ -35,6 +35,6 @@ public class RecordedEvent implements Delayed {
 	   }
 	   
 	   public boolean scheduleNextEvent() {
-		   session.hasNextMessage()
+		   session.hasMessageToSend()
 	   }
 }

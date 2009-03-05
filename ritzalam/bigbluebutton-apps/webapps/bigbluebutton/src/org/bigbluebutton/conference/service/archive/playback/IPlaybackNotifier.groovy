@@ -1,9 +1,5 @@
 package org.bigbluebutton.conference.service.archive.playback
 
-
-
-public class IPlaybackNotifier{
-
-	
-	
+public interface IPlaybackNotifier {
+	public void sendMessage(Map message);
 }

@@ -13,16 +13,17 @@ public class PlaybackSession {
 	private boolean initialMessage = true
 	private long playbackTime = 0
 	
-	public PlaybackSession(String conference, String room, String name) {
+	public PlaybackSession(String name) {
 		this.name = name
-		this.room = room
-		this.conference = conference
 		notifiers = new ConcurrentHashMap<String, IPlaybackNotifier>()
-		player = new FileReaderPlaybackPlayer(conference, room)
 	}
 	
 	public String getName() {
 		return name
+	}
+	
+	public void setPlaybackPlayer(IPlaybackPlayer player) {
+		this.player = player
 	}
 	
 	public void addPlaybackNotifier(String name, IPlaybackNotifier notifier) {
@@ -37,9 +38,9 @@ public class PlaybackSession {
 		player.initialize()
 		playing = true
 		initialMessage = true
-		currentMessage = initialMessage()
+		currentMessage = initializingMessage()
 		nextMessage = player.getMessage()
-		// Let's wait 1 second to play this message
+		// Let's wait 1 second to play the initial message
 		playbackTime = 1000L
 	}
 	
@@ -50,12 +51,23 @@ public class PlaybackSession {
 	
 	public void playMessage() {
 		if (playing) {
-			IPlaybackNotifier n = notifiers.get(currentMessage.application)
-			n.sendMessage(currentMessage)
+			IPlaybackNotifier n = notifiers.get(currentMessage["application"])
+			if (n != null){
+				n.sendMessage(currentMessage)
+			}
+			if (initialMessage) {
+				// This is the first recorded message.
+				// Let's play it after 1 second.
+				playbackTime = 1000L
+				initialMessage = false
+			} else {
+				// We compute the gap between each recorded message.
+				playbackTime = new Long(nextMessage["date"].longValue()) - 
+								new Long(currentMessage["date"].longValue())
+			}
 			currentMessage = nextMessage
 			nextMessage = player.getMessage()
-			playbackTime = new Long(currentMessage["date"].longValue()) - 
-								new Long(nextMessage["date"].longValue())
+
 		}
 	}
 	
@@ -70,12 +82,19 @@ public class PlaybackSession {
 	public long playMessageIn() {
 		playbackTime
 	}
+	
+	public boolean hasMessageToSend() {
+		// We have a message to send if the user has not paused/stop and
+		// haven't reached the end of the recorded events.
+		return (playing && (nextMessage != null))
+	}
 		
 	private Map initializingMessage() {
 		Map m = new HashMap()
-		m.put("date", new Date() + 1000L)
+		m.put("date", new Date())
 		m.put("application", "PLAYBACK")
 		m.put("event", "InitializeEvent")
 		m.put("message", "Initializing...")
+		return m
 	}
 }
