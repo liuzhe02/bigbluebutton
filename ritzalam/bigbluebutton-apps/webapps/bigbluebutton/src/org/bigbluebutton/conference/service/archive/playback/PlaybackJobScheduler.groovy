@@ -49,9 +49,7 @@ public class PlaybackJobScheduler {
 	/**
 	 * This is the main entry for playback sessions to be scheduled.
 	 */
-	public void schedulePlayback(PlaybackSession session) {
-		 // Initialize the session.
-		session.startPlayback();
+	public void schedulePlayback(PlaybackSession session) {		 
 		 // Wrap the session suitable for putting into the queue.
 		 // RecordEvent implements Delay interface.
 		RecordedEvent event = new RecordedEvent(session)

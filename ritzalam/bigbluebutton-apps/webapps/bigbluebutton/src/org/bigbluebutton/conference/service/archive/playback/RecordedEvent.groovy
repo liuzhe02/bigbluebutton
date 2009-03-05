@@ -27,7 +27,7 @@ public class RecordedEvent implements Delayed {
 	   }
 	   
 	   public long getEndOfDelay() {
-		   endOfDelay
+		   session.playMessageIn()
 	   }
 	   
 	   public void playMessage() {
