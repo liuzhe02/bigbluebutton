@@ -2,7 +2,10 @@
   date: 1236202122980
   application: PARTICIPANT
   event: ParticipantJoinedEvent
-  message: "Las Vegas, Nevada, USA"
+  status:
+    raiseHand: true
+    presenter: true
+    stream: "my-video-stream"
 -
   date: 1236202132980
   application: PARTICIPANT

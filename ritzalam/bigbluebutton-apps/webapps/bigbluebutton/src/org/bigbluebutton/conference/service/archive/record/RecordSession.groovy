@@ -1,5 +1,5 @@
 
-package org.bigbluebutton.conference.service.archive
+package org.bigbluebutton.conference.service.archive.record
 
 
 public class RecordSession{

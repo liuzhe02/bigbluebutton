@@ -3,7 +3,8 @@ package org.bigbluebutton.conference.service.archive
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.concurrent.ConcurrentHashMapimport org.bigbluebutton.conference.service.archive.playback.*import org.bigbluebutton.conference.service.archive.playback.PlaybackJobScheduler
+import java.util.concurrent.ConcurrentHashMapimport org.bigbluebutton.conference.service.archive.playback.*import org.bigbluebutton.conference.service.archive.record.*
+
 public class ArchiveApplication {
 	protected static Logger log = LoggerFactory.getLogger( ArchiveApplication.class )
 	
