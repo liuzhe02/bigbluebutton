@@ -24,7 +24,7 @@ public class YamlTest{
 		fout = new FileOutputStream(yamlOutFile, true /*append*/)
 	}
 
-	@Test
+//	@Test
 	public void writeYamlToFileTest() {
 		Map event = new HashMap()
 		event.put("date", 1236202122980)
@@ -102,14 +102,5 @@ public class YamlTest{
         assert eventList2.size() == 3
 		assert !eventList2[2].status.raiseHand 
 		assert eventList2[2]['application'] == 'PARTICIPANT'	
-	}
-	
-	@Test
-	public void simpleYamlTest() {
-		def eventRead = Yaml.load(new File(f.absolutePath))
-		assert eventRead[0].date == 1236202122980
-		assert eventRead[0]['application'] == 'PARTICIPANT'
-		assert eventRead.size() == 5
-		println Yaml.dump(eventRead)
 	}	
 }

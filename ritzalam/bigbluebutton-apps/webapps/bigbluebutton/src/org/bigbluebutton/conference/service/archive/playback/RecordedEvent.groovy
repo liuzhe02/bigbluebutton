@@ -14,7 +14,8 @@ public class RecordedEvent implements Delayed {
 	   }
 
 	   public long getDelay(TimeUnit timeUnit) {
-	      return timeUnit.convert(endOfDelay - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+		   long delay = timeUnit.convert(endOfDelay - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+	      return delay
 	   }
 
 	   public int compareTo(Delayed delayed) {
@@ -26,15 +27,12 @@ public class RecordedEvent implements Delayed {
 	      return this.requestTime.compareTo(request.requestTime);
 	   }
 	   
-	   public long getEndOfDelay() {
-		   session.playMessageIn()
-	   }
-	   
 	   public void playMessage() {
 		   session.playMessage()
 	   }
 	   
 	   public boolean scheduleNextEvent() {
+		   endOfDelay = System.currentTimeMillis() + session.playMessageIn()
 		   session.hasMessageToSend()
 	   }
 }

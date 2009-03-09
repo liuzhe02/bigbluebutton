@@ -4,7 +4,7 @@ package org.bigbluebutton.conference.service.archive
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMapimport org.bigbluebutton.conference.service.archive.playback.*import org.bigbluebutton.conference.service.archive.record.*
-
+import org.bigbluebutton.conference.service.archive.record.IRecorderimport org.bigbluebutton.conference.service.archive.record.FileRecorderimport org.bigbluebutton.conference.service.archive.playback.IPlaybackNotifierimport org.bigbluebutton.conference.service.archive.playback.PlaybackSessionimport org.bigbluebutton.conference.service.archive.playback.IPlaybackPlayerimport org.bigbluebutton.conference.service.archive.playback.FileReaderPlaybackPlayer
 public class ArchiveApplication {
 	protected static Logger log = LoggerFactory.getLogger( ArchiveApplication.class )
 	
@@ -26,6 +26,7 @@ public class ArchiveApplication {
 		PlaybackSession session = new PlaybackSession(sessionName)
 		IPlaybackPlayer player = new FileReaderPlaybackPlayer(conference, room)
 		player.setRecordingsBaseDirectory(recordingsDirectory)
+		session.setPlaybackPlayer(player)
 		playbackSessions.put(session.name, session)
 	}
 	
@@ -35,8 +36,17 @@ public class ArchiveApplication {
 	
 	public void createRecordSession(String conference, String room, String sessionName) {
 		RecordSession recordSession = new RecordSession(sessionName)
-		
+		IRecorder recorder = new FileRecorder(conference, room)
+		recorder.setRecordingsDirectory(recordingsDirectory)
+		recorder.initialize()
 		recordSession.put(session.name, session)
+	}
+	
+	public void addPlaybackNotifier(String sessionName, IPlaybackNotifier notifier) {
+		if (playbackSessions.containsKey(sessionName)) {
+			PlaybackSession session = playbackSessions.get(sessionName)
+			session.addPlaybackNotifier(notifier.notifierName(), notifier)
+		}
 	}
 	
 	public void startPlayback(String name) {

@@ -2,7 +2,7 @@
 package org.bigbluebutton.conference.service.archive.playback
 
 import org.ho.yaml.Yaml
-import java.util.concurrent.atomic.AtomicIntegerpublic class FileReaderPlaybackPlayer implements IPlaybackPlayer{
+import java.util.concurrent.atomic.AtomicIntegerimport org.ho.yaml.YamlDecoderpublic class FileReaderPlaybackPlayer implements IPlaybackPlayer{
 	
 	private final String conference
 	private final String room
@@ -18,7 +18,25 @@ import java.util.concurrent.atomic.AtomicIntegerpublic class FileReaderPlaybac
 	}
 	
 	public void initialize() {
-		recordedEvents = Yaml.load(new File("${recordingsBaseDirectory}/${conference}/${room}/recordings.yaml"))
+		File roomDir = new File("$recordingsBaseDirectory/$conference/$room")
+		File recordingFile = new File(roomDir.canonicalPath + File.separator + "recordings.yaml" )
+		assert recordingFile.exists()
+		
+		recordedEvents = []
+		
+//		 Let's read back the saved data.
+        YamlDecoder dec = new YamlDecoder(recordingFile.newInputStream());
+        try{
+          while (true){
+            Map eventRead = dec.readObject();
+            recordedEvents.add(eventRead)
+          }
+        }catch (EOFException e){
+          println("Finished reading stream.");
+        }finally {
+          dec.close();
+        }
+        
 		if (recordedEvents != null) {
 			playerReady = true
 		}

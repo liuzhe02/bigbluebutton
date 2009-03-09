@@ -1,21 +1,31 @@
 
 package org.bigbluebutton.conference.service.archive.record
 
-
+import java.util.concurrent.CopyOnWriteArrayList
 public class RecordSession{
 
-	private String name
-	private String conference
+	private final String name
+	private final String conference
+	private final IRecorder recorder
 	
-//	private List<IRecordWriter> recordWriters
+	private List<IEventRecorder> recorders
 	
 	public RecordSession(String conference, String room) {
 		name = room
 		this.conference = conference
+		recorders = new CopyOnWriteArrayList<IEventRecorder>()
 	}
 	
 	public String getName() {
 		return name
 	}
 	
+	public void addEventRecorder(IEventRecorder r) {
+		r.acceptRecorder(recorder)
+		recorders.add(r)
+	}
+	
+	public void setRecorder(IRecorder recorder) {
+		this.recorder = recorder
+	}
 }

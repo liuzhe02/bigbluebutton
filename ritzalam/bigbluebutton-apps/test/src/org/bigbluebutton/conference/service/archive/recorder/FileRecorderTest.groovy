@@ -30,8 +30,20 @@ public class FileRecorderTest{
 		status.put("raiseHand", true)
 		status.put("presenter", true)
 		status.put("stream", "my-video-stream")
+
+		
+		Map event3 = new HashMap()
+		event3.put("date", 1236202122980)
+		event3.put("application", "PARTICIPANT")
+		event3.put("event", "ParticipantJoinedEvent")
+		Map status1 = new HashMap()
+		event3.put("status", status1)
+		status1.put("raiseHand", false)
+		status1.put("presenter", false)
+		status1.put("stream", "my-video-stream-1")
 		
 		recorder.recordEvent(event)
+		recorder.recordEvent(event3)
 		
 		Map event1 = new HashMap()
 		event1.put("date", 1236202132980)
@@ -57,7 +69,7 @@ public class FileRecorderTest{
           dec.close();
         }
         
-        assert eventList.size() == 2
+        assert eventList.size() == 3
 		assert eventList[0].date == 1236202122980
 		assert eventList[0]['application'] == 'PARTICIPANT'
 		assert eventList[0]['event'] == 'ParticipantJoinedEvent'

@@ -43,7 +43,7 @@ public class PlaybackJobScheduler {
 				queue.add(r)
 			}
 		}
-		executor.exec(runn)
+		executor.execute(runn)
 	}
 	
 	/**

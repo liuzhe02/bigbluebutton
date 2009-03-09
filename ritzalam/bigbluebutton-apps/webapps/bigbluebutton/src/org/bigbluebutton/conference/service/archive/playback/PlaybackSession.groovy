@@ -27,6 +27,8 @@ public class PlaybackSession {
 	}
 	
 	public void addPlaybackNotifier(String name, IPlaybackNotifier notifier) {
+		assert name != null
+		assert notifier != null
 		notifiers.put(name, notifier)
 	}
 	
@@ -50,6 +52,7 @@ public class PlaybackSession {
 	}
 	
 	public void playMessage() {
+		print "in playMessage"
 		if (playing) {
 			IPlaybackNotifier n = notifiers.get(currentMessage["application"])
 			if (n != null){
@@ -67,7 +70,6 @@ public class PlaybackSession {
 			}
 			currentMessage = nextMessage
 			nextMessage = player.getMessage()
-
 		}
 	}
 	
@@ -80,6 +82,7 @@ public class PlaybackSession {
 	}
 		
 	public long playMessageIn() {
+		assert playbackTime != null
 		playbackTime
 	}
 	
