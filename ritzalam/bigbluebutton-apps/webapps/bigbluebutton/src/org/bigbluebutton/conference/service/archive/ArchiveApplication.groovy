@@ -11,26 +11,31 @@ public class ArchiveApplication {
 	private final Map<String, PlaybackSession> playbackSessions
 	private final Map<String, RecordSession> recordSessions
 	private final PlaybackJobScheduler playbackScheduler
-	
+	private final String recordingsDirectory
 	
 	public ArchiveApplication() {
 		playbackSessions = new ConcurrentHashMap<String, PlaybackSession>()
 		recordSessions = new ConcurrentHashMap<String, RecordSession>()
 	}
 	
-	public void removePlaybackSession(String room) {
-		playbackSessions.remove(room)
+	public void destroyPlaybackSession(String sessionName) {
+		playbackSessions.remove(sessionName)
+	}
+
+	public void createPlaybackSession(String conference, String room, String sessionName) {
+		PlaybackSession session = new PlaybackSession(sessionName)
+		IPlaybackPlayer player = new FileReaderPlaybackPlayer(conference, room)
+		player.setRecordingsBaseDirectory(recordingsDirectory)
+		playbackSessions.put(session.name, session)
 	}
 	
 	public void removeRecordSession(String room) {
 		recordSessions.remove(room)
 	}
 	
-	public void addPlaybackSession(PlaybackSession session) {
-		playbackSessions.put(session.name, session)
-	}
-	
-	public void addRecordSession(RecordSession session) {
+	public void createRecordSession(String conference, String room, String sessionName) {
+		RecordSession recordSession = new RecordSession(sessionName)
+		
 		recordSession.put(session.name, session)
 	}
 	
@@ -67,5 +72,9 @@ public class ArchiveApplication {
 	
 	public void setPlaybackJobScheduler(PlaybackJobScheduler scheduler) {
 		playbackScheduler = scheduler
+	}
+	
+	public void setRecordingsDirectory(String directory) {
+		this.recordingsDirectory = directory
 	}
 }

@@ -6,7 +6,7 @@ import org.ho.yaml.YamlEncoderimport org.ho.yaml.YamlDecoder
 public class YamlTest{
 	File f 
 	File yamlOutFile
-	
+	FileOutputStream fout
 	@BeforeMethod
 	public void setUp() {
 		f = new File('test/resources/recordings.yaml')
@@ -15,7 +15,13 @@ public class YamlTest{
 		if (! yamlOutFileDir.exists())
 			yamlOutFileDir.mkdirs()
 		yamlOutFile = new File('build/test/resources/yaml-output.yaml')
+		if (yamlOutFile.exists()) {
+			// delete the file so we start fresh
+			yamlOutFile.delete()
+			yamlOutFile = new File('build/test/resources/yaml-output.yaml')
+		}
 		println yamlOutFile.canonicalPath
+		fout = new FileOutputStream(yamlOutFile, true /*append*/)
 	}
 
 	@Test
@@ -37,7 +43,7 @@ public class YamlTest{
 		event1.put("message", "Las Vegas, Nevada, USA")
 
 		// We'll save multiple YAML document into the file. 
-		YamlEncoder enc = new YamlEncoder(yamlOutFile.newOutputStream());
+		YamlEncoder enc = new YamlEncoder(fout);
         enc.writeObject(event);
         enc.writeObject(event1);
         enc.close();
@@ -60,14 +66,50 @@ public class YamlTest{
         assert eventList.size() == 2
 		assert eventList[0].date == 1236202122980
 		assert eventList[0]['application'] == 'PARTICIPANT'
+
+		Map event3 = new HashMap()
+		event3.put("date", 1236202122980)
+		event3.put("application", "PARTICIPANT")
+		event3.put("event", "ParticipantJoinedEvent")
+		Map status1 = new HashMap()
+		event3.put("status", status1)
+		status1.put("raiseHand", false)
+		status1.put("presenter", false)
+		status1.put("stream", "my-video-stream-1")
+		
+		// Need to create another outpurstream to be able to write to the file.
+		// Perhaps the stream was closed when the encoder was closed above?
+		FileOutputStream fout2 = new FileOutputStream(yamlOutFile, true /*append*/) 
+		YamlEncoder enc1 = new YamlEncoder(fout2);
+        enc1.writeObject(event3);
+        enc1.close();
+
+        // Let's read back the saved data.
+        YamlDecoder dec2 = new YamlDecoder(yamlOutFile.newInputStream());
+        def eventList2 = []
+        try{
+          while (true){
+            Map eventRead = dec2.readObject();
+            eventList2.add(eventRead)
+          }
+        }catch (EOFException e){
+          println("Finished reading stream.");
+        }finally {
+          dec2.close();
+        }
+        
+        // Let's check if we successfully added the third entry.
+        assert eventList2.size() == 3
+		assert !eventList2[2].status.raiseHand 
+		assert eventList2[2]['application'] == 'PARTICIPANT'	
 	}
 	
 	@Test
 	public void simpleYamlTest() {
-			def eventRead = Yaml.load(new File(f.absolutePath))
-			assert eventRead[0].date == 1236202122980
-			assert eventRead[0]['application'] == 'PARTICIPANT'
-			assert eventRead.size() == 5
-			println Yaml.dump(eventRead)
+		def eventRead = Yaml.load(new File(f.absolutePath))
+		assert eventRead[0].date == 1236202122980
+		assert eventRead[0]['application'] == 'PARTICIPANT'
+		assert eventRead.size() == 5
+		println Yaml.dump(eventRead)
 	}	
 }
