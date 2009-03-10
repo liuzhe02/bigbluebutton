@@ -25,6 +25,11 @@
 
 	<bean id="web.handler" class="org.bigbluebutton.conference.BigBlueButtonApplication" singleton="true">
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+		<property name="applicationListeners">
+    		<set>
+				<ref bean="participantsHandler" />
+    		</set>
+  		</property>		
 	</bean>
 	
 	<bean id="roomsManager" class="org.bigbluebutton.conference.RoomsManager" singleton="true" />
@@ -36,7 +41,6 @@
 	
 	<bean id="participantsHandler" 
 	    class="org.bigbluebutton.conference.service.participants.ParticipantsHandler" singleton="true" >
-		<property name="applicationAdapter"> <ref local="web.handler"/></property>
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 	</bean>
 	
