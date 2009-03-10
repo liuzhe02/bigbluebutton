@@ -62,16 +62,19 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
         String role = ((String) params[1]).toString()
         String conference = ((String) params[2]).toString()
         String mode = ((String) params[3]).toString()
-        connection.setAttribute("conference", conference)
-        connection.setAttribute("username", username)
-        connection.setAttribute("role", role)
-        connection.setAttribute("mode", mode)
+        def userid = Red5.connectionLocal.client.id
+        def sessionName = connection.scope.name
         
-        String room = "No room because LIVE"                
-        if ("PLAYBACK".equals(mode)) {
-        	room = ((String) params[4]).toString()
-        	connection.setAttribute("room", room)
+        def room                
+        if (Constants.PLAYBACK_MODE.equals(mode)) {
+        	room = ((String) params[4]).toString()        	
+        } else {
+        	room = sessionName
         }
+    	
+    	BigBlueButtonSession bbbSession = new BigBlueButtonSession(sessionName, userid,  username, role, conference, mode, room)
+        connection.setAttribute(Constants.SESSION, bbbSession)
+        
 		log.info("${APP} - roomConnect - [${username},${role},${conference},${room}]") 
 
         super.roomConnect(connection, params)
@@ -79,11 +82,24 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 	}
 
 	public String getMyUserId() {
-		return Red5.connectionLocal.client.id;
+		BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
+		assert bbbSession != null
+		return bbbSession.id;
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
 		log.debug("Setting participants application")
 		participantsApplication = a
+	}
+	
+	public void setApplicationListeners(Set listeners) {
+		log.debug("Setting application listeners")
+		def count = 0
+		Iterator iter = listeners.iterator()
+		while (iter.hasNext()) {
+			log.debug("Setting application listeners $count")
+			super.addListener((IApplication) iter.next())
+			count++
+		}
 	}
 }

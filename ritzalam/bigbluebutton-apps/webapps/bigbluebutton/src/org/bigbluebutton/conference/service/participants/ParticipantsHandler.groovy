@@ -10,17 +10,14 @@ import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 import org.red5.server.adapter.ApplicationAdapter
 import org.red5.server.api.Red5import java.util.Mapimport org.bigbluebutton.conference.RoomsManager
-import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListener
+import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListenerimport org.bigbluebutton.conference.BigBlueButtonSessionimport org.bigbluebutton.conference.Constants
 public class ParticipantsHandler extends ApplicationAdapter implements IApplication{
-
 	protected static Logger log = LoggerFactory.getLogger( ParticipantsHandler.class )
-	protected static Logger recorder = LoggerFactory.getLogger( "RECORD-BIGBLUEBUTTON" )
-	
+
 	private static final String PARTICIPANTS = "PARTICIPANTS"
 	private static final String PARTICIPANTS_SO = "participantsSO"   
 	private static final String APP = "PARTICIPANTS"
 
-	private ApplicationAdapter application
 	private ParticipantsApplication participantsApplication
 
 	@Override
@@ -80,7 +77,8 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	@Override
 	public void roomLeave(IClient client, IScope scope) {
 		log.debug("${APP}:roomLeave ${scope.name}")
-		participantsApplication.participantLeft(scope.name, Red5.connectionLocal.client.id)
+		BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
+		participantsApplication.participantLeft(bbbSession.sessionName, bbbSession.userid)
 	}
 
 	@Override
@@ -91,13 +89,13 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
     	if (!hasSharedObject(scope, PARTICIPANTS_SO)) {
     		if (createSharedObject(scope, PARTICIPANTS_SO, false)) {
     			ISharedObject so = getSharedObject(scope, PARTICIPANTS_SO)
-    			if ("PLAYBACK".equals(Red5.connectionLocal.getAttribute("mode"))) {
+    			BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
+    			if (Constants.PLAYBACK_MODE.equals(bbbSession.mode)) {
     				
     			} else {
     				log.debug("Starting room ${scope.name}")
         			return participantsApplication.addRoomListener(scope.name, new RoomListener(so))
-    			}
-    			
+    			}    			
     		}    		
     	}  	
 		log.error("Failed to start room ${scope.name}")
@@ -130,11 +128,6 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		
 		log.debug("${APP}:participantJoin setting status")		
 		return participantsApplication.participantJoin(Red5.connectionLocal.scope.name, userid, username, role, status)
-	}
-	
-	public void setApplicationAdapter(ApplicationAdapter a) {
-		application = a
-		application.addListener(this)
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
