@@ -20,7 +20,7 @@ public class ParticipantsService {
 		String roomName = Red5.connectionLocal.scope.name
 		log.debug("getting participants for ${roomName}")
 		Map p = application.getParticipants(roomName)
-		
+		log.debug("getting participants for ${roomName}")
 		Map participants = new HashMap()
 		if (p == null) {
 			participants.put("count", 0)
@@ -39,9 +39,9 @@ public class ParticipantsService {
 	    			pm.put(ap.userid, ap.toMap()); 
 	    		}  
 				participants.put("participants", pm)
-			}
-			return participants
+			}			
 		}
+		return participants
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {

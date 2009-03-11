@@ -15,17 +15,13 @@ public class BigBlueButtonSession {
 	private final def userid
 	private final def sessionName
 	
-	public BigBlueButtonSession(def sessionName,def userid, def username, def role, def conference, def mode, def room=null){
+	public BigBlueButtonSession(def sessionName, def userid, def username, def role, def conference, def mode, def room){
 		this.userid = userid
 		this.sessionName = sessionName
 		this.username = username
 		this.role = role
 		this.conference = conference
 		this.mode = mode
-		if (mode == Constants.PLAYBACK_MODE) {
-			assert room != null
-			log.info("Playback requested for room $room.")
-			this.room = room
-		}
+		this.room = room
 	}	
 }

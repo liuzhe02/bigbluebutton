@@ -107,12 +107,20 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		log.debug("${APP}:participantJoin")
 //		ISharedObject so = getSharedObject(Red5.connectionLocal.scope, PARTICIPANTS_SO, false)
 		log.debug("${APP}:participantJoin - getting userid")
-		Long userid = new Long(Red5.connectionLocal.client.id.toLong())
-		log.debug("${APP}:participantJoin - getting username")
-		def username = Red5.connectionLocal.getAttribute("username")
-		log.debug("${APP}:participantJoin - getting role")
-		def role = Red5.connectionLocal.getAttribute("role")
-
+		BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
+		if (bbbSession == null) {
+			log.warn("bbb session is null")
+		}
+		
+		Long userid = bbbSession.userid
+		log.debug("${APP}:participantJoin - userid $userid")
+		def username = bbbSession.username
+		log.debug("${APP}:participantJoin - username $username")
+		def role = bbbSession.role
+		log.debug("${APP}:participantJoin - role $role")
+		def room = bbbSession.room
+		log.debug("${APP}:participantJoin - room $room")
+		
 		log.debug("${APP}:participantJoin")
 		Map status = new HashMap()
 		status.put("raiseHand", false)
@@ -120,7 +128,7 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		status.put("hasStream", false)
 		
 		log.debug("${APP}:participantJoin setting status")		
-		return participantsApplication.participantJoin(Red5.connectionLocal.scope.name, userid, username, role, status)
+		return participantsApplication.participantJoin(room, userid, username, role, status)
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {

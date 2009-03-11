@@ -20,67 +20,75 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 	
     public boolean appStart (IScope app )
     {
-        log.info( "${APP} - appStart" )
+        log.debug( "${APP} - appStart" )
         return super.appStart(app)
     }
         
     public void appStop (IScope app )
     {
-        log.info( "${APP} - appStop" )
+        log.debug( "${APP} - appStop" )
         super.appStop(app)
     }
 
     public boolean appConnect( IConnection conn , Object[] params )
     {
-        log.info( "${APP} - appConnect ")
-    	
+        log.debug( "${APP} - appConnect ")    	
         return super.appConnect(conn, params)
     }
     
     public void appDisconnect( IConnection conn)
     {
-        log.info( "${APP} - appDisconnect ")
+        log.debug( "${APP} - appDisconnect ")
         super.appDisconnect(conn)
     }
     
     public boolean roomStart(IScope room) {
-    	log.info( "${APP} - roomStart " )
-//    	assert participantsApplication != null
+    	log.debug( "${APP} - roomStart " )
+    	assert participantsApplication != null
     	participantsApplication.createRoom(room.name)
     	return super.roomStart(room)
     }	
 	
     public void roomStop(IScope room) {
-    	log.info( "${APP} - roomStop " )
+    	log.debug( "${APP} - roomStop " )
     	super.roomStop(room)
-//    	assert participantsApplication != null
+    	assert participantsApplication != null
     	participantsApplication.destroyRoom(room.name)
     }
     
 	public boolean roomConnect(IConnection connection, Object[] params) {
-    	log.info( "${APP} - roomConnect - ")
+    	log.debug( "${APP} - roomConnect - ")
 
         String username = ((String) params[0]).toString()
+        log.debug( "${APP} - roomConnect - $username")
         String role = ((String) params[1]).toString()
+        log.debug( "${APP} - roomConnect - $role")
         String conference = ((String) params[2]).toString()
+        log.debug( "${APP} - roomConnect - $conference")
         String mode = ((String) params[3]).toString()
+        log.debug( "${APP} - roomConnect - $mode")
         def userid = Red5.connectionLocal.client.id
+        log.debug( "${APP} - roomConnect - $userid")
         def sessionName = connection.scope.name
+        log.debug( "${APP} - roomConnect - $sessionName")
         
         def room                
         if (Constants.PLAYBACK_MODE.equals(mode)) {
         	room = ((String) params[4]).toString()   
-//        	assert archiveApplication != null
+        	assert archiveApplication != null
+			log.debug( "${APP} - roomConnect - creating PlaybackSession")
         	archiveApplication.createPlaybackSession(sessionName)
         } else {
         	room = sessionName
-//        	assert archiveApplication != null
-        	archiveApplication.createRecordSession(sessionName)
+        	assert archiveApplication != null
+			log.debug( "${APP} - roomConnect - creating RecordSession")
+        	archiveApplication.createRecordSession(conference, room, sessionName)
         }
-    	
+    	log.debug( "${APP} - roomConnect - creating BigBlueButtonSession")
     	BigBlueButtonSession bbbSession = new BigBlueButtonSession(sessionName, userid,  username, role, conference, mode, room)
+    	log.debug( "${APP} - roomConnect - setting attribute BigBlueButtonSession")
         connection.setAttribute(Constants.SESSION, bbbSession)        
-		log.info("${APP} - roomConnect - [${username},${role},${conference},${room}]") 
+		log.debug("${APP} - roomConnect - [${username},${role},${conference},${room}]") 
 
         super.roomConnect(connection, params)
     	return true;
