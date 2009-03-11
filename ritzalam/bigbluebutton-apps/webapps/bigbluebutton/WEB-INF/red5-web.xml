@@ -42,6 +42,7 @@
 	
 	<bean id="participantsHandler" class="org.bigbluebutton.conference.service.participants.ParticipantsHandler" singleton="true" >
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+		<property name="archiveApplication"> <ref local="archiveApplication"/></property>
 	</bean>
 	
 	<bean id="participantsApplication" 

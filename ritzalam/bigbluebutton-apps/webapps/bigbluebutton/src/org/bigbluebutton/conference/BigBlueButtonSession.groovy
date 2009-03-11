@@ -23,5 +23,9 @@ public class BigBlueButtonSession {
 		this.conference = conference
 		this.mode = mode
 		this.room = room
-	}	
+	}
+	
+	def playbackMode() {
+		mode == Constants.PLAYBACK_MODE
+	}
 }

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 import org.red5.server.adapter.ApplicationAdapter
 import org.red5.server.api.Red5import java.util.Mapimport org.bigbluebutton.conference.RoomsManager
-import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListenerimport org.bigbluebutton.conference.BigBlueButtonSessionimport org.bigbluebutton.conference.Constants
+import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListenerimport org.bigbluebutton.conference.BigBlueButtonSessionimport org.bigbluebutton.conference.Constantsimport org.bigbluebutton.conference.service.archive.ArchiveApplication
 public class ParticipantsHandler extends ApplicationAdapter implements IApplication{
 	protected static Logger log = LoggerFactory.getLogger( ParticipantsHandler.class )
 
@@ -19,7 +19,8 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	private static final String APP = "PARTICIPANTS"
 
 	private ParticipantsApplication participantsApplication
-
+	private ArchiveApplication archiveApplication
+	
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
 		log.debug("${APP}:appConnect")
@@ -57,7 +58,19 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	@Override
 	public boolean roomConnect(IConnection connection, Object[] params) {
 		log.debug("${APP}:roomConnect")
-
+		if (getBbbSession().playbackMode()) {
+			log.debug("In playback mode")
+		} else {
+			log.debug("In live mode")
+			ISharedObject so = getSharedObject(connection.scope, PARTICIPANTS_SO)
+			log.debug("Setting up recorder")
+			ParticipantsEventRecorder recorder = new ParticipantsEventRecorder(so)
+			log.debug("adding event recorder to ${connection.scope.name}")
+			archiveApplication.addEventRecorder(connection.scope.name, recorder)
+			log.debug("Adding room listener")
+    		participantsApplication.addRoomListener(connection.scope.name, recorder)
+    		log.debug("Done setting up recorder and listener")
+		}
     	return true;
 	}
 
@@ -77,7 +90,7 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	@Override
 	public void roomLeave(IClient client, IScope scope) {
 		log.debug("${APP}:roomLeave ${scope.name}")
-		BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
+		BigBlueButtonSession bbbSession = getBbbSession()
 		participantsApplication.participantLeft(bbbSession.sessionName, bbbSession.userid)
 	}
 
@@ -86,9 +99,8 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		log.debug("${APP} - roomStart ${scope.name}")
     	// create ParticipantSO if it is not already created
     	if (!hasSharedObject(scope, PARTICIPANTS_SO)) {
-    		if (createSharedObject(scope, PARTICIPANTS_SO, false)) {
-    			ISharedObject so = getSharedObject(scope, PARTICIPANTS_SO)
-        		return participantsApplication.addRoomListener(scope.name, new RoomListener(so))  			
+    		if (createSharedObject(scope, PARTICIPANTS_SO, false)) {    			
+    			return true 			
     		}    		
     	}  	
 		log.error("Failed to start room ${scope.name}")
@@ -107,7 +119,7 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		log.debug("${APP}:participantJoin")
 //		ISharedObject so = getSharedObject(Red5.connectionLocal.scope, PARTICIPANTS_SO, false)
 		log.debug("${APP}:participantJoin - getting userid")
-		BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
+		BigBlueButtonSession bbbSession = getBbbSession()
 		if (bbbSession == null) {
 			log.warn("bbb session is null")
 		}
@@ -136,4 +148,12 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		participantsApplication = a
 	}
 	
+	public void setArchiveApplication(ArchiveApplication a) {
+		log.debug("Setting archive application")
+		archiveApplication = a
+	}
+	
+	private BigBlueButtonSession getBbbSession() {
+		return Red5.connectionLocal.getAttribute(Constants.SESSION)
+	}
 }

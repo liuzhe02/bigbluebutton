@@ -1,9 +1,12 @@
 
 package org.bigbluebutton.conference.service.archive.record
 
-import org.ho.yaml.YamlEncoder
-public class FileRecorder implements IRecorder{
+import org.ho.yaml.YamlEncoderimport org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
+public class FileRecorder implements IRecorder{
+	protected static Logger log = LoggerFactory.getLogger( FileRecorder.class )
+	
 	private final String conference
 	private final String room
 	private final String recordingsDirectory
@@ -27,10 +30,24 @@ public class FileRecorder implements IRecorder{
 	}
 	
 	public void recordEvent(Map event) {
+		log.debug("Recording event to file ${recordingFile.absolutePath}.")
 		FileOutputStream fout = new FileOutputStream(recordingFile, true /*append*/)
-		YamlEncoder enc = new YamlEncoder(fout)
-        enc.writeObject(event)
-        enc.close()       
+		log.debug("Recording event to file - got output stream.")
+		if (fout == null) {
+			log.debug("Outputstream is null")
+		} else {
+			log.debug("Outputstream is NOT null")
+		}
+		
+		Thread.start {
+			YamlEncoder enc = new YamlEncoder(fout)
+			log.debug("Recording event to file - setting up encoder.")
+	        enc.writeObject(event)
+	        log.debug("Recording event to file - writing the event to file.")
+	        enc.close()  			
+		}
+     
+        log.debug("Recorded event to file - closed encoder.")
 	}
 	
 	public void setRecordingsDirectory(String directory) {

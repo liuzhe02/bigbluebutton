@@ -76,12 +76,12 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
         if (Constants.PLAYBACK_MODE.equals(mode)) {
         	room = ((String) params[4]).toString()   
         	assert archiveApplication != null
-			log.debug( "${APP} - roomConnect - creating PlaybackSession")
-        	archiveApplication.createPlaybackSession(sessionName)
+			log.debug( "${APP} - roomConnect - creating PlaybackSession $sessionName")
+        	archiveApplication.createPlaybackSession(conference, room, sessionName)
         } else {
         	room = sessionName
         	assert archiveApplication != null
-			log.debug( "${APP} - roomConnect - creating RecordSession")
+			log.debug( "${APP} - roomConnect - creating RecordSession $sessionName")
         	archiveApplication.createRecordSession(conference, room, sessionName)
         }
     	log.debug( "${APP} - roomConnect - creating BigBlueButtonSession")

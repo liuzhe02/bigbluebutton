@@ -35,14 +35,16 @@ public class ArchiveApplication {
 				session = new PlaybackSession(sessionName)
 				playbackSessions.put(session.name, session)
 				createdSession = true
+				log.debug("Created playback session ${session.name}")
 			}
 		}
 		if (createdSession) {
 			player = new FileReaderPlaybackPlayer(conference, room)
 			player.setRecordingsBaseDirectory(recordingsDirectory)
 			session.setPlaybackPlayer(player)						
+		}else {
+			log.debug("Not creating playback session ${session.name}")
 		}
-
 	}
 	
 	public void removeRecordSession(String room) {
@@ -53,21 +55,48 @@ public class ArchiveApplication {
 	 * Creates a record session if there wasn't one created already.
 	 */
 	public void createRecordSession(String conference, String room, String sessionName) {
-		RecordSession recordSession
+		RecordSession session
 		IRecorder recorder
 		def createdSession = false
+		log.debug("Trying to create a record session for $sessionName")
 		synchronized (this) {
-			if (recordSessions.containsKey(sessionName)) {
+			log.debug("Checking if record session $sessionName is already present.")
+			if (recordSessions == null) {
+				log.debug("record session is null")
+			} else {
+				log.debug("record session is NOT null")
+			}
+			
+			if (! recordSessions.containsKey(sessionName)) {
+				log.debug("Creating file recorder for $conference $room")
 				recorder = new FileRecorder(conference, room)
-				recordSessions.put(session.name, session)				
+				log.debug("Creating record session for $sessionName")
+				session = new RecordSession(conference, room)
+				log.debug("Adding record session $sessionName to record sessions")
+				recordSessions.put(session.getName(), session)	
+				log.debug("Setting recorder to record session $sessionName")
+				session.setRecorder(recorder)
 				createdSession = true
+				log.debug("Created record session ${session.name}")
+			} else {
+				log.debug("Not creating record session")
+				log.debug("Not creating record session ${session.getName()}")
 			}
 		}
-		if (createdSession) {
-			recordSession = new RecordSession(sessionName)
+		if (createdSession) {			
 			recorder.setRecordingsDirectory(recordingsDirectory)
 			recorder.initialize()
 		}		
+	}
+	
+	public void addEventRecorder(String sessionName, IEventRecorder recorder) {
+		if (recordSessions.containsKey(sessionName)) {
+			log.debug("Adding event recorder to session $sessionName.")
+			RecordSession session = recordSessions.get(sessionName)
+			session.addEventRecorder(recorder)
+		} else {
+			log.debug("Not adding event recorder to session $sessionName.")
+		}
 	}
 	
 	public void addPlaybackNotifier(String sessionName, IPlaybackNotifier notifier) {

@@ -1,19 +1,22 @@
 
 package org.bigbluebutton.conference.service.archive.record
 
-import java.util.concurrent.CopyOnWriteArrayList
-public class RecordSession{
-
+import java.util.concurrent.ConcurrentHashMap
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+public class RecordSession{
+	protected static Logger log = LoggerFactory.getLogger( RecordSession.class )
+	
 	private final String name
 	private final String conference
 	private final IRecorder recorder
 	
-	private List<IEventRecorder> recorders
+	private Map<String, IEventRecorder> recorders
 	
 	public RecordSession(String conference, String room) {
 		name = room
 		this.conference = conference
-		recorders = new CopyOnWriteArrayList<IEventRecorder>()
+		recorders = new ConcurrentHashMap<String, IEventRecorder>()
 	}
 	
 	public String getName() {
@@ -21,8 +24,15 @@ public class RecordSession{
 	}
 	
 	public void addEventRecorder(IEventRecorder r) {
-		r.acceptRecorder(recorder)
-		recorders.add(r)
+		synchronized (this) {
+			if (! recorders.containsKey(r.getName())) {
+				r.acceptRecorder(recorder)
+				recorders.put(r.getName(), r)
+				log.debug("Added event recorder $r.name")
+			} else {
+				log.debug("Did not add recorder as it's already there.")
+			}
+		}				
 	}
 	
 	public void setRecorder(IRecorder recorder) {

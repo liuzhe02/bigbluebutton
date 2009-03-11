@@ -29,8 +29,10 @@ public class Room {
 	}
 	
 	public void addRoomListener(IRoomListener listener) {
-		log.debug("adding room listener")
-		listeners.add(listener)
+		if (! listeners.contains(listener)) {
+			log.debug("adding room listener")
+			listeners.add(listener)			
+		}
 	}
 	
 	public void removeRoomListener(IRoomListener listener) {

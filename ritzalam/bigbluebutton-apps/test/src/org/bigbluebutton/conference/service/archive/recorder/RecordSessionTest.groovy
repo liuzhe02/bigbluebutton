@@ -14,6 +14,9 @@ public class RecordSessionTest{
 	public void recordSessionTest() {
 		// Mock the IEventRecorder interface
 		def recorderPassedFromRecordSession
+		def eventRecorderMockGetNameMethod = {
+				return 'PARTICIPANT'
+		}
 		def eventRecorderMockAcceptRecorderMethod = {
 			recorderPassedFromRecordSession = it
 		}
@@ -21,7 +24,7 @@ public class RecordSessionTest{
 			recorderPassedFromRecordSession.recordEvent(it)
 		}
 		
-		def eventRecorderMock = [acceptRecorder:eventRecorderMockAcceptRecorderMethod, recordEvent:eventRecorderMockRecordEventMethod] as IEventRecorder
+		def eventRecorderMock = [getName:eventRecorderMockGetNameMethod, acceptRecorder:eventRecorderMockAcceptRecorderMethod, recordEvent:eventRecorderMockRecordEventMethod] as IEventRecorder
 		
 		// Setup our test event to be recorded
 		Map event1 = new HashMap()

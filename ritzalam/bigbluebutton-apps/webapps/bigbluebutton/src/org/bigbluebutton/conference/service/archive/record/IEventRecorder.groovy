@@ -6,4 +6,5 @@ interface IEventRecorder{
 
 	def acceptRecorder(IRecorder recorder)
 	def recordEvent(Map event)
+	def getName()
 }
