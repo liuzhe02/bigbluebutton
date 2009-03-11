@@ -84,18 +84,11 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	@Override
 	public boolean roomStart(IScope scope) {
 		log.debug("${APP} - roomStart ${scope.name}")
-
     	// create ParticipantSO if it is not already created
     	if (!hasSharedObject(scope, PARTICIPANTS_SO)) {
     		if (createSharedObject(scope, PARTICIPANTS_SO, false)) {
     			ISharedObject so = getSharedObject(scope, PARTICIPANTS_SO)
-    			BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
-    			if (Constants.PLAYBACK_MODE.equals(bbbSession.mode)) {
-    				
-    			} else {
-    				log.debug("Starting room ${scope.name}")
-        			return participantsApplication.addRoomListener(scope.name, new RoomListener(so))
-    			}    			
+        		return participantsApplication.addRoomListener(scope.name, new RoomListener(so))  			
     		}    		
     	}  	
 		log.error("Failed to start room ${scope.name}")

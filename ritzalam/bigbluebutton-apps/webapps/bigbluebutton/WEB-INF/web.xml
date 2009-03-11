@@ -38,9 +38,9 @@
 	    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	
-	<listener>
+	<!--listener>
 		<listener-class>org.bigbluebutton.conference.service.presentation.JmsConnectionContextListener</listener-class>
-	</listener>
+	</listener-->
 	
     <!-- remove the following servlet tags if you want to disable remoting for this application -->
     <servlet>

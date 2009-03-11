@@ -21,7 +21,8 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 	private static final String PRESENTATION = "PRESENTATION";	
 	private static final String PRESENTATION_SO = "presentationSO";   
 	private static final String APP = "PRESENTATION";
-	private ApplicationAdapter application
+	def conversionUpdatesService
+	
 	private ParticipantsApplication participantsApplication
 	
 	@Override
@@ -50,12 +51,16 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 	@Override
 	public boolean appStart(IScope scope) {
 		log.debug("${APP}:appStart")
+		log.debug("${APP}:Starting conversionUpdatesService")
+		conversionUpdatesService.start()
 		return true;
 	}
 
 	@Override
 	public void appStop(IScope scope) {
 		log.debug("${APP}:appStop ${scope.name}")
+		log.debug("${APP}:Stopping conversionUpdatesService")
+		conversionUpdatesService.stop()
 	}
 
 	@Override
@@ -117,13 +122,6 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 		so.sendMessage("assignPresenterCallback", presenter)
 	}
 	
-	
-	public void setApplicationAdapter(ApplicationAdapter a) {
-		log.debug("Setting application adapter.")
-		application = a
-		application.addListener(this)
-	}
-	
 	public void setParticipantsApplication(ParticipantsApplication a) {
 		log.debug("Setting participants application")
 		participantsApplication = a
@@ -132,5 +130,9 @@ public class PresentationService extends ApplicationAdapter implements IApplicat
 	public void setUpdatesListener(ConversionUpdatesListener updatesListener) {
 		log.debug("Setting updates listener")
 		this.updatesListener = updatesListener;
+	}
+	
+	public void setUpdatesConversionService(IConversionUpdatesService service) {
+		conversionUpdatesService = service
 	}
 }

@@ -1,6 +1,6 @@
 package org.bigbluebutton.conference
 
-import org.red5.server.api.Red5import org.bigbluebutton.conference.service.participants.ParticipantsApplication
+import org.red5.server.api.Red5import org.bigbluebutton.conference.service.participants.ParticipantsApplicationimport org.bigbluebutton.conference.service.archive.ArchiveApplication
 import org.red5.server.adapter.ApplicationAdapter
 import org.red5.server.adapter.IApplication
 import org.red5.server.api.IClient
@@ -16,14 +16,14 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 
 	private static final String APP = "BigBlueButtonApplication"
 	private ParticipantsApplication participantsApplication
+	private ArchiveApplication archiveApplication
 	
     public boolean appStart (IScope app )
     {
         log.info( "${APP} - appStart" )
         return super.appStart(app)
     }
-    
-    
+        
     public void appStop (IScope app )
     {
         log.info( "${APP} - appStop" )
@@ -45,6 +45,7 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
     
     public boolean roomStart(IScope room) {
     	log.info( "${APP} - roomStart " )
+//    	assert participantsApplication != null
     	participantsApplication.createRoom(room.name)
     	return super.roomStart(room)
     }	
@@ -52,6 +53,7 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
     public void roomStop(IScope room) {
     	log.info( "${APP} - roomStop " )
     	super.roomStop(room)
+//    	assert participantsApplication != null
     	participantsApplication.destroyRoom(room.name)
     }
     
@@ -67,14 +69,17 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
         
         def room                
         if (Constants.PLAYBACK_MODE.equals(mode)) {
-        	room = ((String) params[4]).toString()        	
+        	room = ((String) params[4]).toString()   
+//        	assert archiveApplication != null
+        	archiveApplication.createPlaybackSession(sessionName)
         } else {
         	room = sessionName
+//        	assert archiveApplication != null
+        	archiveApplication.createRecordSession(sessionName)
         }
     	
     	BigBlueButtonSession bbbSession = new BigBlueButtonSession(sessionName, userid,  username, role, conference, mode, room)
-        connection.setAttribute(Constants.SESSION, bbbSession)
-        
+        connection.setAttribute(Constants.SESSION, bbbSession)        
 		log.info("${APP} - roomConnect - [${username},${role},${conference},${room}]") 
 
         super.roomConnect(connection, params)
@@ -82,14 +87,20 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 	}
 
 	public String getMyUserId() {
+		log.debug("Getting userid for connection.")
 		BigBlueButtonSession bbbSession = Red5.connectionLocal.getAttribute(Constants.SESSION)
 		assert bbbSession != null
-		return bbbSession.id;
+		return bbbSession.userid;
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
 		log.debug("Setting participants application")
 		participantsApplication = a
+	}
+	
+	public void setArchiveApplication(ArchiveApplication a) {
+		log.debug("Setting archive application")
+		archiveApplication = a
 	}
 	
 	public void setApplicationListeners(Set listeners) {
@@ -101,5 +112,6 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 			super.addListener((IApplication) iter.next())
 			count++
 		}
+		log.debug("Finished Setting application listeners")
 	}
 }

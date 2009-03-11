@@ -16,30 +16,58 @@ public class ArchiveApplication {
 	public ArchiveApplication() {
 		playbackSessions = new ConcurrentHashMap<String, PlaybackSession>()
 		recordSessions = new ConcurrentHashMap<String, RecordSession>()
+		log.debug("Instantiated ArchiveApplication")
 	}
 	
 	public void destroyPlaybackSession(String sessionName) {
 		playbackSessions.remove(sessionName)
 	}
 
+	/**
+	 * Creates a playback session if there wasn't one created already.
+	 */
 	public void createPlaybackSession(String conference, String room, String sessionName) {
-		PlaybackSession session = new PlaybackSession(sessionName)
-		IPlaybackPlayer player = new FileReaderPlaybackPlayer(conference, room)
-		player.setRecordingsBaseDirectory(recordingsDirectory)
-		session.setPlaybackPlayer(player)
-		playbackSessions.put(session.name, session)
+		PlaybackSession session
+		IPlaybackPlayer player
+		def createdSession = false
+		synchronized (this) {
+			if (playbackSessions.containsKey(sessionName)) {
+				session = new PlaybackSession(sessionName)
+				playbackSessions.put(session.name, session)
+				createdSession = true
+			}
+		}
+		if (createdSession) {
+			player = new FileReaderPlaybackPlayer(conference, room)
+			player.setRecordingsBaseDirectory(recordingsDirectory)
+			session.setPlaybackPlayer(player)						
+		}
+
 	}
 	
 	public void removeRecordSession(String room) {
 		recordSessions.remove(room)
 	}
 	
+	/**
+	 * Creates a record session if there wasn't one created already.
+	 */
 	public void createRecordSession(String conference, String room, String sessionName) {
-		RecordSession recordSession = new RecordSession(sessionName)
-		IRecorder recorder = new FileRecorder(conference, room)
-		recorder.setRecordingsDirectory(recordingsDirectory)
-		recorder.initialize()
-		recordSession.put(session.name, session)
+		RecordSession recordSession
+		IRecorder recorder
+		def createdSession = false
+		synchronized (this) {
+			if (recordSessions.containsKey(sessionName)) {
+				recorder = new FileRecorder(conference, room)
+				recordSessions.put(session.name, session)				
+				createdSession = true
+			}
+		}
+		if (createdSession) {
+			recordSession = new RecordSession(sessionName)
+			recorder.setRecordingsDirectory(recordingsDirectory)
+			recorder.initialize()
+		}		
 	}
 	
 	public void addPlaybackNotifier(String sessionName, IPlaybackNotifier notifier) {
@@ -81,10 +109,13 @@ public class ArchiveApplication {
 	}
 	
 	public void setPlaybackJobScheduler(PlaybackJobScheduler scheduler) {
+		log.debug("Setting playbackScheduler")
 		playbackScheduler = scheduler
+		playbackScheduler.start()
 	}
 	
 	public void setRecordingsDirectory(String directory) {
+		log.debug("Setting recordings directory to $directory")
 		this.recordingsDirectory = directory
 	}
 }

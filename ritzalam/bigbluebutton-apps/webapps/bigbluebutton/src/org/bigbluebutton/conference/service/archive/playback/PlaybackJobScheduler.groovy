@@ -4,10 +4,14 @@ package org.bigbluebutton.conference.service.archive.playback
 import java.util.concurrent.DelayQueueimport java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Delayedimport org.bigbluebutton.conference.service.archive.playback.RecordedEvent
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 /**
  * This class handles the playing back of all playback sessions.
  */
 public class PlaybackJobScheduler {
+	protected static Logger log = LoggerFactory.getLogger( PlaybackJobScheduler.class )
 	
 	private DelayQueue<RecordedEvent> queue =  new DelayQueue<RecordedEvent>()
 	private final static int NTHREADS = 5
@@ -17,6 +21,7 @@ public class PlaybackJobScheduler {
 	 * Start the scheduler.
 	 */
 	public void start() {
+		log.debug("Starting PlaybackJobScheduler")
 		/**
 		 * This thread just monitors the queue, gets an entry and pass it
 		 * to one of the worker threads managed by the executor.
@@ -24,7 +29,7 @@ public class PlaybackJobScheduler {
 		def playbackThread = new Thread() {
 			while (true) {
 				try {
-					play(queue.take());
+					play(queue.take())
 	            } catch (InterruptedException e) {}
 			}
 		}

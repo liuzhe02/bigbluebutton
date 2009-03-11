@@ -24,23 +24,23 @@
 	</bean>
 
 	<bean id="web.handler" class="org.bigbluebutton.conference.BigBlueButtonApplication" singleton="true">
-		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>		
 		<property name="applicationListeners">
     		<set>
 				<ref bean="participantsHandler" />
+				<ref bean="presentation.service" />
     		</set>
-  		</property>		
+  		</property>	  
+  		<property name="archiveApplication"> <ref local="archiveApplication"/></property>			
 	</bean>
 	
 	<bean id="roomsManager" class="org.bigbluebutton.conference.RoomsManager" singleton="true" />
 		
-	<!--bean id="chat.service" 
-	    class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
+	<!--bean id="chat.service" class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
 		<property name="applicationAdapter"> <ref local="web.handler"/></property>
 	</bean-->
 	
-	<bean id="participantsHandler" 
-	    class="org.bigbluebutton.conference.service.participants.ParticipantsHandler" singleton="true" >
+	<bean id="participantsHandler" class="org.bigbluebutton.conference.service.participants.ParticipantsHandler" singleton="true" >
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 	</bean>
 	
@@ -49,15 +49,21 @@
 		<property name="roomsManager"> <ref local="roomsManager"/></property>
 	</bean>
 	
-	<bean id="participants.service" 
-	    class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
+	<bean id="archiveApplication" class="org.bigbluebutton.conference.service.archive.ArchiveApplication" singleton="true">
+		<property name="recordingsDirectory" value="${recordingsDirectory}"/>
+		<property name="playbackJobScheduler"> <ref local="playbackJobScheduler"/></property>
+	</bean>
+	
+	<bean id="playbackJobScheduler" class="org.bigbluebutton.conference.service.archive.playback.PlaybackJobScheduler" singleton="true" />
+
+	<bean id="participants.service" class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 	</bean>
 		
 	<bean id="presentation.service" class="org.bigbluebutton.conference.service.presentation.PresentationService" singleton="true">
-		<property name="applicationAdapter"> <ref local="web.handler"/></property>
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 		<property name="updatesListener"> <ref local="updatesListener"/> </property>
+		<property name="updatesConversionService"> <ref local="conversionUpdatesService"/></property>
 	</bean>
 
 	<bean id="updatesListener" class="org.bigbluebutton.conference.service.presentation.ConversionUpdatesListener" singleton="true"/>
