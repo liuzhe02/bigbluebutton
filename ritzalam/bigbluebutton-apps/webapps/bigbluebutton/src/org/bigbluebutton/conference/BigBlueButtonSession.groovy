@@ -28,4 +28,8 @@ public class BigBlueButtonSession {
 	def playbackMode() {
 		mode == Constants.PLAYBACK_MODE
 	}
+	
+//	public Long getUserid() {
+//		return userid
+//	}
 }

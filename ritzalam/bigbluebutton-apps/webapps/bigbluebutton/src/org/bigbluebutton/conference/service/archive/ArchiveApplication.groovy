@@ -80,7 +80,6 @@ public class ArchiveApplication {
 				log.debug("Created record session ${session.name}")
 			} else {
 				log.debug("Not creating record session")
-				log.debug("Not creating record session ${session.getName()}")
 			}
 		}
 		if (createdSession) {			

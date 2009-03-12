@@ -91,7 +91,13 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	public void roomLeave(IClient client, IScope scope) {
 		log.debug("${APP}:roomLeave ${scope.name}")
 		BigBlueButtonSession bbbSession = getBbbSession()
-		participantsApplication.participantLeft(bbbSession.sessionName, bbbSession.userid)
+		if (bbbSession == null) {
+			log.debug("roomLeave - session is null") 
+		} else {
+			log.debug("roomLeave - session is NOT null")
+		}
+		Long userid = bbbSession.userid
+		participantsApplication.participantLeft(bbbSession.sessionName, userid)
 	}
 
 	@Override

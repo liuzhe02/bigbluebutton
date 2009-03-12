@@ -14,6 +14,10 @@ public class ParticipantsRoomListener implements IRoomListener{
 		this.recorder = recorder
 	}
 	
+	def getName() {
+		return 'TEMPNAME'
+	}
+	
 	public void participantStatusChange(Long userid, String status, Object value){
 		so.sendMessage("participantStatusChange", [userid, status, value])
 	}

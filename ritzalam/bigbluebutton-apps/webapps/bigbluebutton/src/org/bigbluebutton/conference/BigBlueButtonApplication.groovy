@@ -67,7 +67,11 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
         log.debug( "${APP} - roomConnect - $conference")
         String mode = ((String) params[3]).toString()
         log.debug( "${APP} - roomConnect - $mode")
-        def userid = Red5.connectionLocal.client.id
+        /*
+         * Convert the id to Long because it gets converted to ascii decimal
+         * equivalent (i.e. zero (0) becomes 48) if we don't.
+         */
+        def userid = Red5.connectionLocal.client.id.toLong()
         log.debug( "${APP} - roomConnect - $userid")
         def sessionName = connection.scope.name
         log.debug( "${APP} - roomConnect - $sessionName")

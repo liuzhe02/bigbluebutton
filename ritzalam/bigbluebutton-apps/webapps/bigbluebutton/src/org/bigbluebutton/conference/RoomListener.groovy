@@ -10,6 +10,10 @@ public class RoomListener implements IRoomListener{
 		this.so = so 
 	}
 	
+	def getName() {
+		return 'TEMPNAME'
+	}
+	
 	public void participantStatusChange(Long userid, String status, Object value){
 		so.sendMessage("participantStatusChange", [userid, status, value])
 	}

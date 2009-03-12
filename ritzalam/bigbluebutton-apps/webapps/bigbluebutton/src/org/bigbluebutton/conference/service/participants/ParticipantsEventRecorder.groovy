@@ -34,7 +34,9 @@ public class ParticipantsEventRecorder implements IEventRecorder, IRoomListener 
 	}
 	
 	public void participantStatusChange(Long userid, String status, Object value){
+		log.debug("A participant's status has changed ${userid} $status $value.")
 		so.sendMessage("participantStatusChange", [userid, status, value])
+		
 		Map event = new HashMap()
 		event.put("date", new Date().time)
 		event.put("application", name)
