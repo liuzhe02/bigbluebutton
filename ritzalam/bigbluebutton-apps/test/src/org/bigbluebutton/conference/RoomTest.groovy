@@ -26,11 +26,22 @@ public class RoomTest{
 
 	@Test
 	public void callListenerOnAddParticipantTest() {
-		expect(mock.participantJoined(p1))
-		replay(mock)
-		r.addRoomListener(mock)
+		def getNameMethod = {
+				'test-room-listener'
+		}
+		def participantStatusChangeMethod = {
+				
+		}
+		def participantJoinedMethod = {
+				Assert.assertEquals(p1, it, "The participant should be the same as the one added.")
+		}
+		def participantLeftMethod = {
+				participantLeft
+		}
+		def roomListenerMock = [getName:getNameMethod, participantStatusChange:participantStatusChangeMethod,
+		                        participantJoined:participantJoinedMethod, participantLeft:participantLeftMethod] as IRoomListener
+		r.addRoomListener(roomListenerMock)
 	    r.addParticipant(p1)
-	    verify(mock)
 	}
 
 	@Test
@@ -46,16 +57,32 @@ public class RoomTest{
 	
 	@Test
 	public void removeParticipantsTest() {
-		expect(mock.participantJoined(p1))
-		expect(mock.participantJoined(p2))
-		expect(mock.participantLeft(p1.userid))
-		replay(mock)
-		r.addRoomListener(mock)
+		def getNameMethod = {
+				'test-room-listener'
+		}
+		def participantStatusChangeMethod = {
+				
+		}
+		def participantJoinedMethod = {
+				Assert.assertEquals(p1, it, "The participant should be the same as the one added.")
+		}
+		def participantLeftMethod = {
+				Assert.assertEquals(1L, it, "The userid of the participant that left should be 1.")
+		}
+		def roomListenerMock = [getName:getNameMethod, participantStatusChange:participantStatusChangeMethod,
+		                        participantJoined:participantJoinedMethod, participantLeft:participantLeftMethod] as IRoomListener
+		/**
+		 * Add a participant before we add the listener mock so as not to trigger the
+		 * paticipantJoined method failing the test.
+		 */ 
+		r.addParticipant(p2)
+		// Add the listener mock.
+		r.addRoomListener(roomListenerMock)
+		// Add participant 1 which should call participantJoinedMethod and should pass the assertion.
 	    r.addParticipant(p1)
-	    r.addParticipant(p2)
+	    
 	    Assert.assertEquals(r.getNumberOfParticipants(), 2, "There should be 2 participants.")
 	    r.removeParticipant(new Long(1))
-	    verify(mock)
 	    Assert.assertEquals(r.getNumberOfParticipants(), 1, "There should be 1 participant left.")
 	    Map mp = r.getParticipants()
 	    Assert.assertEquals(mp.size(), 1, "There should be 1 participant.")
@@ -65,16 +92,28 @@ public class RoomTest{
 	
 	@Test
 	public void changeParticipantStatusTest() {
-		expect(mock.participantJoined(p1))
-		expect(mock.participantJoined(p2))
-		expect(mock.participantStatusChange(p1.userid, "presenter", true))
-		replay(mock)
-		r.addRoomListener(mock)
-	    r.addParticipant(p1)
-	    r.addParticipant(p2)
+		def getNameMethod = {
+			'test-room-listener'
+		}
+		def participantStatusChangeMethod = {userid, status, value ->
+			Assert.assertEquals(1L, userid, "The user id should be 1.")
+			Assert.assertEquals("presenter", status, "The status should be presenter.")
+			Assert.assertTrue(value, "The presenter should be true.")
+		}
+		def participantJoinedMethod = {
+				Assert.assertEquals(p1, it, "The participant should be the same as the one added.")
+		}
+		def participantLeftMethod = {
+				Assert.assertEquals(1L, it, "The userid of the participant that left should be 1.")
+		}
+		def roomListenerMock = [getName:getNameMethod, participantStatusChange:participantStatusChangeMethod,
+		                        participantJoined:participantJoinedMethod, participantLeft:participantLeftMethod] as IRoomListener
+		r.addParticipant(p2)
+		r.addRoomListener(roomListenerMock)
+	    r.addParticipant(p1)	   
 	    Assert.assertEquals(r.getNumberOfParticipants(), 2, "There should be 2 participants.")
 	    r.changeParticipantStatus(new Long(1), "presenter", true)
-	    verify(mock)
+
 	    Map mp = r.getParticipants()
 	    Assert.assertEquals(mp.size(), 2, "There should be 2 participants.")
 	    Participant ap =  mp.get(new Long(1))

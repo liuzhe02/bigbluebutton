@@ -22,11 +22,14 @@ public class FileRecorder implements IRecorder{
 		if (! roomDir.exists())
 			roomDir.mkdirs()
 		recordingFile = new File(roomDir.canonicalPath + File.separator + "recordings.yaml" )
-		if (recordingFile.exists()) {
-			// delete the file so we start fresh
-			recordingFile.delete()
-			recordingFile = new File(roomDir.canonicalPath + File.separator + "recordings.yaml" )
-		}
+		/**
+		 * We do not actually want to delete the file. We just want to append to it.
+		 */
+//		if (recordingFile.exists()) {
+//			// delete the file so we start fresh
+//			recordingFile.delete()
+//			recordingFile = new File(roomDir.canonicalPath + File.separator + "recordings.yaml" )
+//		}
 	}
 	
 	public void recordEvent(Map event) {

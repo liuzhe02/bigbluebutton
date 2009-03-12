@@ -30,7 +30,6 @@ public class FileRecorderTest{
 		status.put("raiseHand", true)
 		status.put("presenter", true)
 		status.put("stream", "my-video-stream")
-
 		
 		Map event3 = new HashMap()
 		event3.put("date", 1236202122980)
