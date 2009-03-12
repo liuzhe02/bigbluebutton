@@ -20,7 +20,15 @@ public class ArchiveApplication {
 	}
 	
 	public void destroyPlaybackSession(String sessionName) {
-		playbackSessions.remove(sessionName)
+		PlaybackSession s = playbackSessions.remove(sessionName)
+		/*
+		 * ConcurrentHashMap returns null if sessionName is not found.
+		 */
+		if (s != null) {
+			log.debug("Removed playback session $sessionName")
+		} else {
+			log.debug("Could not find playback session $sessionName")
+		}
 	}
 
 	/**
@@ -31,6 +39,11 @@ public class ArchiveApplication {
 		IPlaybackPlayer player
 		def createdSession = false
 		synchronized (this) {
+			/**
+			 * Could not use putIfAbsent because we need to know if session was
+			 * added because there wasn't one created yet and be able to
+			 * add a playback player.
+			 */
 			if (playbackSessions.containsKey(sessionName)) {
 				session = new PlaybackSession(sessionName)
 				playbackSessions.put(session.name, session)
@@ -47,8 +60,16 @@ public class ArchiveApplication {
 		}
 	}
 	
-	public void removeRecordSession(String room) {
-		recordSessions.remove(room)
+	public void destroyRecordSession(String sessionName) {
+		RecordSession s = recordSessions.remove(sessionName)
+		/*
+		 * ConcurrentHashMap returns null if sessionName is not found.
+		 */
+		if (s != null) {
+			log.debug("Removed record session")
+		} else {
+			log.debug("Could not find record session $sessionName")
+		}
 	}
 	
 	/**

@@ -54,6 +54,19 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
     	super.roomStop(room)
     	assert participantsApplication != null
     	participantsApplication.destroyRoom(room.name)
+    	BigBlueButtonSession bbbSession = getBbbSession()
+    	assert bbbSession != null
+    	if (Constants.PLAYBACK_MODE.equals(bbbSession.mode)) {
+			log.debug( "${APP} - roomStop - destroying PlaybackSession ${bbbSession.sessionName}")
+			assert archiveApplication != null
+        	archiveApplication.destroyPlaybackSession(bbbSession.sessionName)
+        	log.debug( "${APP} - roomStop - destroyed PlaybackSession ${bbbSession.sessionName}")
+        } else {        	
+			log.debug( "${APP} - roomStop - destroying RecordSession ${bbbSession.sessionName}")
+			assert archiveApplication != null
+        	archiveApplication.destroyRecordSession(bbbSession.sessionName)
+        	log.debug( "${APP} - roomStop - destroyed RecordSession ${bbbSession.sessionName}")
+        }
     }
     
 	public boolean roomConnect(IConnection connection, Object[] params) {
@@ -125,5 +138,9 @@ public class BigBlueButtonApplication extends ApplicationAdapter{
 			count++
 		}
 		log.debug("Finished Setting application listeners")
+	}
+	
+	private BigBlueButtonSession getBbbSession() {
+		return Red5.connectionLocal.getAttribute(Constants.SESSION)
 	}
 }
