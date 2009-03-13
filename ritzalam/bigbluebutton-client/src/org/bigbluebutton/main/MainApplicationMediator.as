@@ -88,8 +88,8 @@ package org.bigbluebutton.main
 					}
 					if (ml == "ListenersModule") {
 						listenerLoaded = true;
-						proxy.loadModule("ViewersModule");
-						//proxy.loadModule("VideoModule");
+						//proxy.loadModule("ViewersModule");
+						proxy.loadModule("VideoModule");
 					}
 					if (ml == "VideoModule") {
 						videoLoaded = true;
@@ -102,7 +102,7 @@ package org.bigbluebutton.main
 					//facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
 					
 					//if (videoLoaded && viewerLoaded && chatLoaded && presentLoaded && phoneLoaded
-					if (viewerLoaded && chatLoaded && presentLoaded 
+					if (videoLoaded && viewerLoaded && chatLoaded && presentLoaded 
 							&& listenerLoaded && loginLoaded ) {
 					//if (viewerLoaded && loginLoaded) {
 						facade.sendNotification(MainApplicationConstants.MODULE_START, "LoginModule");
@@ -115,7 +115,7 @@ package org.bigbluebutton.main
 					proxy.stopModule("ChatModule");
 					proxy.stopModule("PresentationModule");
 					proxy.stopModule("ListenersModule");
-					//proxy.stopModule("VideoModule");
+					proxy.stopModule("VideoModule");
 					proxy.stopModule("ViewersModule");	
 					proxy.stopModule("LoginModule");
 					//proxy.stopModule("Red5PhoneModule");				
@@ -133,7 +133,7 @@ package org.bigbluebutton.main
 					LogUtil.debug(NAME + '::Received USER_JOINED');
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ChatModule");					
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "ListenersModule");
-					//facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
+					facade.sendNotification(MainApplicationConstants.MODULE_START, "VideoModule");
 					//facade.sendNotification(MainApplicationConstants.MODULE_START, "Red5PhoneModule");
 					facade.sendNotification(MainApplicationConstants.MODULE_START, "PresentationModule");
 					break;

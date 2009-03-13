@@ -190,7 +190,8 @@ package org.bigbluebutton.modules.viewers.model.services
 				aUser.removeStatus(statusName);
 			}
 		}
-		
+*/
+/*		
 		public function iAmPresenter(userid:Number, presenter:Boolean):void {
 			var aUser:User = _participants.getParticipant(userid);			
 			if (aUser != null) {

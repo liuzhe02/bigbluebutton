@@ -213,10 +213,12 @@ package org.bigbluebutton.modules.presentation.model.business
 		}
 		
 		public function assignPresenterCallback(userid:Number, name:String, assignedBy:Number):void {
-			LogUtil.debug(userid + "," + name + "," + assignedBy);
+			LogUtil.debug("assignPresenterCallback " + userid + "," + name + "," + assignedBy);
 			if (userid == _module.userid) {
+				LogUtil.debug("assignPresenterCallback - sending presenter mode");
 				sendMessage(PresentModuleConstants.PRESENTER_MODE, {userid:userid, presenterName:name, assignedBy:assignedBy});
 			} else {
+				LogUtil.debug("assignPresenterCallback - sending viewer mode");
 				sendMessage(PresentModuleConstants.VIEWER_MODE);
 			}
 		}
