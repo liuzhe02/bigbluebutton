@@ -121,10 +121,10 @@ package org.bigbluebutton.main.view
 					shell.loadedModules.text += notification.getBody() + "(loaded) ";
 					
 					// Should do this properly.
-					if (notification.getBody() == "ViewersModule") {
-						shell.loadedModules.text = "";
-						shell.loadProgress.text = "";
-					}
+					//if (notification.getBody() == "ViewersModule") {
+					//	shell.loadedModules.text = "";
+					//	shell.loadProgress.text = "";
+					//}
 					break;
 				case MainApplicationConstants.MODULE_LOAD_PROGRESS:
 					var mod:String = notification.getBody().name as String;

@@ -1,12 +1,11 @@
 package org.bigbluebutton.main.model
 {
-	import flash.utils.Dictionary;
-	
 	import org.bigbluebutton.common.messaging.Router;
 	import org.bigbluebutton.main.MainApplicationConstants;
 	import org.puremvc.as3.multicore.interfaces.IProxy;
 	import org.puremvc.as3.multicore.patterns.proxy.Proxy;
-
+	import org.bigbluebutton.common.messaging.Router;
+	
 	public class ModulesProxy extends Proxy implements IProxy
 	{
 		public static const NAME:String = 'ModulesProxy';
@@ -14,11 +13,13 @@ package org.bigbluebutton.main.model
 		private var modulesManager:BbbModuleManager;
 		
 		private var _user:Object;
+		private var _router:Router;
 		
-		public function ModulesProxy(data:Object=null)
+		public function ModulesProxy(router:Router)
 		{
-			super(NAME, data);
-			modulesManager = new BbbModuleManager();
+			super(NAME);
+			_router = router;
+			modulesManager = new BbbModuleManager(_router);
 			modulesManager.addInitializedListener(onInitializeComplete);
 			modulesManager.addModuleLoadedListener(onModuleLoadedListener);
 			modulesManager.initialize();
@@ -36,40 +37,16 @@ package org.bigbluebutton.main.model
 		public function set user(loggedInUser:Object):void {
 			_user = loggedInUser;
 			modulesManager.loggedInUser(_user);
-			// Add this into the attributes of the module
-			//modulesManager.addUserIntoAttributes(_user);
 		}
 
-/*		
-		public function loadModules():void {
-			LogUtil.debug('Loading all modules');
-			for (var key:Object in _modules) {
-				LogUtil.debug(key, _modules[key].attributes.url);
-				loadModule(key, loadModuleResultHandler);
-			}
-		}
-		
-		public function startModules(router:Router):void {
-			LogUtil.debug('Starting all modules');
-			for (var key:Object in _modules) {
-				LogUtil.debug('Starting ' + _modules[key].name);
-				var m:ModuleDescriptor = _modules[key] as ModuleDescriptor;
-				var bbb:IBigBlueButtonModule = m.module as IBigBlueButtonModule;
-				if (m.attributes.name == 'ViewersModule') {
-					bbb.acceptRouter(router);	
-				}
-			}		
-		}
-*/
+//		public function startModule(name:String, router:Router):void {
+//			LogUtil.debug('Request to start module ' + name);
+//			modulesManager.startModule(name, router);
+//		}
 
-		public function startModule(name:String, router:Router):void {
-			LogUtil.debug('Request to start module ' + name);
-			modulesManager.startModule(name, router);
-		}
-
-		public function stopModule(name:String):void {
-			modulesManager.stopModule(name);
-		}
+//		public function stopModule(name:String):void {
+//			modulesManager.stopModule(name);
+//		}
 						
 		public function loadModule(name:String):void {
 			LogUtil.debug('Loading ' + name);
@@ -78,30 +55,37 @@ package org.bigbluebutton.main.model
 				
 		private function onModuleLoadedListener(event:String, name:String, progress:Number=0):void {
 			switch(event) {
-					case MainApplicationConstants.MODULE_LOAD_PROGRESS:
-						facade.sendNotification(MainApplicationConstants.MODULE_LOAD_PROGRESS, {name:name, progress:progress});
-					break;	
-					case MainApplicationConstants.MODULE_LOAD_READY:
-						facade.sendNotification(MainApplicationConstants.MODULE_LOADED, name);					
-					break;				
-				}
-			
-		}
+				case MainApplicationConstants.MODULE_LOAD_PROGRESS:
+					facade.sendNotification(MainApplicationConstants.MODULE_LOAD_PROGRESS, {name:name, progress:progress});
+				break;	
+				case MainApplicationConstants.MODULE_LOAD_READY:
+					facade.sendNotification(MainApplicationConstants.LOADED_MODULE, name);
+				break;
+				case MainApplicationConstants.ALL_MODULES_LOADED:
+					LogUtil.debug(NAME + " All modules have been loaded.");
+					facade.sendNotification(MainApplicationConstants.ALL_MODULES_LOADED);					
+				break;				
+			}			
+		}		
 		
-		public function moduleStarted(name:String, started:Boolean):void {
-/*			for (var key:Object in _modules) {				
-				var m:ModuleDescriptor = _modules[key] as ModuleDescriptor;
-				if (m != null) {
-					LogUtil.debug('Setting ' + _modules[key].name + ' started to ' + started);
-					m.started = started;
-				}
-			}		
-*/		}
-				
-		public function get modules():Dictionary {
-			return null;
-//			return _modules;
+		public function moduleEventHandler(event:String):void {
+			switch (event) {
+				case MainApplicationConstants.APP_MODEL_INITIALIZED:
+					modulesManager.handleAppModelInitialized();
+					break;
+				case MainApplicationConstants.APP_START:
+					modulesManager.handleAppStart();
+					break;
+				case MainApplicationConstants.USER_LOGGED_IN:
+					modulesManager.handleUserLoggedIn();
+					break;
+				case MainApplicationConstants.USER_JOINED:
+					modulesManager.handleUserJoined();
+					break;
+				case MainApplicationConstants.LOGOUT:
+					modulesManager.handleLogout();
+					break;
+			}
 		}
-
 	}
 }
