@@ -71,7 +71,12 @@ import net.jcip.annotations.ThreadSafeimport java.util.concurrent.ConcurrentHas
 		m.put("userid", userid)
 		m.put("name", name)
 		m.put("role", role)
-		m.put("status", unmodifiableStatus)
+		/**
+		 * Create a copy of the status instead of returning the
+		 * unmodifiableMap. This way callers can still manipulate it
+		 * for their own purpose but our copy still remains unmodified.
+		 */
+		m.put("status", new HashMap(unmodifiableStatus))
 		return m
 	}
 }
