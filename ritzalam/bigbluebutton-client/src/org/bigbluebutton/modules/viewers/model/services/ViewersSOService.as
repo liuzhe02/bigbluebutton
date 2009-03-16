@@ -26,6 +26,8 @@ package org.bigbluebutton.modules.viewers.model.services
 		private var _connectionFailedListener:Function;
 		private var _connectionStatusListener:Function;
 		private var _messageSender:Function;
+		private var _mode:String;
+		private var _room:String;
 				
 		public function ViewersSOService(uri:String, participants:IViewers)
 		{			
@@ -37,6 +39,8 @@ package org.bigbluebutton.modules.viewers.model.services
 		}
 		
 		public function connect(uri:String, username:String, role:String, conference:String, mode:String, room:String):void {
+			_mode = mode;
+			_room = room;
 			netConnectionDelegate.connect(_uri, username, role, conference, mode, room);
 		}
 			
@@ -77,7 +81,34 @@ package org.bigbluebutton.modules.viewers.model.services
 			_participantsSO.client = this;
 			_participantsSO.connect(netConnectionDelegate.connection);
 			LogUtil.debug(LOGNAME + ":ViewersModules is connected to Shared object");
-			queryForParticipants();
+			if (_mode == 'PLAYBACK') {
+				startPlayback()
+			} else {
+				queryForParticipants();
+			}			
+		}
+		
+		private function startPlayback():void {
+			var nc:NetConnection = netConnectionDelegate.connection;
+			nc.call(
+				"archive.startPlayback",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Object):void { 
+						LogUtil.debug("Successfully started playback: "); 
+						notifyConnectionStatusListener(true);
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+						notifyConnectionStatusListener(false, "Failed to join the conference.");
+					}
+				),//new Responder
+				_room
+			); //_netConnection.call
 		}
 		
 		private function queryForParticipants():void {

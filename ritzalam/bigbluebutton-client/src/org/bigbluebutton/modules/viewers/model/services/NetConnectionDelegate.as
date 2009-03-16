@@ -91,7 +91,9 @@ package org.bigbluebutton.modules.viewers.model.services
 			try {					
 				LogUtil.debug(NAME + "::Connecting to " + _uri + " [" + username + "," + role + "," + conference + 
 						"," + mode + "," + room + "]");		
-				//_netConnection.connect(_uri, username, role);	
+				//if (mode == 'PLAYBACK') {
+				//	
+				//}
 				_netConnection.connect(_uri, username, role, conference, mode, room);			
 				
 			} catch( e : ArgumentError ) {
