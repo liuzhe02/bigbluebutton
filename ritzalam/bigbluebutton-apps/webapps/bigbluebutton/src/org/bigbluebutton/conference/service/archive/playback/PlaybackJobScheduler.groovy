@@ -45,6 +45,7 @@ public class PlaybackJobScheduler {
 			// If so, schedule by putting into the queue.
 			// If none, the session gets removed from the schedule.
 			if (r.scheduleNextEvent()) {
+				log.debug("There is still a message to send. Schedule the event.")
 				queue.add(r)
 			}
 		}

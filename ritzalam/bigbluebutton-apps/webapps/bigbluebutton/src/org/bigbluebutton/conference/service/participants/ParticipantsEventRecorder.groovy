@@ -72,7 +72,7 @@ public class ParticipantsEventRecorder implements IEventRecorder, IRoomListener 
 		event.put("date", new Date().time)
 		event.put("application", name)
 		event.put("event", "participantLeft")
-		event.put("user", userid)
+		event.put("userid", userid)
 		recordEvent(event)
 	}
 }

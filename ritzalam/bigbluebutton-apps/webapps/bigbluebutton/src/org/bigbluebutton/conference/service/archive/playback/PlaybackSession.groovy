@@ -1,7 +1,10 @@
 package org.bigbluebutton.conference.service.archive.playback
-import java.util.concurrent.ConcurrentHashMap
-public class PlaybackSession {
+import java.util.concurrent.ConcurrentHashMapimport org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
+public class PlaybackSession {
+	protected static Logger log = LoggerFactory.getLogger( PlaybackSession.class )
+	
 	private final String conference
 	private final String room
 	private final String name
@@ -55,7 +58,11 @@ public class PlaybackSession {
 		print "in playMessage"
 		if (playing) {
 			IPlaybackNotifier n = notifiers.get(currentMessage["application"])
-			if (n != null){
+			def playDate = new Date()
+			def app = currentMessage['application']
+			def evt = currentMessage['event']
+			log.debug("$playDate: playing [$app $evt]")
+			if (n != null){				
 				n.sendMessage(currentMessage)
 			}
 			if (initialMessage) {
@@ -67,7 +74,11 @@ public class PlaybackSession {
 				// We compute the gap between each recorded message.
 				playbackTime = new Long(nextMessage["date"].longValue()) - 
 								new Long(currentMessage["date"].longValue())
-			}
+			}			
+			def nextApp = nextMessage['application']
+			def nextEvt = nextMessage['event']
+			// Setup the next message to send.
+			log.debug("Will play $nextApp:$nextEvt in $playbackTime milliseconds.")
 			currentMessage = nextMessage
 			nextMessage = player.getMessage()
 		}
@@ -89,7 +100,14 @@ public class PlaybackSession {
 	public boolean hasMessageToSend() {
 		// We have a message to send if the user has not paused/stop and
 		// haven't reached the end of the recorded events.
-		return (playing && (nextMessage != null))
+		def hasMessage = playing && (currentMessage != null)
+		if (hasMessage) {
+			log.debug("There is still a message to send.")
+		} else {
+			log.debug("No more message to send.")
+		}
+		
+		return (playing && (currentMessage != null))
 	}
 		
 	private Map initializingMessage() {

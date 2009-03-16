@@ -2,7 +2,10 @@
 package org.bigbluebutton.conference.service.archive.playback
 
 import org.ho.yaml.Yaml
-import java.util.concurrent.atomic.AtomicIntegerimport org.ho.yaml.YamlDecoderpublic class FileReaderPlaybackPlayer implements IPlaybackPlayer{
+import java.util.concurrent.atomic.AtomicIntegerimport org.ho.yaml.YamlDecoderimport org.slf4j.Logger
+import org.slf4j.LoggerFactory
+public class FileReaderPlaybackPlayer implements IPlaybackPlayer{
+	protected static Logger log = LoggerFactory.getLogger( FileReaderPlaybackPlayer.class )
 	
 	private final String conference
 	private final String room
@@ -32,11 +35,12 @@ import java.util.concurrent.atomic.AtomicIntegerimport org.ho.yaml.YamlDecoder
             recordedEvents.add(eventRead)
           }
         }catch (EOFException e){
-          println("Finished reading stream.");
+        	log.debug("Finished reading recordings file.");
         }finally {
           dec.close();
         }
         
+        log.debug("Read ${recordedEvents.size()} events.")
 		if (recordedEvents != null) {
 			playerReady = true
 		}
@@ -44,6 +48,9 @@ import java.util.concurrent.atomic.AtomicIntegerimport org.ho.yaml.YamlDecoder
 	
 	public Map getMessage() {
 		if ((int)eventNumber < recordedEvents.size()){
+			Map e = recordedEvents[eventNumber as int]
+			def evt = e['event']
+			log.debug("Giving message $eventNumber - $evt.")
 			return recordedEvents[eventNumber.andIncrement]
 		}
 		return null

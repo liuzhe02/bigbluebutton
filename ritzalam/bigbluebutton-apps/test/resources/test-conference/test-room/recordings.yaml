@@ -1,21 +1,41 @@
 --- 
 application: PARTICIPANT
-status: !java.util.HashMap
-  stream: my-video-stream
-  raiseHand: &2 true
-  presenter: *2
-event: ParticipantJoinedEvent
-date: !java.lang.Long 1236202122980
+event: participantJoined
+date: !java.lang.Long 1237212144317
+user: !java.util.HashMap
+  status: !java.util.Collections$UnmodifiableMap
+    raiseHand: &4 false
+    hasStream: *4
+    presenter: *4
+  name: RE
+  userid: !java.lang.Long 0
+  role: MODERATOR
 --- 
 application: PARTICIPANT
-status: !java.util.HashMap
-  stream: my-video-stream-1
-  raiseHand: &2 false
-  presenter: *2
-event: ParticipantJoinedEvent
-date: !java.lang.Long 1236202132980
+event: participantLeft
+date: !java.lang.Long 1237212189988
+user: !java.lang.Long 0
 --- 
-message: "Las Vegas, Nevada, USA"
 application: PARTICIPANT
-event: ParticipantJoinedEvent
-date: !java.lang.Long 1236202142980
+event: participantJoined
+date: !java.lang.Long 1237212197806
+user: !java.util.HashMap
+  status: !java.util.Collections$UnmodifiableMap
+    raiseHand: &4 false
+    hasStream: *4
+    presenter: *4
+  name: RE
+  userid: !java.lang.Long 1
+  role: MODERATOR
+--- 
+application: PARTICIPANT
+status: presenter
+event: participantStatusChange
+value: true
+userid: !java.lang.Long 1
+date: !java.lang.Long 1237212203231
+--- 
+application: PARTICIPANT
+event: participantLeft
+date: !java.lang.Long 1237212277129
+user: !java.lang.Long 1

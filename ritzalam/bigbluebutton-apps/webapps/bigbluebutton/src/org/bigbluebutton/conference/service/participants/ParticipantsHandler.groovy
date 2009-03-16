@@ -60,6 +60,10 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		log.debug("${APP}:roomConnect")
 		if (getBbbSession().playbackMode()) {
 			log.debug("In playback mode")
+			ISharedObject so = getSharedObject(connection.scope, PARTICIPANTS_SO)
+			ParticipantPlaybackNotifier notifier = new ParticipantPlaybackNotifier(so)
+			archiveApplication.addPlaybackNotifier(connection.scope.name, notifier)
+			// add the playback notifier with so
 		} else {
 			log.debug("In live mode")
 			ISharedObject so = getSharedObject(connection.scope, PARTICIPANTS_SO)
@@ -83,7 +87,11 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	@Override
 	public boolean roomJoin(IClient client, IScope scope) {
 		log.debug("${APP}:roomJoin ${scope.name} - ${scope.parent.name}")
-		participantJoin();
+		if (getBbbSession().playbackMode()) {
+			log.debug("In playback mode, so not joining the conference room.")
+		} else {
+			participantJoin();
+		}
 		return true;
 	}
 
@@ -96,8 +104,12 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 		} else {
 			log.debug("roomLeave - session is NOT null")
 		}
-		Long userid = bbbSession.userid
-		participantsApplication.participantLeft(bbbSession.sessionName, userid)
+		if (getBbbSession().playbackMode()) {
+			log.debug("In playback mode, so not leaving the conference room.")
+		} else {
+			Long userid = bbbSession.userid
+			participantsApplication.participantLeft(bbbSession.sessionName, userid)
+		}
 	}
 
 	@Override

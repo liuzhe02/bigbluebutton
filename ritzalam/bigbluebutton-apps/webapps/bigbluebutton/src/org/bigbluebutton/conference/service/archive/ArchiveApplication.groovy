@@ -35,6 +35,7 @@ public class ArchiveApplication {
 	 * Creates a playback session if there wasn't one created already.
 	 */
 	public void createPlaybackSession(String conference, String room, String sessionName) {
+		log.debug("Looking for playback session for $conference $room $sessionName")
 		PlaybackSession session
 		IPlaybackPlayer player
 		def createdSession = false
@@ -44,11 +45,14 @@ public class ArchiveApplication {
 			 * added because there wasn't one created yet and be able to
 			 * add a playback player.
 			 */
-			if (playbackSessions.containsKey(sessionName)) {
+			if (! playbackSessions.containsKey(sessionName)) {
+				log.debug("Could not find session...creating one $sessionName}")
 				session = new PlaybackSession(sessionName)
 				playbackSessions.put(session.name, session)
 				createdSession = true
-				log.debug("Created playback session ${session.name}")
+				log.debug("Created playback session $session.name")
+			} else {
+				log.debug("Found session...not creating one $sessionName")
 			}
 		}
 		if (createdSession) {
@@ -129,9 +133,13 @@ public class ArchiveApplication {
 	public void startPlayback(String name) {
 		PlaybackSession session = playbackSessions.get(name)
 		if (session != null) {
+			log.debug("Found playback session $name")
 			// Initialize the session.
 			session.startPlayback()
+			log.debug("Scheduling playback session $name")
 			playbackScheduler.schedulePlayback(session)			
+		} else {
+			log.debug("Did not find playback session $name")
 		}
 	}
 	

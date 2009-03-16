@@ -55,6 +55,10 @@
 		<property name="playbackJobScheduler"> <ref local="playbackJobScheduler"/></property>
 	</bean>
 	
+	<bean id="archive.service" class="org.bigbluebutton.conference.service.archive.ArchiveService" singleton="true" >
+		<property name="archiveApplication"> <ref local="archiveApplication"/></property>
+	</bean>
+	
 	<bean id="playbackJobScheduler" class="org.bigbluebutton.conference.service.archive.playback.PlaybackJobScheduler" singleton="true" />
 
 	<bean id="participants.service" class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >

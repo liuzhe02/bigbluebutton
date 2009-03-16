@@ -47,10 +47,9 @@ public class FileRecorder implements IRecorder{
 			log.debug("Recording event to file - setting up encoder.")
 	        enc.writeObject(event)
 	        log.debug("Recording event to file - writing the event to file.")
-	        enc.close()  			
-		}
-     
-        log.debug("Recorded event to file - closed encoder.")
+	        enc.close()  
+	        log.debug("Recorded event to file - closed encoder.")
+		}        
 	}
 	
 	public void setRecordingsDirectory(String directory) {
