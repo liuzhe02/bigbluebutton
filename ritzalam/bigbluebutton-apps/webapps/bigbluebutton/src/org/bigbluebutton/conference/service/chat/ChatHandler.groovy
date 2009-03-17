@@ -9,8 +9,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.red5.server.api.so.ISharedObject
 import org.red5.server.adapter.ApplicationAdapter
-import org.red5.server.api.Red5import java.util.Mapimport org.bigbluebutton.conference.RoomsManager
-import org.bigbluebutton.conference.Roomimport org.bigbluebutton.conference.Participantimport org.bigbluebutton.conference.RoomListenerimport org.bigbluebutton.conference.BigBlueButtonSessionimport org.bigbluebutton.conference.Constantsimport org.bigbluebutton.conference.service.archive.ArchiveApplication
+import org.red5.server.api.Red5import java.util.Mapimport org.bigbluebutton.conference.service.chat.ChatRoomsManager
+import org.bigbluebutton.conference.service.chat.ChatRoomimport org.bigbluebutton.conference.BigBlueButtonSessionimport org.bigbluebutton.conference.Constantsimport org.bigbluebutton.conference.service.archive.ArchiveApplication
 public class ChatHandler extends ApplicationAdapter implements IApplication{
 	protected static Logger log = LoggerFactory.getLogger( ChatHandler.class )
 
@@ -19,6 +19,7 @@ public class ChatHandler extends ApplicationAdapter implements IApplication{
 	private static final String APP = "CHAT"
 
 	private ArchiveApplication archiveApplication
+	private ChatApplication chatApplication
 	
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
@@ -60,17 +61,17 @@ public class ChatHandler extends ApplicationAdapter implements IApplication{
 		if (getBbbSession().playbackMode()) {
 			log.debug("In playback mode")
 			ISharedObject so = getSharedObject(connection.scope, CHAT_SO)
-			ParticipantPlaybackNotifier notifier = new ParticipantPlaybackNotifier(so)
+			ChatPlaybackNotifier notifier = new ChatPlaybackNotifier(so)
 			archiveApplication.addPlaybackNotifier(connection.scope.name, notifier)
 		} else {
 			log.debug("In live mode")
-			ISharedObject so = getSharedObject(connection.scope, PARTICIPANTS_SO)
+			ISharedObject so = getSharedObject(connection.scope, CHAT_SO)
 			log.debug("Setting up recorder")
-			ParticipantsEventRecorder recorder = new ParticipantsEventRecorder(so)
+			ChatEventRecorder recorder = new ChatEventRecorder(so)
 			log.debug("adding event recorder to ${connection.scope.name}")
 			archiveApplication.addEventRecorder(connection.scope.name, recorder)
 			log.debug("Adding room listener")
-    		participantsApplication.addRoomListener(connection.scope.name, recorder)
+    		chatApplication.addRoomListener(connection.scope.name, recorder)
     		log.debug("Done setting up recorder and listener")
 		}
     	return true;
@@ -96,6 +97,7 @@ public class ChatHandler extends ApplicationAdapter implements IApplication{
 	@Override
 	public boolean roomStart(IScope scope) {
 		log.debug("${APP} - roomStart ${scope.name}")
+		chatApplication.createRoom(scope.name)
     	if (!hasSharedObject(scope, CHAT_SO)) {
     		if (createSharedObject(scope, CHAT_SO, false)) {    			
     			return true 			
@@ -108,11 +110,17 @@ public class ChatHandler extends ApplicationAdapter implements IApplication{
 	@Override
 	public void roomStop(IScope scope) {
 		log.debug("${APP}:roomStop ${scope.name}")
+		chatApplication.destroyRoom(scope.name)
 		if (!hasSharedObject(scope, CHAT_SO)) {
     		clearSharedObjects(scope, CHAT_SO)
     	}
 	}
-			
+	
+	public void setChatApplication(ChatApplication a) {
+		log.debug("Setting chat application")
+		chatApplication = a
+	}
+	
 	public void setArchiveApplication(ArchiveApplication a) {
 		log.debug("Setting archive application")
 		archiveApplication = a

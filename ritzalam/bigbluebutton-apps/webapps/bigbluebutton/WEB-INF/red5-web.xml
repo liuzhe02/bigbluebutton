@@ -28,6 +28,7 @@
 		<property name="applicationListeners">
     		<set>
 				<ref bean="participantsHandler" />
+				<ref bean="chatHandler" />
 				<ref bean="presentation.service" />
     		</set>
   		</property>	  
@@ -35,11 +36,7 @@
 	</bean>
 	
 	<bean id="roomsManager" class="org.bigbluebutton.conference.RoomsManager" singleton="true" />
-		
-	<!--bean id="chat.service" class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
-		<property name="applicationAdapter"> <ref local="web.handler"/></property>
-	</bean-->
-	
+			
 	<bean id="participantsHandler" class="org.bigbluebutton.conference.service.participants.ParticipantsHandler" singleton="true" >
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 		<property name="archiveApplication"> <ref local="archiveApplication"/></property>
@@ -50,6 +47,11 @@
 		<property name="roomsManager"> <ref local="roomsManager"/></property>
 	</bean>
 	
+	<bean id="participants.service" class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+	</bean>
+	
+	<!-- BEGIN ARCHIVE -->
 	<bean id="archiveApplication" class="org.bigbluebutton.conference.service.archive.ArchiveApplication" singleton="true">
 		<property name="recordingsDirectory" value="${recordingsDirectory}"/>
 		<property name="playbackJobScheduler"> <ref local="playbackJobScheduler"/></property>
@@ -60,11 +62,9 @@
 	</bean>
 	
 	<bean id="playbackJobScheduler" class="org.bigbluebutton.conference.service.archive.playback.PlaybackJobScheduler" singleton="true" />
-
-	<bean id="participants.service" class="org.bigbluebutton.conference.service.participants.ParticipantsService" singleton="true" >
-		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
-	</bean>
-		
+	<!-- END ARCHIVE -->
+	
+	<!-- BEGIN PRESENTATION -->		
 	<bean id="presentation.service" class="org.bigbluebutton.conference.service.presentation.PresentationService" singleton="true">
 		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
 		<property name="updatesListener"> <ref local="updatesListener"/> </property>
@@ -96,5 +96,23 @@
 		<property name="destination"> <ref local="destination"/> </property> 
 		<property name="updatesListener"> <ref local="updatesListener"/> </property> 
 	</bean>
-  
+  	<!-- END PRESENTATION -->
+  	
+  	<!-- BEGIN CHAT -->
+  	<bean id="chatHandler" class="org.bigbluebutton.conference.service.chat.ChatHandler" singleton="true" >
+		<property name="chatApplication"> <ref local="chatApplication"/></property>
+		<property name="archiveApplication"> <ref local="archiveApplication"/></property>
+	</bean>
+	
+	<bean id="chatApplication" 
+	    class="org.bigbluebutton.conference.service.chat.ChatApplication" singleton="true" >
+		<property name="roomsManager"> <ref local="chatRoomsManager"/></property>
+	</bean>
+	
+	<bean id="chat.service" class="org.bigbluebutton.conference.service.chat.ChatService" singleton="true" >
+		<property name="chatApplication"> <ref local="chatApplication"/></property>
+	</bean>
+	
+	<bean id="chatRoomsManager" class="org.bigbluebutton.conference.service.chat.ChatRoomsManager" singleton="true" />
+	<!-- END CHAT -->
 </beans>

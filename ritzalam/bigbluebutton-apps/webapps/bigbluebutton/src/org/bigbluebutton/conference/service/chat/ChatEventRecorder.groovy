@@ -4,12 +4,12 @@ package org.bigbluebutton.conference.service.chat
 import java.util.Map
 import org.bigbluebutton.conference.service.archive.record.IEventRecorder
 import org.bigbluebutton.conference.service.archive.record.IRecorder
-import org.bigbluebutton.conference.IRoomListenerimport org.red5.server.api.so.ISharedObject
+import org.bigbluebutton.conference.service.chat.IChatRoomListenerimport org.red5.server.api.so.ISharedObject
 import org.bigbluebutton.conference.Participant
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-public class ChatEventRecorder implements IEventRecorder, IRoomListener {
+public class ChatEventRecorder implements IEventRecorder, IChatRoomListener {
 	protected static Logger log = LoggerFactory.getLogger( ChatEventRecorder.class )
 	
 	IRecorder recorder
@@ -33,46 +33,16 @@ public class ChatEventRecorder implements IEventRecorder, IRoomListener {
 		this.so = so 
 	}
 	
-	public void participantStatusChange(Long userid, String status, Object value){
-		log.debug("A participant's status has changed ${userid} $status $value.")
-		so.sendMessage("participantStatusChange", [userid, status, value])
+	def newChatMessage(def message){
+		log.debug("New chat message...")
+		so.sendMessage("newChatMessage", [message])
 		
 		Map event = new HashMap()
 		event.put("date", new Date().time)
 		event.put("application", name)
-		event.put("event", "participantStatusChange")
-		event.put("userid", userid)
-		event.put("status", status)
-		event.put("value", value)
+		event.put("event", "newChatMessage")
+		event.put("message", message)
 		recordEvent(event)
 	}
-	
-	public void participantJoined(Participant p) {
-		log.debug("A participant has joined ${p.userid}.")
-		List args = new ArrayList()
-		args.add(p.toMap())
-		log.debug("Sending participantJoined ${p.userid} to client.")
-		so.sendMessage("participantJoined", args)
-		
-		Map event = new HashMap()
-		event.put("date", new Date().time)
-		event.put("application", name)
-		event.put("event", "participantJoined")
-		event.put("user", p.toMap())
-		log.debug("Recording participantJoined ${p.userid}.")
-		recordEvent(event)
-	}
-	
-	public void participantLeft(Long userid) {		
-		List args = new ArrayList()
-		args.add(userid)
-		so.sendMessage("participantLeft", args)
-		
-		Map event = new HashMap()
-		event.put("date", new Date().time)
-		event.put("application", name)
-		event.put("event", "participantLeft")
-		event.put("userid", userid)
-		recordEvent(event)
-	}
+
 }

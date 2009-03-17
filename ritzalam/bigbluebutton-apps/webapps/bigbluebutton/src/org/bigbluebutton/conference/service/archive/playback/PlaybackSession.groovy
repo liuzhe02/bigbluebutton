@@ -74,6 +74,7 @@ public class PlaybackSession {
 				if (nextMessage == null) {
 					// we just played our last message.
 					// NOTE:Need to refactor this to make it more cleaner/DRYier.
+					currentMessage = nextMessage // so hasMessageToSend() returns false (UGLY)
 					return
 				}
 				// We compute the gap between each recorded message.
