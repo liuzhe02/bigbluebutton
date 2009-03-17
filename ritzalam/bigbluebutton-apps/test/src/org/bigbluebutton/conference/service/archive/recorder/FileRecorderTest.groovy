@@ -36,7 +36,7 @@ public class FileRecorderTest{
 		recorder = new FileRecorder(conference, room)
 		recorder.setRecordingsDirectory(recordingsDir.canonicalPath)
 		recorder.initialize()
-		println recordingsDir.canonicalPath
+		recorder.deleteRecording()
 	}
 
 	@Test
@@ -99,19 +99,20 @@ public class FileRecorderTest{
 		recorder.recordEvent(event5)
 		
 		File recordingFile = new File("$recordingsDir.canonicalPath/$conference/$room/recordings.yaml" )
+		assert recordingFile.exists()
 		
-//		 Let's read back the saved data.
+		// Let's read back the saved data.
         YamlDecoder dec = new YamlDecoder(recordingFile.newInputStream());
         def eventList = []
-        try{
-          while (true){
-            Map eventRead = dec.readObject();
-            eventList.add(eventRead)
-          }
-        }catch (EOFException e){
-          println("Finished reading stream.");
-        }finally {
-          dec.close();
+        try {
+        	while (true) {        		
+        		Map eventRead = dec.readObject() // Not sure why this fails...the FileReaderPlayback works..
+        		eventList.add(eventRead)
+        	}
+        } catch (EOFException e){
+        	println("Finished reading stream.")
+        } finally {
+        	dec.close();
         }
         
         assert eventList.size() == 5

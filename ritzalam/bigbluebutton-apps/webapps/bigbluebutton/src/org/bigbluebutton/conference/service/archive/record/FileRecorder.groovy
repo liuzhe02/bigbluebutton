@@ -11,25 +11,30 @@ public class FileRecorder implements IRecorder{
 	private final String room
 	private final String recordingsDirectory
 	private final File recordingFile
-
+	private final File roomDir
+	
 	public FileRecorder(String conference, String room) {
 		this.conference = conference
 		this.room = room
 	}
 	
 	public void initialize() {
-		File roomDir = new File("$recordingsDirectory/$conference/$room")
+		roomDir = new File("$recordingsDirectory/$conference/$room")
 		if (! roomDir.exists())
 			roomDir.mkdirs()
 		recordingFile = new File(roomDir.canonicalPath + File.separator + "recordings.yaml" )
 		/**
 		 * We do not actually want to delete the file. We just want to append to it.
 		 */
-//		if (recordingFile.exists()) {
-//			// delete the file so we start fresh
-//			recordingFile.delete()
-//			recordingFile = new File(roomDir.canonicalPath + File.separator + "recordings.yaml" )
-//		}
+		 //deleteRecording()
+	}
+	
+	public void deleteRecording() {
+		if (recordingFile.exists()) {
+			// delete the file so we start fresh
+			recordingFile.delete()
+			recordingFile = new File(roomDir.canonicalPath + File.separator + "recordings.yaml" )
+		}		
 	}
 	
 	public void recordEvent(Map event) {
