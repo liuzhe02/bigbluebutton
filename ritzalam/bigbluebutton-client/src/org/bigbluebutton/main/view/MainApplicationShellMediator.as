@@ -28,6 +28,7 @@ package org.bigbluebutton.main.view
 	
 	import org.bigbluebutton.common.IBbbModuleWindow;
 	import org.bigbluebutton.main.MainApplicationConstants;
+	import org.bigbluebutton.main.model.ModulesProxy;
 	import org.bigbluebutton.main.view.components.MainApplicationShell;
 	import org.bigbluebutton.main.view.components.ModuleStoppedWindow;
 	import org.bigbluebutton.main.view.events.StartModuleEvent;
@@ -74,6 +75,7 @@ package org.bigbluebutton.main.view
 			return [
 					MainApplicationConstants.ADD_WINDOW_MSG,
 					MainApplicationConstants.REMOVE_WINDOW_MSG,
+					MainApplicationConstants.USER_JOINED,
 					MainApplicationConstants.USER_LOGGED_IN,
 					MainApplicationConstants.USER_LOGGED_OUT,
 					MainApplicationConstants.LOADED_MODULE,
@@ -99,19 +101,25 @@ package org.bigbluebutton.main.view
 					shell.mdiCanvas.windowManager.remove(rwin as MDIWindow);						
 					break;
 				case MainApplicationConstants.USER_LOGGED_OUT:
-					//if (red5phoneAdded) {
-					//	red5phoneAdded = false;
-					//	shell.mdiCanvas.windowManager.remove(red5PhoneWindow as MDIWindow);
-					//}
+					if (red5phoneAdded) {
+						red5phoneAdded = false;
+						shell.mdiCanvas.windowManager.remove(red5PhoneWindow as MDIWindow);
+					}
+					break;
+				case MainApplicationConstants.USER_JOINED:
+					 /**
+			 			 * Workaround to pass in username for sip registration.
+			 			*/
+						red5PhoneWindow.sipusername = modulesProxy.username;
 					break;
 				case MainApplicationConstants.USER_LOGGED_IN:
 					shell.loadedModules.text = "";
 					shell.loadProgress.text = "";
-					//if (!red5phoneAdded) {
-					//	red5phoneAdded = true;
-					//	shell.mdiCanvas.windowManager.add(red5PhoneWindow as MDIWindow);
-					//	shell.mdiCanvas.windowManager.absPos(red5PhoneWindow as MDIWindow, red5PhoneWindow.xPosition, red5PhoneWindow.yPosition);
-					//}	
+					if (!red5phoneAdded) {
+						red5phoneAdded = true;
+						shell.mdiCanvas.windowManager.add(red5PhoneWindow as MDIWindow);
+						shell.mdiCanvas.windowManager.absPos(red5PhoneWindow as MDIWindow, red5PhoneWindow.xPosition, red5PhoneWindow.yPosition);						
+					}	
 					break;
 				case MainApplicationConstants.MODULE_STOPPED:
 					var info:Object = notification.getBody();
@@ -147,6 +155,10 @@ package org.bigbluebutton.main.view
             	point1 = shell.localToGlobal(point1);
            	 	t.x = point1.x + 25;
             	t.y = point1.y + 25;				
+		}
+		
+		private function get modulesProxy():ModulesProxy {
+			return facade.retrieveProxy(ModulesProxy.NAME) as ModulesProxy;
 		}
 	}
 }

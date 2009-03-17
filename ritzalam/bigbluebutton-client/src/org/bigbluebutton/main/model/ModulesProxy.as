@@ -4,7 +4,6 @@ package org.bigbluebutton.main.model
 	import org.bigbluebutton.main.MainApplicationConstants;
 	import org.puremvc.as3.multicore.interfaces.IProxy;
 	import org.puremvc.as3.multicore.patterns.proxy.Proxy;
-	import org.bigbluebutton.common.messaging.Router;
 	
 	public class ModulesProxy extends Proxy implements IProxy
 	{
@@ -37,6 +36,10 @@ package org.bigbluebutton.main.model
 		public function set user(loggedInUser:Object):void {
 			_user = loggedInUser;
 			modulesManager.loggedInUser(_user);
+		}
+		
+		public function get username():String {
+			return _user.username;
 		}
 
 //		public function startModule(name:String, router:Router):void {

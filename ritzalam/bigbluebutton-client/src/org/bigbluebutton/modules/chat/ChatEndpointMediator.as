@@ -79,9 +79,10 @@ package org.bigbluebutton.modules.chat
 					LogUtil.debug('Sending Chat MODULE_STOPPED message to main');
 					facade.sendNotification(ChatModuleConstants.CLOSE_WINDOW);
 					//var info:Object = notification.getBody();
-					//info["moduleId"] = _module.moduleId
+					var info:Object = new Object()
+					info["moduleId"] = _module.moduleId
 					_endpoint.sendMessage(EndpointMessageConstants.MODULE_STOPPED, 
-							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
+							EndpointMessageConstants.TO_MAIN_APP, info);
 					break;
 				case ChatModuleConstants.ADD_WINDOW:
 					LogUtil.debug('Sending Chat ADD_WINDOW message to main');

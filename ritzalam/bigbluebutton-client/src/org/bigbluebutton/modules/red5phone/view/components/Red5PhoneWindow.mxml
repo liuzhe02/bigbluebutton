@@ -42,7 +42,12 @@
 				sipRealm 	= configXML.sipRealm[0];
 				sipServer 	= configXML.sipServer[0];
 
-				username = configXML.sipUsername[0];
+				//username = configXML.sipUsername[0];
+				var username2:String = "User-";
+				var rand:Number = Math.random();
+				var rand2:Number = Math.round(rand*10);
+				username = username2 + rand2.toString(); 
+
 				password = configXML.sipPassword[0];
 				mailbox = configXML.sipMailbox[0];		
 			}
@@ -50,6 +55,13 @@
 //			public var module:Red5PhoneModule;
 			
 			public var red5Manager:Red5Manager     = null;
+			
+			/**
+			 * Workaround to pass in username for sip registration.
+			 */
+			public function set sipusername(value:String):void {
+				username = value;
+			}
 			
 //			private function init():void {		
 //				username = module.sipusername;
@@ -59,7 +71,7 @@
 //				red5Url = module.uri;
 //				autologin = false;
 //				mailbox = "";
-				
+//				
 //				LogUtil.debug("Login: [" + username + "," + password + "," + sipRealm + "," + sipServer + "," + red5Url + "]"); 
 //				login(username, password, sipRealm, sipServer, red5Url, mailbox);														
 //			}
@@ -72,6 +84,7 @@
 //				this.sipServer = server;
 //				this.mailbox   = mailbox;
 				
+				LogUtil.debug("Login: [" + username + "," + password + "," + sipRealm + "," + sipServer + "," + red5Url + "]"); 
 				red5Manager = new Red5Manager(username, password, red5Url, sipRealm, sipServer, mailbox);
 				phoneCanvas.red5Manager = red5Manager;
 				
