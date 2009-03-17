@@ -12,7 +12,7 @@
 			onUserLogoutEvent="STOP"
 	/>
 	<module name="ChatModule" url="ChatModule.swf" 
-			uri="rtmp://localhost/chatServer" 
+			uri="rtmp://localhost/bigbluebutton" 
 			loadNextModule="PresentationModule"	
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"		 
