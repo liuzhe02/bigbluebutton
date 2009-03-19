@@ -20,7 +20,6 @@
 package org.bigbluebutton.modules.chat.model.business
 {
 	import org.bigbluebutton.modules.chat.ChatModuleConstants;
-	import org.bigbluebutton.modules.chat.model.vo.*;
 	import org.puremvc.as3.multicore.interfaces.IProxy;
 	import org.puremvc.as3.multicore.patterns.proxy.Proxy;
 		

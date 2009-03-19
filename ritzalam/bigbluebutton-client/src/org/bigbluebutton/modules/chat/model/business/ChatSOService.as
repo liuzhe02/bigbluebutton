@@ -127,8 +127,24 @@ package org.bigbluebutton.modules.chat.model.business
 		}
 
 		public function getChatTranscript():void {
-			LogUtil.debug('getting chat transcript');
-			needsTranscript = true;				
+			var nc:NetConnection = module.connection;
+			nc.call(
+				"chat.getChatMessages",// Remote function name
+				new Responder(
+	        		// On successful result
+					function(result:Object):void { 
+						LogUtil.debug("Successfully sent message: "); 
+						newChatMessage(result as String);
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+						} 
+					}
+				)//new Responder
+			); //_netConnection.call				
 		}
 		
 		private function notifyConnectionStatusListener(connected:Boolean, errors:Array=null):void {

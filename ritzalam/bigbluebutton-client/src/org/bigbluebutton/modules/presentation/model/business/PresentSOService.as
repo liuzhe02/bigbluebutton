@@ -212,6 +212,9 @@ package org.bigbluebutton.modules.presentation.model.business
 			); //_netConnection.call
 		}
 		
+		/**
+		 * Called by the server to assign a presenter
+		 */
 		public function assignPresenterCallback(userid:Number, name:String, assignedBy:Number):void {
 			LogUtil.debug("assignPresenterCallback " + userid + "," + name + "," + assignedBy);
 			if (userid == _module.userid) {
@@ -230,9 +233,27 @@ package org.bigbluebutton.modules.presentation.model.business
 		 */		
 		public function gotoSlide(num:int) : void
 		{
-			_presentationSO.send("gotoPageCallback", num);
-			//LogUtil.debug("Going to slide " + num);
-			_presentationSO.setProperty(CURRENT_PAGE, num);
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"presentation.gotoSlide",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully moved page to: " + num);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				num
+			); //_netConnection.call
 		}
 		
 		/**
@@ -241,7 +262,7 @@ package org.bigbluebutton.modules.presentation.model.business
 		 * @param page
 		 * 
 		 */		
-		public function gotoPageCallback(page : Number) : void
+		public function gotoSlideCallback(page : Number) : void
 		{
 			sendMessage(PresentModuleConstants.DISPLAY_SLIDE, page);
 		}
@@ -253,12 +274,36 @@ package org.bigbluebutton.modules.presentation.model.business
 		}
 		
 		public function sharePresentation(share:Boolean):void {
-			LogUtil.debug('SO Sharing presentation = ' + share);
-			_presentationSO.data[SHARING] = share;
-			_presentationSO.setDirty(SHARING);
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"presentation.sharePresentation",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully shared presentation");							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				"default", // hardocde this for now...this will be used later to pre-upload multiple presentation
+				share
+			); //_netConnection.call
 		}
 
-	
+		public function sharePresentationCallback(presentationName:String, share:Boolean):void {
+			LogUtil.debug("sharePresentationCallback " + presentationName + "," + share);
+			if (share) {
+				sendMessage(PresentModuleConstants.START_SHARE);
+			}
+		}
 		
 		/**
 		 * Event called automatically once a SharedObject Sync method is received 

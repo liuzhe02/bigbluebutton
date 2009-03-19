@@ -23,7 +23,6 @@ package org.bigbluebutton.modules.chat.view
 	
 	import org.bigbluebutton.modules.chat.ChatModuleConstants;
 	import org.bigbluebutton.modules.chat.model.business.ChatProxy;
-	import org.bigbluebutton.modules.chat.model.vo.*;
 	import org.bigbluebutton.modules.chat.view.components.ChatWindow;
 	import org.puremvc.as3.multicore.interfaces.IMediator;
 	import org.puremvc.as3.multicore.interfaces.INotification;
