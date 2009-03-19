@@ -29,7 +29,7 @@
     		<set>
 				<ref bean="participantsHandler" />
 				<ref bean="chatHandler" />
-				<ref bean="presentation.service" />
+				<ref bean="presentationHandler" />
     		</set>
   		</property>	  
   		<property name="archiveApplication"> <ref local="archiveApplication"/></property>			
@@ -64,15 +64,32 @@
 	<bean id="playbackJobScheduler" class="org.bigbluebutton.conference.service.archive.playback.PlaybackJobScheduler" singleton="true" />
 	<!-- END ARCHIVE -->
 	
-	<!-- BEGIN PRESENTATION -->		
-	<bean id="presentation.service" class="org.bigbluebutton.conference.service.presentation.PresentationService" singleton="true">
-		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
-		<property name="updatesListener"> <ref local="updatesListener"/> </property>
-		<property name="updatesConversionService"> <ref local="conversionUpdatesService"/></property>
+	<!-- BEGIN PRESENTATION -->	
+	<bean id="presentationRoomsManager" class="org.bigbluebutton.conference.service.presentation.PresentationRoomsManager" singleton="true" />
+			
+	<bean id="presentationHandler" class="org.bigbluebutton.conference.service.presentation.PresentationHandler" singleton="true" >
+		<property name="presentationApplication"> 
+			<ref local="presentationApplication"/>
+		</property>
+		<property name="archiveApplication"> 
+			<ref local="archiveApplication"/>
+		</property>
+		<property name="conversionUpdatesService"> 
+			<ref local="conversionUpdatesService"/>
+		</property>
 	</bean>
-
-	<bean id="updatesListener" class="org.bigbluebutton.conference.service.presentation.ConversionUpdatesListener" singleton="true"/>
-
+	
+	<bean id="presentationApplication" class="org.bigbluebutton.conference.service.presentation.PresentationApplication" singleton="true" >
+		<property name="roomsManager"> 
+			<ref local="presentationRoomsManager"/>
+		</property>
+	</bean>
+	
+	<bean id="presentation.service" class="org.bigbluebutton.conference.service.presentation.PresentationService" singleton="true" >
+		<property name="participantsApplication"> <ref local="participantsApplication"/></property>
+		<property name="presentationApplication"> <ref local="presentationApplication"/></property>
+	</bean>
+		
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL">
             <value>tcp://localhost:61616</value>
@@ -84,7 +101,7 @@
             <ref local="connectionFactory"/>
         </property>
     </bean>
-
+   
     <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg index="0">
             <value>UpdatesQueue</value>
@@ -94,7 +111,7 @@
 	<bean id="conversionUpdatesService" class="org.bigbluebutton.conference.service.presentation.ConversionUpdatesService" singleton="true">
 		<property name="jmsTemplate"> <ref local="jmsTemplate"/> </property>
 		<property name="destination"> <ref local="destination"/> </property> 
-		<property name="updatesListener"> <ref local="updatesListener"/> </property> 
+		<property name="presentationApplication"> <ref local="presentationApplication"/></property>
 	</bean>
   	<!-- END PRESENTATION -->
   	

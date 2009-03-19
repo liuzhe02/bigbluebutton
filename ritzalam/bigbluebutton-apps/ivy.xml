@@ -11,6 +11,7 @@
     	<!-- Testing support -->
         <dependency name="junit" rev="4.0"/>
         <dependency org="org.testng" name="testng" rev="5.8"/>
+        <dependency org="org/fitnesse" name="fitnesse" rev="20090214"/>
         <dependency org="org.easymock" name="easymock" rev="2.4"/>
         <dependency org="commons" name="commons-lang" rev="2.3" />
         <!-- Logging --> 

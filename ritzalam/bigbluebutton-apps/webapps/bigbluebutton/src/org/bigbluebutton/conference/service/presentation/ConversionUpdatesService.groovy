@@ -8,51 +8,54 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
+import java.lang.RuntimeException
+public class ConversionUpdatesService { //implements IConversionUpdatesService {
+	protected static Logger log = LoggerFactory.getLogger(ConversionUpdatesService.class);
 
-public class ConversionUpdatesService implements IConversionUpdatesService {
-	protected static Logger logger = LoggerFactory.getLogger(ConversionUpdatesService.class);
-	protected static Logger recorder = LoggerFactory.getLogger("RECORD-BIGBLUEBUTTON");
-	
     private JmsTemplate template = null;    
-    private Destination destination = null;    
-    private volatile Thread updatesListenerThread;    
+    private Destination destination = null;  
     private boolean waitForMessage = true;
-    private ConversionUpdatesListener updatesListener;
+    private PresentationApplication presentationApplication
     
     private static String APP = "PRESENTATION ";
+    
+    public ConversionUpdatesService() {
+    	log.debug("In ConversionUpdatesService constructor")
+    }
     
 	public void start() {
 		
 		Thread.start {
-	        logger.info("${APP} - Will wait for document conversion updates messages.");
+	        log.info("${APP} - Will wait for document conversion updates messages.");
 	        
 	        while (waitForMessage) {
 	        	Message jmsMessage = template.receive(destination);
 	        	
-	        	System.out.println("${APP} - Got JMS message.");
+	        	log.debug("${APP} - Got JMS message.");
 	        	
 	        	if (jmsMessage instanceof MapMessage) {
 	                try {
 	                	MapMessage mapMessage = ((MapMessage) jmsMessage);
-						String room = mapMessage.getString("room");
-						String code = mapMessage.getString("returnCode");
 
-						if ("SUCCESS".equals(code)) {
-							String message = mapMessage.getStringProperty("message");
-							recorder.debug(APP + "PresentationUploadEvent room=" + room + " code=" + code + " message=" + message);
-							updatesListener.updateMessage(room, code, message);
-						} else if ("EXTRACT".equals(code) || "CONVERT".equals(code)) {
-							System.out.println("${APP} - totalSlide = " + mapMessage.getString("totalSlides"));
-							int totalSlides = mapMessage.getInt("totalSlides");
-							int completedSlides = mapMessage.getInt("slidesCompleted");
-							recorder.debug(APP + "PresentationUploadEvent room=" + room + " code=" + code + 
-									" totalSlides=" + totalSlides + " completedSlides=" + completedSlides);
-							updatesListener.updateMessage(room, code, totalSlides, completedSlides);
-						} else {
-							logger.error("Cannot handle recieved message.");
-						}
-			        	System.out.println("${APP} - Room = [" + room + "," + code + "]");	                    
-			        	logger.debug(mapMessage.toString());
+	                	def code = mapMessage.getString("returnCode")
+						Map message = new HashMap()
+						message.put('room', mapMessage.getString("room"))
+						message.put('code', code)
+						
+						switch (code) {
+							case 'SUCCESS':
+								message.put('message', mapMessage.getStringProperty("message"))
+								presentationApplication.sendUpdateMessage(message)
+								break
+							case 'EXTRACT':
+							case 'CONVERT':
+								message.put('totalSlides', mapMessage.getInt("totalSlides"))
+								message.put('completedSlides', mapMessage.getInt("slidesCompleted"))
+								presentationApplication.sendUpdateMessage(message)
+								break
+							default:
+								log.error("Cannot handle recieved message.")
+						}						
 	                }
 	                catch (JMSException ex) {
 	                    throw new RuntimeException(ex);
@@ -67,14 +70,17 @@ public class ConversionUpdatesService implements IConversionUpdatesService {
 	}
 
 	public void setDestination(ActiveMQQueue destination) {
+		log.debug("Setting destination")
 		this.destination = (Destination) destination;
 	}
-
+	
 	public void setJmsTemplate(JmsTemplate jmsTemplate) {
+		log.debug("Setting jms template")
 		this.template = jmsTemplate;
 	}
 	
-	public void setUpdatesListener(ConversionUpdatesListener updatesListener) {
-		this.updatesListener = updatesListener;
-	}	
+	public void setPresentationApplication(PresentationApplication a) {
+		log.debug("Setting presentation application")
+		presentationApplication = a
+	}
 }
