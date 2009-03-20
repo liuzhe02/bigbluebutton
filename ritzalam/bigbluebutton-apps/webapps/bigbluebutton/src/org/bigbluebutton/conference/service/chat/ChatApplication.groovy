@@ -38,7 +38,7 @@ public class ChatApplication {
 		return false
 	}
 	
-	public String getChatMessage(String room) {
+	public String getChatMessages(String room) {
 		return roomsManager.getChatMessages(room)
 	}
 	
