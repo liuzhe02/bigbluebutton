@@ -10,8 +10,5 @@ public class RoomFixtureTest extends ColumnFixture{
 	public String checkRoomName() {
 	    room = new Room(roomName)
 	    return room.getName()
-	}
-
-	
-	
+	}	
 }

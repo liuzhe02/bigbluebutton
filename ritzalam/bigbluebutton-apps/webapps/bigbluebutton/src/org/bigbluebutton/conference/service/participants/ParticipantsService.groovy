@@ -37,6 +37,12 @@ public class ParticipantsService {
 		return participants
 	}
 	
+	def setParticipantStatus(def userid, def status, def value) {
+		String roomName = Red5.connectionLocal.scope.name
+		log.debug("Setting participant status $roomName $userid $status $value")
+		application.setParticipantStatus(roomName, userid, status, value)
+	}
+	
 	public void setParticipantsApplication(ParticipantsApplication a) {
 		log.debug("Setting Participants Applications")
 		application = a
