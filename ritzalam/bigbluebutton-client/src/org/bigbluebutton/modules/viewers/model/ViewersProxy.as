@@ -99,11 +99,11 @@ package org.bigbluebutton.modules.viewers.model
 		}
 		
 		public function addStream(userid:Number, streamName:String):void {
-//			_viewersService.addStream(userid, streamName);
+			_viewersService.addStream(userid, streamName);
 		}
 		
 		public function removeStream(userid:Number, streamName:String):void {
-//			_viewersService.removeStream(userid, streamName);
+			_viewersService.removeStream(userid, streamName);
 		}
 		
 		public function queryPresenter():void {

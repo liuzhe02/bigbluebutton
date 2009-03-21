@@ -19,11 +19,62 @@
 */
 package org.bigbluebutton.modules.viewers.model.vo
 {
+	import mx.collections.ArrayCollection;
+	
 	import org.bigbluebutton.common.Role;
 	
-	[Bindable]	
 	public class User
 	{
+		[Bindable] public var me:Boolean = false;
+		[Bindable] public var userid:Number;
+		[Bindable] public var name:String;
+		[Bindable] public var hasStream:Boolean = false;
+		[Bindable] public var streamName:String = "";
+		[Bindable] public var presenter:Boolean = false;
+		[Bindable] public var role:String = Role.VIEWER;	
+		[Bindable] public var room:String = "";
+		[Bindable] public var authToken:String = "";
+		
+		private var _status:StatusCollection = new StatusCollection();
+				
+		public function get status():ArrayCollection {
+			return _status.getAll();
+		}
+		
+		public function set status(s:ArrayCollection):void {
+			_status.status = s;
+		}	
+			
+		public function addStatus(status:Status):void {
+			_status.addStatus(status);
+		}
+		
+		public function changeStatus(status:Status):void {
+			//_status.changeStatus(status);
+			if (status.name == "presenter") {
+				presenter = status.value
+			}
+			switch (status.name) {
+				case "presenter":
+					presenter = status.value;
+					break;
+				case "hasStream":
+					hasStream = status.value;
+					break;
+				case "streamName":
+					streamName = status.value as String;
+					break;
+			}
+		}
+		
+		public function removeStatus(name:String):void {
+			_status.removeStatus(name);
+		}
+		
+		public function getStatus(name:String):Status {
+			return _status.getStatus(name);
+		}
+		/*
 		public var me:Boolean = false;
 		public var userid:Number;
 		public var name:String;
@@ -31,12 +82,12 @@ package org.bigbluebutton.modules.viewers.model.vo
 		public var role:String = Role.VIEWER;	
 		public var room:String = "";
 		public var authToken:String = "";
-		
+		*/
 		/**
 		 * This is a workaround until we figure out how to make 
 		 * status Bindable in StatusItemRenderer.mxml (ralam 2/20/2009)
 		 */
-		private var _status:Object;
+/*		private var _status:Object;
 		public var streamName:String = "";
 		public var presenter:Boolean = false;
 		public var hasStream:Boolean = false;
@@ -47,5 +98,6 @@ package org.bigbluebutton.modules.viewers.model.vo
 			presenter = s["presenter"];
 			streamName = s["streamName"];
 		}
+	*/
 	}
 }

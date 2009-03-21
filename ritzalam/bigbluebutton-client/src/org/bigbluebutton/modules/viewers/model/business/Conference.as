@@ -140,9 +140,8 @@ package org.bigbluebutton.modules.viewers.model.business
 			var aUser:User = getParticipant(id);
 			
 			if (aUser != null) {
-				if (status == "presenter") {
-					aUser.presenter = value;
-				}
+				var s:Status = new Status(status, value);
+				aUser.changeStatus(s);
 			}	
 			
 			sort();		

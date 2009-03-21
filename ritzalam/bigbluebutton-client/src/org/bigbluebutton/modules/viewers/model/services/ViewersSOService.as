@@ -7,6 +7,7 @@ package org.bigbluebutton.modules.viewers.model.services
 	import flash.net.SharedObject;
 	
 	import org.bigbluebutton.modules.viewers.model.business.IViewers;
+	import org.bigbluebutton.modules.viewers.model.vo.Status;
 	import org.bigbluebutton.modules.viewers.model.vo.User;
 
 	public class ViewersSOService implements IViewersService
@@ -157,14 +158,15 @@ package org.bigbluebutton.modules.viewers.model.services
 			user.userid = Number(joinedUser.userid);
 			user.name = joinedUser.name;	
 			user.role = joinedUser.role;						
-			user.status = joinedUser.status;	
+//			user.addStatus( = joinedUser.status;	
 								
 			LogUtil.info("Joined as [" + user.userid + "," + user.name + "," + user.role + "]");
 			_participants.addUser(user);
 		}
 		
 		public function participantStatusChange(userid:Number, status:String, value:Object):void {
-			LogUtil.debug("[" + userid + "," + status + "," + value + "]")
+			LogUtil.debug("Received status change [" + userid + "," + status + "," + value + "]")
+			
 			_participants.newUserStatus(userid, status, value);
 		}
 /*
@@ -266,35 +268,106 @@ package org.bigbluebutton.modules.viewers.model.services
 		public function queryPresenter():void {
 		
 		}
+*/
 
 		public function addStream(userid:Number, streamName:String):void {
-			var aUser : User = _participants.getParticipant(userid);						
-			if (aUser != null) {
-				// This sets the users stream
-				aUser.hasStream = true;
-				aUser.streamName = streamName;
-				_participantsSO.setProperty(userid.toString(), aUser);
-				_participantsSO.setDirty(userid.toString());
-				
-				LogUtil.debug(LOGNAME + "Conference::addStream::found =[" + userid + "," 
-						+ aUser.hasStream + "," + aUser.streamName + "]");				
-			}
+			var nc:NetConnection = netConnectionDelegate.connection;
+			nc.call(
+				"participants.setParticipantStatus",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully assigned stream to: " + userid);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				userid,
+				"streamName",
+				streamName
+			); //_netConnection.call
+			
+			nc.call(
+				"participants.setParticipantStatus",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully assigned stream to: " + userid);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				userid,
+				"hasStream",
+				true
+			); //_netConnection.call
 		}
 		
 		public function removeStream(userid:Number, streamName:String):void {
-			var aUser : User = _participants.getParticipant(userid);						
-			if (aUser != null) {
-				// This sets the users stream
-				aUser.hasStream = false;
-				aUser.streamName = "";
-				_participantsSO.setProperty(userid.toString(), aUser);
-				_participantsSO.setDirty(userid.toString());
-				
-				LogUtil.debug(LOGNAME + "Conference::removeStream::found =[" + userid + "," 
-						+ aUser.hasStream + "," + aUser.streamName + "]");				
-			}
+			var nc:NetConnection = netConnectionDelegate.connection;
+			nc.call(
+				"participants.setParticipantStatus",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully assigned stream to: " + userid);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				userid,
+				"streamName",
+				""
+			); //_netConnection.call
+			
+			nc.call(
+				"participants.setParticipantStatus",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully removed stream to: " + userid);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				userid,
+				"hasStream",
+				false
+			); //_netConnection.call
 		}
-*/		
+		
 
 		private function notifyConnectionStatusListener(connected:Boolean, reason:String = null):void {
 			if (_connectionStatusListener != null) {
