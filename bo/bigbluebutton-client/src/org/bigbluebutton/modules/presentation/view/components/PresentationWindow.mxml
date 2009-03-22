@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<pres:MDIWindow xmlns:mx="http://www.adobe.com/2006/mxml"  
+	xmlns:thumb="org.bigbluebutton.modules.presentation.view.components.*"
+	xmlns:pres="flexlib.mdi.containers.*"
+	paddingBottom="0" paddingTop="0" 
+	paddingLeft="0" paddingRight="0" 
+    verticalScrollPolicy="off" horizontalScrollPolicy="off"
+	implements="org.bigbluebutton.common.IBbbModuleWindow"
+	mouseMove="thumbnailDisplay()"
+	creationComplete="init()">
+
+	<mx:Script>
+		<![CDATA[
+		
+			import org.bigbluebutton.modules.presentation.view.PresentationWindowMediator;
+			import mx.core.Application;
+			import org.bigbluebutton.modules.presentation.view.components.Images;
+			import org.bigbluebutton.modules.presentation.PresentationFacade;
+			import mx.binding.utils.BindingUtils;
+
+			import mx.collections.ArrayCollection;
+			import mx.rpc.events.*;
+			import mx.controls.Alert;
+            import mx.managers.PopUpManager;
+            import mx.containers.TitleWindow;
+            import flash.geom.Point;
+             			
+            public static const TITLE:String = "Presentation";
+			private var images:Images = new Images();
+
+			[Bindable] private var uploadIcon : Class = images.pdf;
+			[Bindable] private var forwardIcon : Class = images.forward;
+			[Bindable] private var backwardIcon : Class = images.backward;
+			[Bindable] private var thumbnailIcon : Class = images.thumbnails;
+			[Bindable] private var magnifierIcon : Class = images.magnifier;
+			[Bindable] private var fastForwardIcon : Class = images.fastForward;
+			[Bindable] private var fastBackIcon : Class = images.fastBack;
+			
+			[Bindable] private var thumbY:Number;
+											
+			public var uploadWindow:FileUploadWindow = null;
+			
+			private var _xPosition:int;
+			private var _yPosition:int;
+			
+			private var mouseDown:Boolean = false;
+			public var isPresenter:Boolean = false;
+			private var scrollTimer:Timer;
+			
+			private function init():void{
+				positionThumbnails();
+				thumbnailWindow.addEventListener(FisheyeThumbnail.SLIDE_HIGHLIGHTED, onSlideHighlighted);
+				thumbY = this.height - 160;
+			}
+			
+			private function positionThumbnails():void{
+				this.thumbnailWindow.y = this.mainCanvas.height*0.9;
+			}
+			
+			public function get xPosition():int {
+				return _xPosition;
+			}
+			
+			public function get yPosition():int {
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void {
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void {
+				_yPosition = y;
+			}	
+			
+			private function thumbnailDisplay():void{
+				if (!mouseDown && mouseY > this.height*0.8 && isPresenter){
+					//readjust the position of the thumbnails in case the window was resized
+					//Note: this is necessary because the MDIWindow does not let you listen to the resize() event!
+					thumbY = this.height - 160;
+					thumbnailWindow.visible = true;
+				} else if (slideView.slides != null){
+					//make the thumbnails dissapear
+					thumbnailWindow.visible = false;
+					slideNumLbl.text = "" + (slideView.selectedSlide + 1) + " of " + slideView.slides.length;
+				}
+			}
+			
+			private function onSlideHighlighted(e:Event):void{
+				if (slideView.visible)
+				slideNumLbl.text = "" + (thumbnailWindow.slideNumber+1) + " of " + slideView.slides.length;
+			}
+			
+			private function scrollThumbnails(e:TimerEvent):void{
+				if (!thumbnailWindow.visible) return;
+				
+				if (mouseX < 80) this.thumbnailWindow.x += 20;
+				else if (mouseX > this.width - 80) this.thumbnailWindow.x -= 20;
+			}
+			
+			private function showThumbs():void {
+				 if (isPresenter){
+					//readjust the position of the thumbnails in case the window was resized
+					//Note: this is necessary because the MDIWindow does not let you listen to the resize() event!
+					thumbY = this.height - 150;
+					thumbnailWindow.visible = true;
+				}				
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Fade id="thumbFadeIn" alphaFrom="1" alphaTo="0" duration="100" />
+	<mx:Fade id="thumbFadeOut" alphaFrom="0" alphaTo="1" duration="100" />
+	
+	<mx:Canvas id="mainCanvas" width="100%" height="100%" resize="positionThumbnails()" mouseDown="mouseDown = true" 
+		mouseUp="mouseDown = false" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		<thumb:SlideView id="slideView" width="100%" height="100%" visible="false"/>
+		<thumb:FisheyeThumbnail y="{thumbY}" id="thumbnailWindow" width="100%" height="100%" visible="false" backgroundAlpha="1" 
+			verticalScrollPolicy="off" horizontalScrollPolicy="off" verticalCenter="top"/>
+	</mx:Canvas>
+			
+    
+    <mx:ApplicationControlBar id="presCtrlBar" width="100%">
+    	  <mx:Button id="uploadPres" icon="{uploadIcon}" visible="false" width="20" height="20"
+    	   		toolTip="Upload PDF document for presentation." click="dispatchEvent(new Event(PresentationWindowMediator.OPEN_UPLOAD))"/>    
+    	  <mx:Label id="presenterNameLabel" visible="false" text=""/>
+    	  <mx:Spacer width="50%"/>	
+    	  <mx:Button id="backButton" icon="{backwardIcon}" visible="false" width="40" height="20"
+    	   		toolTip="Previous slide." click="dispatchEvent(new Event(PresentationWindowMediator.PREVIOUS_SLIDE))"/>
+    	  <mx:Label id="slideNumLbl" text=""/>    
+    	  <mx:Button id="forwardButton" icon="{forwardIcon}" visible="false" width="40" height="20"
+    	   		toolTip="Next slide" click="dispatchEvent(new Event(PresentationWindowMediator.NEXT_SLIDE))"/>    				
+    	<mx:Spacer width="50%"/>
+    	<mx:Button id="btnResetZoom" icon="{magnifierIcon}" visible="false" width="20" height="20" 
+    		toolTip="Reset Zoom" click="dispatchEvent(new Event(PresentationWindowMediator.RESET_ZOOM))"/>
+    </mx:ApplicationControlBar>			
+</pres:MDIWindow>
