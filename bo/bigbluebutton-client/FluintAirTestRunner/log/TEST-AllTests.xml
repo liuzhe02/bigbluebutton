@@ -1,0 +1,26 @@
+<testsuites status="false" failureCount="2" errorCount="0" testCount="5">
+  <testsuite name="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase" errors="0" failures="1" tests="1" time="1.294">
+    <properties/>
+    <testcase name="testLoginService" time="1.294" className="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase">
+      <failure message="login FAILED: fullname=Bo  conference=1  password=2" type="net.digitalprimates.fluint.assertion::AssertionFailedError">null</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase" errors="0" failures="1" tests="1" time="0.034">
+    <properties/>
+    <testcase name="testLoginService" time="0.034" className="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase">
+      <failure message="login FAILED: fullname=Bo  conference=1  password=2" type="net.digitalprimates.fluint.assertion::AssertionFailedError">null</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase" errors="0" failures="0" tests="1" time="0.259">
+    <properties/>
+    <testcase name="testLoginService" time="0.259" className="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase"/>
+  </testsuite>
+  <testsuite name="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase" errors="0" failures="0" tests="1" time="0.019">
+    <properties/>
+    <testcase name="testLoginService" time="0.019" className="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase"/>
+  </testsuite>
+  <testsuite name="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase" errors="0" failures="0" tests="1" time="0.041">
+    <properties/>
+    <testcase name="testLoginService" time="0.041" className="org.bigbluebutton.modules.login.model.services.LoginServiceTestCase"/>
+  </testsuite>
+</testsuites>

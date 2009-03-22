@@ -1,0 +1,29 @@
+<project name="MyProject" default="runTests" basedir=".">
+
+<path id="libraries">
+   <fileset dir="C:\Tomcat4_1\webapps\ROOT\cloudtogether\bbb\googlecode\bbb_developers\bo\bigbluebutton-client\FluintAirTestRunner\lib">
+      <include name="**/*.jar"/>
+   </fileset>
+</path>
+
+<taskdef name="fluint"
+   classname="net.digitalprimates.ant.tasks.fluint.Fluint"
+   classpathref="libraries" />
+
+
+
+<target name="runTests">
+<fluint
+   debug="true"
+   headless="true"
+   failonerror="false"
+   testRunner="C:/FluintAIRTestRunner/FluintAIRTestRunner.exe"
+   outputDir="C:/Tomcat4_1/webapps/ROOT/cloudtogether/bbb/googlecode/bbb_developers/bo/bigbluebutton-client/FluintAirTestRunner/log">
+
+   <fileset dir="C:/Tomcat4_1/webapps/ROOT/cloudtogether/bbb/googlecode/bbb_developers/bo/bigbluebutton-client/FluintAirTestRunner/swf">
+      <include name="**/*.swf"/>
+   </fileset>
+</fluint>
+	</target>
+
+</project>
