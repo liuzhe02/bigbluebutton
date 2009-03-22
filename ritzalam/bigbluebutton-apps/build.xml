@@ -220,15 +220,10 @@
 		<echo message="Webapps build dir: ${webapps.build.dir}"/>
 		<echo message="Webapps build dir: ${full.classpath}"/>
 		
-		<!--build-groovy name="chat"/-->
 		<build-groovy name="bigbluebutton"/>
-		<!--build-groovy name="conference"/-->
 		<!-- build apps -->
 		<build-app name="astmeetme"/>
 		<build-app name="bigbluebutton"/>
-		<!--build-app name="conference"/-->
-		<build-app name="chatServer"/>
-		<!--build-app name="presentation"/-->
 	</target>
 
 	<macrodef name="compile-jarapp">
@@ -249,10 +244,6 @@
 		<!-- create jar files for apps -->
 		<compile-jarapp name="astmeetme"/>
 		<compile-jarapp name="bigbluebutton"/>
-		<!--compile-jarapp name="conference"/-->
-		<!--compile-jarapp name="chat"/-->
-		<compile-jarapp name="chatServer"/>
-		<!--compile-jarapp name="presentation"/-->
 	</target>
 
 	<macrodef name="deploy-app">
@@ -268,10 +259,6 @@
 		<!-- need to do this one-by-one as it seems like macrodef does not support delete -->
 		<delete dir="${red5.home}/webapps/astmeetme"/>
 		<delete dir="${red5.home}/webapps/bigbluebutton"/>
-		<delete dir="${red5.home}/webapps/conference"/>
-		<delete dir="${red5.home}/webapps/chatServer"/>
-		<delete dir="${red5.home}/webapps/chat"/>
-		<delete dir="${red5.home}/webapps/presentation"/>
 		<copy todir="${red5.home}/webapps">
 			   	<fileset dir="${dist.webapps.dir}"/>
 		</copy>		
@@ -381,27 +368,6 @@
 				<presentation-lib webapp="bigbluebutton"/>
 			</copy-assets>
 		</copy-app>
-		<!--copy-app name="conference">
-			<copy-assets>
-				<logback webapp="conference"/>
-			</copy-assets>
-		</copy-app>
-		<copy-app name="chat">
-			<copy-assets>
-				<logback webapp="chat"/>
-			</copy-assets>
-		</copy-app-->
-		<copy-app name="chatServer">
-			<copy-assets>
-				<logback webapp="chatServer"/>
-			</copy-assets>
-		</copy-app>
-		<!--copy-app name="presentation">
-			<copy-assets>
-				<logback webapp="presentation"/>
-				<presentation-lib webapp="presentation"/>
-			</copy-assets>
-		</copy-app-->
 	</target>
 
 	<target name="create-bin-zipfile" depends="dist" description="create distributable file for windows">
