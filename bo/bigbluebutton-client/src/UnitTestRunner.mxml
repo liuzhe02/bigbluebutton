@@ -10,7 +10,7 @@
 		<![CDATA[
 			import net.digitalprimates.fluint.unitTests.frameworkSuite.FrameworkSuite;
 
-			import unit.UnitTestSuite;
+			import org.bigbluebutton.UnitTestSuite;
 			
 			protected function startTestProcess( event:Event ) : void
 			{

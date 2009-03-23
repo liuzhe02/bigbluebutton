@@ -22,7 +22,7 @@ package org.bigbluebutton.modules.login.model.services
 		private var conference:String;
 		private var password:String;
 		private var url:String;
-
+		private var ls:LoginService;
 
 		public function LoginServiceTestCase(fullname:String, conference:String, password:String, url:String)
 		{
@@ -36,7 +36,7 @@ package org.bigbluebutton.modules.login.model.services
 		
 		override protected function setUp():void 
 		{
-			//timer = new Timer( 18000, 1 );  			
+			ls = new LoginService(); 			
         }
         
 		override protected function tearDown():void 
@@ -48,19 +48,10 @@ package org.bigbluebutton.modules.login.model.services
 		[Test]
 		public function testLoginService():void 
 		{
-            vars.fullname = this.fullname;
-            vars.conference = this.conference;
-            vars.password = this.password;
-            request = new URLRequest(url);
-            request.data = vars;
-            request.method = URLRequestMethod.POST;		
-            urlLoader = new URLLoader();
-			urlLoader.addEventListener(Event.COMPLETE, asyncHandler(handleComplete, 5000));	
+            ls.addLoginResultListener(asyncHandler(handleComplete, 5000));	
             urlLoader.load(request);	
         
-			//var asyncHandler:Function = asyncHandler( handleTimerComplete, 17000, null, handleTimeout );
-            //timer.addEventListener(TimerEvent.TIMER_COMPLETE, asyncHandler, false, 0, true );
-            //timer.start();
+			ls.load(url, fullname, conference, password);
         
         }
 

@@ -25,6 +25,7 @@
 </sourceAttachmentPath>
 </compiler>
 <applications>
+<application path="UnitTestRunner.mxml"/>
 <application path="src/main.mxml"/>
 <application path="MessagingUnitTests.mxml"/>
 <application path="PresentationUnitTest.mxml"/>

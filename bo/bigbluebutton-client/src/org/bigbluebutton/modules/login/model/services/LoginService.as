@@ -14,9 +14,7 @@ package org.bigbluebutton.modules.login.model.services
 		private var urlLoader:URLLoader;
 		private var _resultListener:Function;
 		
-		public function LoginService()
-		{
-		}
+		public function LoginService(){}
 		
 		/**
 		 * Load slides from an HTTP service. Response is received in the Responder class' onResult method 

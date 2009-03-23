@@ -1,4 +1,4 @@
-package
+package org.bigbluebutton
 {
 	import net.digitalprimates.fluint.tests.TestSuite;
 
