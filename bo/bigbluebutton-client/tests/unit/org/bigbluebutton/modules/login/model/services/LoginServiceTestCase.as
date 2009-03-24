@@ -47,11 +47,9 @@ package org.bigbluebutton.modules.login.model.services
         
 		[Test]
 		public function testLoginService():void 
-		{
-            ls.addLoginResultListener(asyncHandler(handleComplete, 5000));	
-            urlLoader.load(request);	
-        
-			ls.load(url, fullname, conference, password);
+		{	
+            urlLoader.load(request);	       
+			ls.load(url, fullname, conference, password, asyncHandler(handleComplete, 5000));
         
         }
 

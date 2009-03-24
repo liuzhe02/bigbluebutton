@@ -12,8 +12,6 @@ package org.bigbluebutton.modules.login.model.services
 		private var vars:URLVariables = new URLVariables();
 		
 		private var urlLoader:URLLoader;
-		private var _resultListener:Function;
-		
 		public function LoginService(){}
 		
 		/**
@@ -21,7 +19,7 @@ package org.bigbluebutton.modules.login.model.services
 		 * @param url
 		 * 
 		 */		
-		public function load(url:String, fullname:String, conference:String, password:String) : void
+		public function load(url:String, fullname:String, conference:String, password:String, handleComplete:Function) : void
 		{
 			LogUtil.debug("LoginService:load(...) " + url);
 			            
@@ -35,26 +33,6 @@ package org.bigbluebutton.modules.login.model.services
             urlLoader = new URLLoader();
 			urlLoader.addEventListener(Event.COMPLETE, handleComplete);	
             urlLoader.load(request);	
-		}
-
-		public function addLoginResultListener(listener:Function):void {
-			_resultListener = listener;
-		}
-		
-		private function handleComplete(e:Event):void{
-			
-			var xml:XML = new XML(e.target.data)
-			LogUtil.debug("Loading complete: " + xml);
-			var returncode:String = xml.returncode;
-			if (returncode == 'FAILED') {
-				LogUtil.debug("Result = " + returncode + " " + xml.message);
-				_resultListener(false, {message:xml.message});
-			} else if (returncode == 'SUCCESS') {
-				LogUtil.debug(xml.returncode + " " + xml.fullname + " " + xml.conference + " " + xml.role
-					+ " " + xml.room);
-				_resultListener(true, {fullname:xml.fullname,conference:xml.conference,role:xml.role,room:xml.room});
-			}
-				
-		}
+		}	
 	}
 }

@@ -19,6 +19,8 @@
 */
 package org.bigbluebutton.modules.login.model
 {
+	import flash.events.Event;
+	
 	import org.bigbluebutton.modules.login.LoginModuleConstants;
 	import org.bigbluebutton.modules.login.model.services.LoginService;
 	import org.puremvc.as3.multicore.interfaces.IProxy;
@@ -40,25 +42,27 @@ package org.bigbluebutton.modules.login.model
 		public function login(fullname:String, conference:String, password:String):void {
 			LogUtil.debug(NAME + "::logging in " + fullname + " to " + conference);
 			loginService = new LoginService();
-			loginService.addLoginResultListener(loginListener);
-			loginService.load(uri, fullname, conference, password);
-
+			loginService.load(uri, fullname, conference, password, handleComplete);
 		}
 		
 		public function stop():void {
-			// USer is issuing a disconnect.
-//			manualDisconnect = true;
-//			chatService.disconnect();
+
 		}
 		
-		private function loginListener(success:Boolean, result:Object):void {
-			if (success) {
-				LogUtil.debug(NAME + '::Sending LoginModuleConstants.LOGIN_SUCCESS');
-				sendNotification(LoginModuleConstants.LOGIN_SUCCESS, result);
-			} else {
-				LogUtil.debug(NAME + '::Sending LoginModuleConstants.LOGIN_FAILED');
-				sendNotification(LoginModuleConstants.LOGIN_FAILED, result);
+
+		private function handleComplete(e:Event):void{			
+			var xml:XML = new XML(e.target.data)
+			LogUtil.debug("Loading complete: " + xml);
+			var returncode:String = xml.returncode;
+			if (returncode == 'FAILED') {
+				LogUtil.debug("Result = " + returncode + " " + xml.message);
+				sendNotification(LoginModuleConstants.LOGIN_SUCCESS, {message:xml.message});
+			} else if (returncode == 'SUCCESS') {
+				LogUtil.debug(xml.returncode + " " + xml.fullname + " " + xml.conference + " " + xml.role
+					+ " " + xml.room);
+				sendNotification(LoginModuleConstants.LOGIN_SUCCESS, {fullname:xml.fullname,conference:xml.conference,role:xml.role,room:xml.room});
 			}
+				
 		}
 	}
 }
