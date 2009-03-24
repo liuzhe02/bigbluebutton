@@ -1,0 +1,9 @@
+about hout to run Ant+TestRunner_ant:
+
+checkout new BBB-client
+install adobe Air
+install FlunitAirTestRunner-1.1.0.air(double-click, already checkin at BBB-client/FlunitAirTestRunner/other ) into C:\FluintAIRTestRunner
+update BBB-client/FlunitAirTestRunner/build.xml(set testing-resort-output folder, swf folder)
+build test-case(for example, UnitTestRunner_ant.mxml), and copy  UnitTestRunner_ant into BBB-client/FlunitAirTestRunner/swf/ folder
+run BBB-client/FlunitAirTestRunner/build.xml
+check testing resort at BBB-client/FlunitAirTestRunner/log
