@@ -35,7 +35,7 @@
 			}
 		
 			public function get uri():String {
-				return _attributes.uri + "/" + _attributes.conference;
+				return _attributes.uri + "/" + _attributes.room;
 			}
 			
 			public function get username():String {
@@ -48,6 +48,18 @@
 			
 			public function get role():String {
 				return _attributes.userrole as String;
+			}
+			
+			public function get room():String {
+				return _attributes.room;
+			}
+			
+			public function get conference():String {
+				return _attributes.conference;
+			}
+			
+			public function get connection():NetConnection {
+				return _attributes.connection;
 			}
 			
 			public function isModerator():Boolean {

@@ -24,7 +24,7 @@
 			onUserLogoutEvent="STOP"
 	/>
 	<module name="ListenersModule" url="ListenersModule.swf" 
-			uri="rtmp://localhost/astmeetme" 
+			uri="rtmp://localhost/bigbluebutton" 
 			loadNextModule="VideoModule"
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"

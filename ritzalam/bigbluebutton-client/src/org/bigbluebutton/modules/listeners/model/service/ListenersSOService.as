@@ -43,21 +43,24 @@ package org.bigbluebutton.modules.listeners.model.service
 		private var _messageSender:Function;
 		private var nc_responder : Responder;
 		private var _soErrors:Array;
+		private var _module:ListenersModule;
 							
-		public function ListenersSOService(listeners:IListeners)
+		public function ListenersSOService(listeners:IListeners, module:ListenersModule)
 		{			
-			_listeners = listeners;						
+			_listeners = listeners;		
+			_module = module;				
 		}
 		
 		public function connect(uri:String):void {
 			_uri = uri;
-			netConnectionDelegate = new NetConnectionDelegate(uri, connectionListener);
-			netConnectionDelegate.connect();
+			//netConnectionDelegate = new NetConnectionDelegate(uri, connectionListener);
+			//netConnectionDelegate.connect();
+			join();
 		}
 		
 		public function disconnect():void {
 			leave();
-			netConnectionDelegate.disconnect();
+			//netConnectionDelegate.disconnect();
 		}
 		
 		private function connectionListener(connected:Boolean, errors:Array=null):void {
@@ -73,17 +76,18 @@ package org.bigbluebutton.modules.listeners.model.service
 		
 	    private function join() : void
 		{
-			_listenersSO = SharedObject.getRemote(SHARED_OBJECT, _uri, false);
+			trace(_module.uri);
+			_listenersSO = SharedObject.getRemote(SHARED_OBJECT, _module.uri, false);
 			_listenersSO.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			_listenersSO.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
 			_listenersSO.client = this;
-			_listenersSO.connect(netConnectionDelegate.connection);
+			_listenersSO.connect(_module.connection);
 			LogUtil.debug(LOGNAME + ":Voice is connected to Shared object");
 			notifyConnectionStatusListener(true);		
 				
 			// Query the server if there are already listeners in the conference.
-			nc_responder = new Responder(getMeetMeUsers, null);	
-			netConnectionDelegate.getCurrentListeners(nc_responder);
+			//nc_responder = new Responder(getMeetMeUsers, null);	
+			//netConnectionDelegate.getCurrentListeners(nc_responder);
 		}
 		
 	    private function leave():void
@@ -144,17 +148,17 @@ package org.bigbluebutton.modules.listeners.model.service
 		
 		public function muteUnmuteUser(userid:Number, mute:Boolean):void
 		{
-			netConnectionDelegate.muteUnmuteUser(userid, mute);		
+			//netConnectionDelegate.muteUnmuteUser(userid, mute);		
 		}
 
 		public function muteAllUsers(mute:Boolean):void
 		{	
-			netConnectionDelegate.muteAllUsers(mute);			
+			//netConnectionDelegate.muteAllUsers(mute);			
 		}
 		
 		public function ejectUser(userId:Number):void
 		{
-			netConnectionDelegate.ejectUser(userId);			
+			//netConnectionDelegate.ejectUser(userId);			
 		}
 		
 		public function getMeetMeUsers(meetmeUser:Object):void

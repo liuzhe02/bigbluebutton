@@ -15,14 +15,14 @@ package org.bigbluebutton.modules.listeners.model
 	{
 		public static const NAME:String = "ListenersProxy";
 
-		private var _module:IBigBlueButtonModule;		
+		private var _module:ListenersModule;		
 		private var _listenersService:IListenersService;
 		private var _listeners:IListeners = null;
 		// Is teh disconnection due to user issuing the disconnect or is it the server
 		// disconnecting due to t fault?
 		private var manualDisconnect:Boolean = false;
 		
-		public function ListenersProxy(module:IBigBlueButtonModule)
+		public function ListenersProxy(module:ListenersModule)
 		{
 			super(NAME);
 			_module = module;
@@ -36,7 +36,7 @@ package org.bigbluebutton.modules.listeners.model
 		
 		public function connect():void {
 			_listeners = new Listeners();
-			_listenersService = new ListenersSOService(_listeners);
+			_listenersService = new ListenersSOService(_listeners, _module);
 			_listenersService.addConnectionStatusListener(connectionStatusListener);
 			_listenersService.addMessageSender(messageSender);	
 			manualDisconnect = false;
@@ -59,7 +59,7 @@ package org.bigbluebutton.modules.listeners.model
 		
 		private function connectionStatusListener(connected:Boolean, errors:Array=null):void {
 			if (connected) {
-				sendNotification(ListenersModuleConstants.CONNECTED);
+			//	sendNotification(ListenersModuleConstants.CONNECTED);
 			} else {
 				_listeners = null;
 				sendNotification(ListenersModuleConstants.DISCONNECTED, {manual:manualDisconnect, errors:errors});
