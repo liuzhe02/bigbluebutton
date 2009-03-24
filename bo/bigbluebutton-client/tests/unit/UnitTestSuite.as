@@ -12,6 +12,7 @@ package
 			super();
 			
 			/*
+			//will LoginServiceTestCase
 			addTestCase(new LoginServiceTestCase("http://localhost:8080/bigbluebutton/join/signIn", "Bo", "1", "1"));
 			addTestCase(new LoginServiceTestCase("http://localhost:8080/bigbluebutton/join/signIn", "Bo", "1", "2"));
 			addTestCase(new LoginServiceTestCase("http://localhost:8080/bigbluebutton/join/signIn", "Bo", "1", "1"));
@@ -19,6 +20,7 @@ package
 			addTestCase(new LoginServiceTestCase("http://localhost:8080/bigbluebutton/join/signInAAAAA", "Bo", "1", "1"));
 			*/
 			
+			//with LoginWindowTestCase
 			addTestCase(new LoginWindowTestCase("http://localhost:8080/bigbluebutton/join/signIn", "Bo", "1", "1"));
 			addTestCase(new LoginWindowTestCase("http://localhost:8080/bigbluebutton/join/signIn", "Bo", "1", "2"));
 			addTestCase(new LoginWindowTestCase("http://localhost:8080/bigbluebutton/join/signIn", "Bo", "1", "1"));
