@@ -7,3 +7,8 @@ update BBB-client/FlunitAirTestRunner/build.xml(set testing-resort-output folder
 build test-case(for example, UnitTestRunner_ant.mxml), and copy  UnitTestRunner_ant into BBB-client/FlunitAirTestRunner/swf/ folder
 run BBB-client/FlunitAirTestRunner/build.xml
 check testing resort at BBB-client/FlunitAirTestRunner/log
+
+for example, one sample test is as following:
+
+UnitTestRunner_ant.mxml(/src/ folder) - UnitTestSuite.as(/tests/unit/ folder) - LoginServiceTestCase.as(/tests/unit/org/bigbluebutton/modules/login/model/services/ folder)
+build UnitTestRunner_ant.mxml to UnitTestRunner_ant.swf, copy to /FlunitAirTestRunner/swf/, then run builder.xml
