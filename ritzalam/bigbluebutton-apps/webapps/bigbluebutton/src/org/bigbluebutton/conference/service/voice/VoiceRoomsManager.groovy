@@ -33,6 +33,14 @@ public class VoiceRoomsManager {
 		return ((HashMap)rooms).containsKey(name)
 	}
 	
+	public void setConference(String room, String conference) {
+		VoiceRoom r = getRoom(room)
+		if (r != null) {
+			r.setConference(conference)
+			return
+		}
+		log.warn("Setting conference to a non-existing room ${roomName}")
+	}
 	
 	/**
 	 * Keeping getRoom private so that all access to ChatRoom goes through here.
@@ -62,41 +70,56 @@ public class VoiceRoomsManager {
 	}
 	
 	def joined(room, participant, name, muted, talking){
-		VoiceRoom r = getRoom(room)
-		if (r != null) {
-			r.joined(participant, name, muted, talking)
-			return
+		log.debug("joined: $room $participant $name $muted $talking")
+		for (Iterator iter = rooms.values().iterator(); iter.hasNext();) {
+			VoiceRoom r = (VoiceRoom) iter.next()
+			if (r.conference == room) {
+				r.joined(participant, name, muted, talking)
+				return
+			}
 		}	
-		log.warn("Adding participant to a non-existing room ${room}")
+		log.warn("Participant joining to a non-existing room ${room}")
 	}
 	
 
 	def left(room, participant){
-		VoiceRoom r = getRoom(room)
-		if (r != null) {
-			r.left(participant)
-			return
+		log.debug("left: $room $participant")
+		for (Iterator iter = rooms.values().iterator(); iter.hasNext();) {
+			VoiceRoom r = (VoiceRoom) iter.next()
+			if (r.conference == room) {
+				r.left(participant)
+				return
+			}
 		}	
 		log.warn("Participant leaving from a non-existing room ${room}")
 	}
 	
 
 	def mute(participant, room, mute){
-		VoiceRoom r = getRoom(room)
-		if (r != null) {
-			r.mute(participant, mute)
-			return
-		}	
+		log.debug("mute: $participant $room $mute")
+		for (Iterator iter = rooms.values().iterator(); iter.hasNext();) {
+			VoiceRoom r = (VoiceRoom) iter.next()
+			if (r.conference == room) {
+				log.debug("mute: $participant $room $mute FOUND")
+				r.mute(participant, mute)
+				return
+			}
+		}				
 		log.warn("Mute/unmute participant on a non-existing room ${room}")
 	}
 	
 
 	def talk(participant, room, talk){
-		VoiceRoom r = getRoom(room)
-		if (r != null) {
-			r.talk(participant, talk)
-			return
-		}	
+		log.debug("talk: $participant $room $talk")
+		for (Iterator iter = rooms.values().iterator(); iter.hasNext();) {
+			VoiceRoom r = (VoiceRoom) iter.next()
+			if (r.conference == room) {
+				log.debug("talk: $participant $room $talk FOUND")
+				r.talk(participant, talk)
+				return
+			}
+		}
+		
 		log.warn("Talk participant on a non-existing room ${room}")
 	}
 }

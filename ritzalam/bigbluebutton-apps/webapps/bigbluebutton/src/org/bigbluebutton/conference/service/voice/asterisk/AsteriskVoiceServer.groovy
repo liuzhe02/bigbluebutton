@@ -33,7 +33,7 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 	
 	def start(){
 		try {
-			logger.info("Logging at " + managerConnection.getHostname() + ":" + 
+			log.debug("Logging at " + managerConnection.getHostname() + ":" + 
 					managerConnection.getPort())
 			
 			managerConnection.login()
@@ -45,13 +45,13 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 			pingThread.setTimeout(40000)
 			pingThread.start()
 		} catch (IOException e) {
-			logger.error("IOException while connecting to Asterisk server.")
+			log.error("IOException while connecting to Asterisk server.")
 		} catch (TimeoutException e) {
-			logger.error("TimeoutException while connecting to Asterisk server.")
+			log.error("TimeoutException while connecting to Asterisk server.")
 		} catch (AuthenticationFailedException e) {
-			logger.error("AuthenticationFailedException while connecting to Asterisk server.")
+			log.error("AuthenticationFailedException while connecting to Asterisk server.")
 		} catch (ManagerCommunicationException e) {
-			logger.error(e.printStackTrace())
+			log.error(e.printStackTrace())
 		}
 	}
 	
@@ -61,11 +61,12 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 			pingThread.die()
 			managerConnection.logoff()
 		} catch (IllegalStateException e) {
-			logger.error("Logging off when Asterisk Server is not connected.")
+			log.error("Logging off when Asterisk Server is not connected.")
 		}
 	}
 	
 	def mute(user, conference, mute) {
+		log.debug("mute: $user $conference $mute")
 		MeetMeRoom room = asteriskServer.getMeetMeRoom(conference)
 		Collection<MeetMeUser> users = room.getUsers()
 		
@@ -82,6 +83,7 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 	}
 	
 	def kick(user, conference) {
+		log.debug("Kick: $user $conference")
 		MeetMeRoom room = asteriskServer.getMeetMeRoom(conference)
 		Collection<MeetMeUser> users = room.getUsers()
 		
@@ -94,6 +96,7 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 	}
 	
 	def mute(conference, mute) {
+		log.debug("Mute: $conference $mute")
 		MeetMeRoom room = asteriskServer.getMeetMeRoom(conference)
 		Collection<MeetMeUser> users = room.getUsers()
 		
@@ -108,6 +111,7 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 	}
 	
 	def kick(conference){
+		log.debug("Kick: $conference")
 		MeetMeRoom room = asteriskServer.getMeetMeRoom(conference)
 		Collection<MeetMeUser> users = room.getUsers()
 		
@@ -118,7 +122,13 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 	}
 	
 	def initializeRoom(conference){
+		log.debug("initialize $conference")
 		MeetMeRoom room = asteriskServer.getMeetMeRoom(conference)
+		if (room.empty) {
+			log.debug("$conference is empty.")
+			return
+		}
+		
 		Collection<MeetMeUser> users = room.getUsers()
 		
 		for (Iterator it = users.iterator(); it.hasNext();) {
@@ -131,6 +141,8 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
     {
 		log.info("New user joined meetme room: " + user.getRoom() + 
 				" " + user.getChannel().getCallerId().getName());
+		// add a listener for changes to this user
+		user.addPropertyChangeListener(this)
 		newUserJoined(user)
     }
     
@@ -146,30 +158,34 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 	public void propertyChange(PropertyChangeEvent evt) {
 		MeetMeUser changedUser = (MeetMeUser) evt.getSource();
 	
-		log.info("Received property changed event for " + evt.getPropertyName() +
+		log.debug("Received property changed event for " + evt.getPropertyName() +
 				" old = '" + evt.getOldValue() + "' new = '" + evt.getNewValue() +
 				"' room = '" + ((MeetMeUser) evt.getSource()).getRoom() + "'");	
 		
 		if (evt.getPropertyName().equals("muted")) {				
-			if ((muted == null) || (muted.booleanValue() != changedUser.isMuted())) {	
-				conferenceServerListener.mute(changedUser.userNumber, changedUser.room.roomNumber, changedUser.muted)
-			}
+			//if ((muted == null) || (muted.booleanValue() != changedUser.isMuted())) {	
+				conferenceServerListener.mute(changedUser.userNumber.toString(), changedUser.room.roomNumber, changedUser.muted)
+			//}
 		} else if (evt.getPropertyName().equals("talking")) {
-			if ((talking == null) || (talking.booleanValue() != changedUser.isTalking())) {					
-				conferenceServerListener.talk(changedUser.userNumber, changedUser.room.roomNumber, changedUser.talking)
-			}
+			//if ((talking == null) || (talking.booleanValue() != changedUser.isTalking())) {					
+				conferenceServerListener.talk(changedUser.userNumber.toString(), changedUser.room.roomNumber, changedUser.talking)
+			//}
 		} else if ("state".equals(evt.getPropertyName())) {
 			if (MeetMeUserState.LEFT == (MeetMeUserState) evt.getNewValue()) {
-				conferenceServerListener.left(changedUser.userNumber, changedUser.room.roomNumber)
+				conferenceServerListener.left(changedUser.room.roomNumber, changedUser.userNumber)
 			}
 		}			
 	}    
 	
 	public void setManagerConnection(ManagerConnection connection) {
-		this.managerConnection = connection;
+		log.debug('setting manager connection')
+		this.managerConnection = connection
+		log.debug('setting manager connection DONE')
 	}
 	
 	public void setConferenceServerListener(IConferenceServerListener l) {
+		log.debug('setting conference listener')
 		conferenceServerListener = l
+		log.debug('setting conference listener DONE')
 	}
 }

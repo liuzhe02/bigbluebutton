@@ -259,6 +259,7 @@
 		<!-- need to do this one-by-one as it seems like macrodef does not support delete -->
 		<delete dir="${red5.home}/webapps/astmeetme"/>
 		<delete dir="${red5.home}/webapps/bigbluebutton"/>
+		<delete dir="${red5.home}/webapps/chatServer"/>
 		<copy todir="${red5.home}/webapps">
 			   	<fileset dir="${dist.webapps.dir}"/>
 		</copy>		
@@ -355,17 +356,18 @@
 		</macrodef>
 	
 	<target name="dist" description="Make Binary distribution" depends="jar">
-		<copy-app name="astmeetme">
+		<!--copy-app name="astmeetme">
 			<copy-assets>
 				<logback webapp="astmeetme"/>
 				<astmeetme-lib webapp="astmeetme"/>
 			</copy-assets>
-		</copy-app>
+		</copy-app-->
 		<copy-app name="bigbluebutton">
 			<copy-assets>
 				<logback webapp="bigbluebutton"/>
 				<bigbluebutton-lib webapp="bigbluebutton"/>
 				<presentation-lib webapp="bigbluebutton"/>
+				<astmeetme-lib webapp="bigbluebutton"/>
 			</copy-assets>
 		</copy-app>
 	</target>

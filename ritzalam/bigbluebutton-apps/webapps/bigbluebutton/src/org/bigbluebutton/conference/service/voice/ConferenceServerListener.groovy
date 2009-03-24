@@ -10,25 +10,31 @@ public class ConferenceServerListener implements IConferenceServerListener{
 	private VoiceApplication voiceApplication
 	
 	def joined(room, participant, name, muted, talking){
+		log.debug("joined: $room $participant $name $muted $talking")
 		voiceApplication.joined(room, participant, name, muted, talking)
 	}
 	
 
 	def left(room, participant){
+		log.debug("left: $room $participant")
 		voiceApplication.left(room, participant)
 	}
 	
 
 	def mute(participant, room, mute){
+		log.debug("mute: $participant $room $mute")
 		voiceApplication.mute(participant, room, mute)
 	}
 	
 
-	def talk(participant, conference, talk){
+	def talk(participant, room, talk){
+		log.debug("talk: $participant $room $talk")
 		voiceApplication.talk(participant, room, talk)
 	}
 	
-	def setVoiceApplication(VoiceApplication a) {
+	public void setVoiceApplication(VoiceApplication a) {
+		log.debug('setting voice application')
 		voiceApplication = a
+		log.debug('setting voice application DONE')
 	}
 }

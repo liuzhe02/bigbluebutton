@@ -14,11 +14,12 @@ public class VoiceHandler extends ApplicationAdapter implements IApplication{
 	protected static Logger log = LoggerFactory.getLogger( VoiceHandler.class )
 
 	private static final String VOICE = "VOICE"
-	private static final String VOICE_SO = "meetMeUsersSO"   
+	private static final String VOICE_SO = "meetMeUsersSO"
 	private static final String APP = "VOICE"
 
 	private ArchiveApplication archiveApplication
 	private VoiceApplication voiceApplication
+	private IVoiceServer voiceServer
 	
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
@@ -46,12 +47,14 @@ public class VoiceHandler extends ApplicationAdapter implements IApplication{
 	@Override
 	public boolean appStart(IScope scope) {
 		log.debug("${APP}:appStart ${scope.name}")
+		voiceServer.start()
 		return true;
 	}
 
 	@Override
 	public void appStop(IScope scope) {
 		log.debug("${APP}:appStop ${scope.name}")
+		voiceServer.stop()
 	}
 
 	@Override
@@ -71,7 +74,9 @@ public class VoiceHandler extends ApplicationAdapter implements IApplication{
 			archiveApplication.addEventRecorder(connection.scope.name, recorder)
 			log.debug("Adding room listener")
     		voiceApplication.addRoomListener(connection.scope.name, recorder)
+    		voiceApplication.setConference(connection.scope.name, getBbbSession().conference)
     		log.debug("Done setting up recorder and listener")
+    		voiceServer.initializeRoom(getBbbSession().conference)
 		}
     	return true;
 	}
@@ -116,13 +121,20 @@ public class VoiceHandler extends ApplicationAdapter implements IApplication{
 	}
 	
 	public void setVoiceApplication(VoiceApplication a) {
-		log.debug("Setting chat application")
+		log.debug("Setting voice application")
 		voiceApplication = a
+	}
+	
+	public void setIVoiceServer(IVoiceServer s) {
+		log.debug("Setting voice server")
+		voiceServer = s
+		log.debug("Setting voice server DONE")
 	}
 	
 	public void setArchiveApplication(ArchiveApplication a) {
 		log.debug("Setting archive application")
 		archiveApplication = a
+		log.debug("Setting archive application DONE")
 	}
 	
 	private BigBlueButtonSession getBbbSession() {

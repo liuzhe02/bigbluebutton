@@ -1,22 +1,20 @@
-package org.bigbluebutton.conference.service.chat
+package org.bigbluebutton.conference.service.voice
 import org.slf4j.Loggerimport org.slf4j.LoggerFactoryimport org.red5.server.api.Red5
-public class ChatService {
+public class VoiceService {
 	
-	protected static Logger log = LoggerFactory.getLogger( ChatService.class );
+	protected static Logger log = LoggerFactory.getLogger( VoiceService.class );
 	
-	private ChatApplication application
-
-	public String getChatMessages() {
-		String roomName = Red5.connectionLocal.scope.name
-		return application.getChatMessages(roomName)
-	}
-	
-	public void sendMessage(String message) {
-		String roomName = Red5.connectionLocal.scope.name
-		application.sendMessage(roomName, message)
-	}
-	public void setChatApplication(ChatApplication a) {
-		log.debug("Setting Chat Applications")
+	private VoiceApplication application
+	private IVoiceServer voiceServer
+		
+	public void setVoiceApplication(VoiceApplication a) {
+		log.debug("Setting Voice Applications")
 		application = a
+	}
+	
+	public void setIVoiceServer(IVoiceServer s) {
+		log.debug("Setting voice server")
+		voiceServer = s
+		log.debug("Setting voice server DONE")
 	}
 }

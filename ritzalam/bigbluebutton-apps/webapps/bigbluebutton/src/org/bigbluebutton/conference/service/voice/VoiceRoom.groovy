@@ -13,7 +13,9 @@ public class VoiceRoom {
 	
 	private final String name
 	private final Map<String, IVoiceRoomListener> listeners
-	private final Map <Long, HashMap> participants
+	private final Map<String, HashMap> participants
+	
+	private String conference
 	
 	public VoiceRoom(String name) {
 		this.name = name
@@ -23,6 +25,14 @@ public class VoiceRoom {
 	
 	public String getName() {
 		return name
+	}
+	
+	public void setConference(String c) {
+		conference = c
+	}
+	
+	public String getConference() {
+		return conference
 	}
 	
 	public void addRoomListener(IVoiceRoomListener listener) {
@@ -44,20 +54,48 @@ public class VoiceRoom {
 		p.put('muted', muted)
 		p.put('talking', talking)
 		participants.put(participant, p)
+		
+		for (Iterator iter = listeners.values().iterator(); iter.hasNext();) {
+			log.debug("calling on listener")
+			IVoiceRoomListener listener = (IVoiceRoomListener) iter.next()
+			log.debug("calling joined on listener ${listener.getName()}")
+			listener.joined(participant, name, muted, talking)
+		}
 	}
 	
 	def left(participant){
 		participants.remove(participant)
+		for (Iterator iter = listeners.values().iterator(); iter.hasNext();) {
+			log.debug("calling on listener")
+			IVoiceRoomListener listener = (IVoiceRoomListener) iter.next()
+			log.debug("calling left on listener ${listener.getName()}")
+			listener.left(participant)
+		}
 	}
 	
 	def mute(participant, mute){
-		HashMap p = participants.get(participant)
+		log.debug("mute: $participant $mute")
+		Map p = (HashMap) participants.get(participant)
 		p.put('muted', mute)
+		
+		for (Iterator iter = listeners.values().iterator(); iter.hasNext();) {
+			log.debug("calling on listener")
+			IVoiceRoomListener listener = (IVoiceRoomListener) iter.next()
+			log.debug("calling mute on listener ${listener.getName()}")
+			listener.mute(participant, mute)
+		}
 	}
 	
 
 	def talk(participant, talk){
-		HashMap p = participants.get(participant)
+		log.debug("talk: $participant $talk")
+		Map p = (HashMap) participants.get(participant)
 		p.put('talking', talk)
+		for (Iterator iter = listeners.values().iterator(); iter.hasNext();) {
+			log.debug("calling on listener")
+			IVoiceRoomListener listener = (IVoiceRoomListener) iter.next()
+			log.debug("calling talk on listener ${listener.getName()}")
+			listener.talk(participant, talk)
+		}
 	}	
 }

@@ -29,6 +29,7 @@ public class BigBlueButtonSession {
 		mode == Constants.PLAYBACK_MODE
 	}
 	
+	
 //	public Long getUserid() {
 //		return userid
 //	}
