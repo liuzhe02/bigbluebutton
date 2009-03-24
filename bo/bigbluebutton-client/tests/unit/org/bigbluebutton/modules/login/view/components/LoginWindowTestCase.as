@@ -75,7 +75,7 @@ package org.bigbluebutton.modules.login.view.components
      
 		protected function handleLoginEvent( event:Event, passThroughData:Object ):void {
         	var ls:LoginService = new LoginService();
-			ls.load(url, fullname, conference, password, asyncHandler(handleComplete, 5000));
+			ls.load(url, form.nameField.text, form.confField.text, form.passwdField.text, asyncHandler(handleComplete, 5000));
         }
 
 		private function handleComplete(e:Event, passThroughData:Object):void
