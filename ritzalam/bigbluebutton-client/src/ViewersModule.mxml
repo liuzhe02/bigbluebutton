@@ -93,8 +93,8 @@
 			
 			public function get mode():String {
 				if (_attributes.mode == null) {
-					//_attributes.mode = "PLAYBACK"
-					_attributes.mode = "LIVE"
+					_attributes.mode = "PLAYBACK"
+					//_attributes.mode = "LIVE"
 				}
 				return _attributes.mode;
 			}

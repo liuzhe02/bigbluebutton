@@ -21,6 +21,7 @@ package org.bigbluebutton.modules.listeners.model.service
 {
 	import flash.events.AsyncErrorEvent;
 	import flash.events.NetStatusEvent;
+	import flash.net.NetConnection;
 	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
@@ -86,8 +87,7 @@ package org.bigbluebutton.modules.listeners.model.service
 			notifyConnectionStatusListener(true);		
 				
 			// Query the server if there are already listeners in the conference.
-			//nc_responder = new Responder(getMeetMeUsers, null);	
-			//netConnectionDelegate.getCurrentListeners(nc_responder);
+			getCurrentUsers();
 		}
 		
 	    private function leave():void
@@ -148,19 +148,98 @@ package org.bigbluebutton.modules.listeners.model.service
 		
 		public function muteUnmuteUser(userid:Number, mute:Boolean):void
 		{
-			//netConnectionDelegate.muteUnmuteUser(userid, mute);		
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"voice.muteUnmuteUser",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Object):void { 
+						LogUtil.debug("Successfully mute/unmute: " + userid); 	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				),//new Responder
+				userid,
+				mute
+			); //_netConnection.call		
 		}
 
 		public function muteAllUsers(mute:Boolean):void
 		{	
-			//netConnectionDelegate.muteAllUsers(mute);			
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"voice.muteAllUsers",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Object):void { 
+						LogUtil.debug("Successfully mute/unmute all users: "); 	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				),//new Responder
+				mute
+			); //_netConnection.call		
 		}
 		
 		public function ejectUser(userId:Number):void
 		{
-			//netConnectionDelegate.ejectUser(userId);			
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"voice.kickUSer",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Object):void { 
+						LogUtil.debug("Successfully kick user: userId"); 	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				),//new Responder
+				userId
+			); //_netConnection.call		
 		}
 		
+		private function getCurrentUsers():void {
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"voice.getMeetMeUsers",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Object):void { 
+						LogUtil.debug("Successfully queried participants: " + result.count); 
+						if (result.count > 0) {
+							for(var p:Object in result.participants) 
+							{
+								var u:Object = result.participants[p]
+								userJoin(u.participant, u.name, u.name, u.muted, u.talking);
+							}							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				)//new Responder
+			); //_netConnection.call
+		}
+/*		
 		public function getMeetMeUsers(meetmeUser:Object):void
 		{			
 			for(var items:String in meetmeUser) 
@@ -173,7 +252,7 @@ package org.bigbluebutton.modules.listeners.model.service
 				userJoin(userId, cidName, cidNum, muted, talking);
 			}
 		}
-		
+*/		
 		private function notifyConnectionStatusListener(connected:Boolean, errors:Array=null):void {
 			if (_connectionListener != null) {
 				LogUtil.debug(LOGNAME + 'notifying connectionListener for Voice');

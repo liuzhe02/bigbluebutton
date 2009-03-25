@@ -242,8 +242,7 @@ package org.bigbluebutton.modules.viewers.model.services
 				"participants.assignPresenter",// Remote function name
 				new Responder(
 	        		// participants - On successful result
-					function(result:Boolean):void { 
-						 
+					function(result:Boolean):void { 						 
 						if (result) {
 							LogUtil.debug("Successfully assigned presenter to: " + userid);							
 						}	
