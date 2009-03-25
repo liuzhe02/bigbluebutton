@@ -13,12 +13,13 @@ package org.bigbluebutton.main.model
 		
 		private var _user:Object;
 		private var _router:Router;
+		private var _mode:String;
 		
-		public function ModulesProxy(router:Router)
+		public function ModulesProxy(router:Router, mode:String)
 		{
 			super(NAME);
 			_router = router;
-			modulesManager = new BbbModuleManager(_router);
+			modulesManager = new BbbModuleManager(_router, _mode);
 			modulesManager.addInitializedListener(onInitializeComplete);
 			modulesManager.addModuleLoadedListener(onModuleLoadedListener);
 			modulesManager.initialize();

@@ -92,15 +92,18 @@
 			}
 			
 			public function get mode():String {
-				if (_attributes.mode == null) {
+				if (_attributes.mode == null) {					
 					//_attributes.mode = "PLAYBACK"
 					_attributes.mode = "LIVE"
+					LogUtil.debug('Setting ViewersModule mode: ' + _attributes.mode);
 				}
+				LogUtil.debug('ViewersModule mode: ' + _attributes.mode);
 				return _attributes.mode;
 			}
 			
 			public function start(attributes:Object):void {		
 				_attributes = attributes;	
+				LogUtil.debug('Passed ViewersModule mode: ' + _attributes.mode);
 				ViewersFacade.getInstance().startup(this);	
 			}
 		

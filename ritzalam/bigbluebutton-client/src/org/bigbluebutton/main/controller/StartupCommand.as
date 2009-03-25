@@ -43,7 +43,7 @@ package org.bigbluebutton.main.controller
 			facade.registerMediator(new MainApplicationMediator());
 			var med:MainEndpointMediator = new MainEndpointMediator();
 			facade.registerMediator(med);
-			facade.registerProxy(new ModulesProxy(med.router));
+			facade.registerProxy(new ModulesProxy(med.router, app.mode));
 		}		
 	}
 }

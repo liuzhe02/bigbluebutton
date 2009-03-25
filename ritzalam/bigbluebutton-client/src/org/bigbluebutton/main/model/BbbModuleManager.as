@@ -10,7 +10,6 @@ package org.bigbluebutton.main.model
 	import org.bigbluebutton.common.IBigBlueButtonModule;
 	import org.bigbluebutton.common.messaging.Router;
 	import org.bigbluebutton.main.MainApplicationConstants;
-	import org.bigbluebutton.common.messaging.Router;
 	
 	public class BbbModuleManager
 	{
@@ -23,10 +22,12 @@ package org.bigbluebutton.main.model
 		public var  _modules:Dictionary = new Dictionary();
 		private var _user:Object;
 		private var _router:Router;
+		private var _mode:String;
 		
-		public function BbbModuleManager(router:Router)
+		public function BbbModuleManager(router:Router, mode:String)
 		{
 			_router = router;
+			_mode = mode;
 			_urlLoader = new URLLoader();
 			_urlLoader.addEventListener(Event.COMPLETE, handleComplete);			
 		}
@@ -90,7 +91,7 @@ package org.bigbluebutton.main.model
 			_user.room = user.room;
 			_user.authToken = user.authToken;
 			_user.userid = user.userid;
-			_user.mode = user.mode;
+			_user.mode = _mode; // Assign if this is PLAYBACK or LIVE
 			_user.connection = user.connection;
 		}
 				
@@ -130,7 +131,10 @@ package org.bigbluebutton.main.model
 					m.addAttribute("userid", _user.userid);
 					m.addAttribute("mode", _user.mode);
 					m.addAttribute("connection", _user.connection);
-				}						
+				} else {
+					// Pass the mode that we got from the URL query string.
+					m.addAttribute("mode", _mode);
+				}					
 				bbb.start(m.attributes);		
 			}	
 		}
