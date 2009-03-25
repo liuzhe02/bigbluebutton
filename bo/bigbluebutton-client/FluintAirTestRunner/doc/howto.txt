@@ -12,3 +12,6 @@ for example, one sample test is as following:
 
 UnitTestRunner_ant.mxml(/src/ folder) - UnitTestSuite.as(/tests/unit/ folder) - LoginServiceTestCase.as(/tests/unit/org/bigbluebutton/modules/login/model/services/ folder)
 build UnitTestRunner_ant.mxml to UnitTestRunner_ant.swf, copy to /FlunitAirTestRunner/swf/, then run builder.xml
+
+when you test please check UnitTestCase.as first, the testing parameters there(for example, password, conference number) is for my server, so please update them with your server's parameters.
+
