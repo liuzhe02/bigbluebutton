@@ -94,7 +94,8 @@ package org.bigbluebutton.modules.presentation
 					break;
 				case EndpointMessageConstants.ASSIGN_PRESENTER:
 					LogUtil.debug('Received ASSIGN_PRESENTER message from ' + message.getHeader().SRC);
-					presentProxy.assignPresenter(message.getBody() as Number);
+					var p:Object = message.getBody();
+					presentProxy.assignPresenter(p["assignTo"], p["name"]);
 					break;
 				case EndpointMessageConstants.BECOME_VIEWER:
 					LogUtil.debug('Received BECOME_VIEWER message from ' + message.getHeader().SRC);

@@ -93,8 +93,8 @@ package org.bigbluebutton.modules.presentation.model.business
 			service.upload(presentationName, fileToUpload);
 		}
 
-		public function assignPresenter(assignTo:Number):void {
-			_presentService.assignPresenter(assignTo, _module.username, _module.userid);
+		public function assignPresenter(assignTo:Number, name:String):void {
+			_presentService.assignPresenter(assignTo, name, _module.userid);
 		}
 		
 		/**

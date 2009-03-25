@@ -74,7 +74,7 @@ package org.bigbluebutton.modules.viewers.view
 		
 		private function onAssignPresenter(e:AssignPresenterEvent):void {
 			LogUtil.debug('Assigning presenter to ' + e.assignTo);
-			sendNotification(ViewersModuleConstants.ASSIGN_PRESENTER, e.assignTo);
+			sendNotification(ViewersModuleConstants.ASSIGN_PRESENTER, {assignTo:e.assignTo, name:e.name});
 		}
 		
 		/**
