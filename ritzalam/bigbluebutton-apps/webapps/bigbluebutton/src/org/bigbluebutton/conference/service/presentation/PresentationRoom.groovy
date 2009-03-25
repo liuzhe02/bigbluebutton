@@ -15,6 +15,7 @@ public class PresentationRoom {
 	private final Map<String, IPresentationRoomListener> listeners
 	def currentPresenter
 	def currentSlide
+	def sharing
 	
 	public PresentationRoom(String name) {
 		this.name = name
@@ -69,6 +70,7 @@ public class PresentationRoom {
 	
 	def sharePresentation = {presentationName, share ->
 		log.debug("Request share presentation $presentationName $share for room $name")
+		sharing = share
 		for (Iterator iter = listeners.values().iterator(); iter.hasNext();) {
 			log.debug("calling on listener")
 			IPresentationRoomListener listener = (IPresentationRoomListener) iter.next()
