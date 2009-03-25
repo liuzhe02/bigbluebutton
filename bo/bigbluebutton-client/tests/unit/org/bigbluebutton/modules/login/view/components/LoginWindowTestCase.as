@@ -1,9 +1,8 @@
 package org.bigbluebutton.modules.login.view.components
 {
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	
+	import flash.events.*;
 	import mx.events.FlexEvent;
+	import flash.net.*;
 	
 	import net.digitalprimates.fluint.sequence.SequenceEventDispatcher;
 	import net.digitalprimates.fluint.sequence.SequenceRunner;
@@ -12,8 +11,8 @@ package org.bigbluebutton.modules.login.view.components
 	import net.digitalprimates.fluint.tests.TestCase;
 	
 	import org.bigbluebutton.common.*;
-	import org.bigbluebutton.modules.login.view.LoginWindowMediator;
 	import org.bigbluebutton.modules.login.model.services.LoginService;
+	import org.bigbluebutton.modules.login.view.LoginWindowMediator;
 	
 	public class LoginWindowTestCase extends TestCase
 	{
@@ -22,7 +21,10 @@ package org.bigbluebutton.modules.login.view.components
 		private var conference:String;
 		private var password:String;
 		
-		private var form:LoginWindow;
+		private var formlogin:LoginWindow;
+		
+		private var uri:String;
+		private var netConnection:NetConnection;
 
 		public function LoginWindowTestCase(url:String, fullname:String, conference:String, password:String)
 		{
@@ -35,14 +37,14 @@ package org.bigbluebutton.modules.login.view.components
 		}
 		
 		override protected function setUp():void {
-                form = new LoginWindow();
-                form.addEventListener( FlexEvent.CREATION_COMPLETE, asyncHandler( pendUntilComplete, 100 ), false, 0, true );
-                addChild( form );
+            formlogin = new LoginWindow();
+            formlogin.addEventListener( FlexEvent.CREATION_COMPLETE, asyncHandler( pendUntilComplete, 100 ), false, 0, true );
+            addChild( formlogin );
         }
         
 		override protected function tearDown():void {
-            removeChild( form );                    
-            form = null;
+            removeChild( formlogin );                    
+            formlogin = null;
         }        
         
 		[Test]
@@ -55,17 +57,17 @@ package org.bigbluebutton.modules.login.view.components
 
             var sequence:SequenceRunner = new SequenceRunner( this );
 
-            sequence.addStep( new SequenceSetter( form.nameField, {text:passThroughData.fullname} ) );
-            sequence.addStep( new SequenceWaiter( form.nameField, FlexEvent.VALUE_COMMIT, 100 ) );
+            sequence.addStep( new SequenceSetter( formlogin.nameField, {text:passThroughData.fullname} ) );
+            sequence.addStep( new SequenceWaiter( formlogin.nameField, FlexEvent.VALUE_COMMIT, 100 ) );
 
-            sequence.addStep( new SequenceSetter( form.confField, {text:passThroughData.conference} ) );
-            sequence.addStep( new SequenceWaiter( form.confField, FlexEvent.VALUE_COMMIT, 100 ) );
+            sequence.addStep( new SequenceSetter( formlogin.confField, {text:passThroughData.conference} ) );
+            sequence.addStep( new SequenceWaiter( formlogin.confField, FlexEvent.VALUE_COMMIT, 100 ) );
 
-            sequence.addStep( new SequenceSetter( form.passwdField, {text:passThroughData.password} ) );
-            sequence.addStep( new SequenceWaiter( form.passwdField, FlexEvent.VALUE_COMMIT, 100 ) );
+            sequence.addStep( new SequenceSetter( formlogin.passwdField, {text:passThroughData.password} ) );
+            sequence.addStep( new SequenceWaiter( formlogin.passwdField, FlexEvent.VALUE_COMMIT, 100 ) );
 
-            sequence.addStep( new SequenceEventDispatcher( form.loginBtn, new MouseEvent( 'click', true, false ) ) );
-            sequence.addStep( new SequenceWaiter( form, LoginWindowMediator.LOGIN, 100 ) );
+            sequence.addStep( new SequenceEventDispatcher( formlogin.loginBtn, new MouseEvent( 'click', true, false ) ) );
+            sequence.addStep( new SequenceWaiter( formlogin, LoginWindowMediator.LOGIN, 100 ) );
                       
             sequence.addAssertHandler( handleLoginEvent, passThroughData );
                       
@@ -75,7 +77,7 @@ package org.bigbluebutton.modules.login.view.components
      
 		protected function handleLoginEvent( event:Event, passThroughData:Object ):void {
         	var ls:LoginService = new LoginService();
-			ls.load(url, form.nameField.text, form.confField.text, form.passwdField.text, asyncHandler(handleComplete, 5000));
+			ls.load(url, formlogin.nameField.text, formlogin.confField.text, formlogin.passwdField.text, asyncHandler(handleComplete, 5000));
         }
 
 		private function handleComplete(e:Event, passThroughData:Object):void
@@ -90,9 +92,8 @@ package org.bigbluebutton.modules.login.view.components
 			} 
 			else if (returncode == 'SUCCESS') 
 			{
-        		assertEquals( "login SUCCESS: fullname=" + fullname + "  conference=" + conference + "  password=" + password, 5, 5);   
+				//fail("login SUCCESS: " + xml.returncode + " " + xml.fullname + " " + xml.conference + " " + xml.role + " " + xml.room);
 			}
-        	
     	}     
 	}
 }
