@@ -163,13 +163,9 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 				"' room = '" + ((MeetMeUser) evt.getSource()).getRoom() + "'");	
 		
 		if (evt.getPropertyName().equals("muted")) {				
-			//if ((muted == null) || (muted.booleanValue() != changedUser.isMuted())) {	
-				conferenceServerListener.mute(changedUser.userNumber.toString(), changedUser.room.roomNumber, changedUser.muted)
-			//}
-		} else if (evt.getPropertyName().equals("talking")) {
-			//if ((talking == null) || (talking.booleanValue() != changedUser.isTalking())) {					
-				conferenceServerListener.talk(changedUser.userNumber.toString(), changedUser.room.roomNumber, changedUser.talking)
-			//}
+			conferenceServerListener.mute(changedUser.userNumber.toString(), changedUser.room.roomNumber, changedUser.muted)
+		} else if (evt.getPropertyName().equals("talking")) {				
+			conferenceServerListener.talk(changedUser.userNumber.toString(), changedUser.room.roomNumber, changedUser.talking)
 		} else if ("state".equals(evt.getPropertyName())) {
 			if (MeetMeUserState.LEFT == (MeetMeUserState) evt.getNewValue()) {
 				conferenceServerListener.left(changedUser.room.roomNumber, changedUser.userNumber)

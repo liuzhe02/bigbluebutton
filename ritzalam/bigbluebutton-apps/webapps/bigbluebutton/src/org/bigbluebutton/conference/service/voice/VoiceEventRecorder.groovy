@@ -13,7 +13,7 @@ public class VoiceEventRecorder implements IEventRecorder, IVoiceRoomListener {
 	
 	IRecorder recorder
 	private ISharedObject so
-	def name = 'VOICE'
+	def recorderName = 'VOICE'
 	
 	def acceptRecorder(IRecorder recorder){
 		log.debug("Accepting IRecorder")
@@ -21,7 +21,7 @@ public class VoiceEventRecorder implements IEventRecorder, IVoiceRoomListener {
 	}
 	
 	def getName() {
-		return name
+		return recorderName
 	}
 	
 	def recordEvent(Map event){
@@ -34,18 +34,12 @@ public class VoiceEventRecorder implements IEventRecorder, IVoiceRoomListener {
 	
 	def joined(participant, name, muted, talking){
 		log.debug("Participant $name joining")
-		List <Object>args = new ArrayList<Object>()
-		args.add(participant)
-		args.add(name) // Just send the name to represent callerId number for now
-		args.add(name)
-		args.add(muted)
-		args.add(talking)
-			
-		so.sendMessage("userJoin", args);
+		// Just send the name to represent callerId number for now
+		so.sendMessage("userJoin", [participant, name, name, muted, talking])
 					
 		Map event = new HashMap()
 		event.put("date", new Date().time)
-		event.put("application", name)
+		event.put("application", recorderName)
 		event.put("event", "joined")
 		event.put('participant', participant)
 		event.put('name', name)
@@ -56,14 +50,11 @@ public class VoiceEventRecorder implements IEventRecorder, IVoiceRoomListener {
 	
 	def left(participant){
 		log.debug("Participant $participant leaving")
-		List <Object>args = new ArrayList<Object>()
-		args.add(participant);
-		
-		so.sendMessage("userLeft", args);
+		so.sendMessage("userLeft", [participant])
 
 		Map event = new HashMap()
 		event.put("date", new Date().time)
-		event.put("application", name)
+		event.put("application", recorderName)
 		event.put("event", "left")
 		event.put('participant', participant)
 		recordEvent(event)	
@@ -71,15 +62,11 @@ public class VoiceEventRecorder implements IEventRecorder, IVoiceRoomListener {
 	
 	def mute(participant, mute){
 		log.debug("Participant $participant mute $mute")
-		List <Object>args = new ArrayList<Object>()
-		args.add(participant);
-		args.add(mute);
-		
-		so.sendMessage("userMute", args);
+		so.sendMessage("userMute", [participant, mute])
 
 		Map event = new HashMap()
 		event.put("date", new Date().time)
-		event.put("application", name)
+		event.put("application", recorderName)
 		event.put("event", "mute")
 		event.put('participant', participant)
 		event.put('mute', mute)
@@ -88,17 +75,13 @@ public class VoiceEventRecorder implements IEventRecorder, IVoiceRoomListener {
 	
 
 	def talk(participant, talk){
-		log.debug("Participant $participant mute $talk")
-		List <Object>args = new ArrayList<Object>()
-		args.add(participant);
-		args.add(talk);
-		
-		so.sendMessage("userTalk", args);
+		log.debug("Participant $participant talk $talk")
+		so.sendMessage("userTalk", [participant, talk])
 
 		Map event = new HashMap()
 		event.put("date", new Date().time)
-		event.put("application", name)
-		event.put("event", "mute")
+		event.put("application", recorderName)
+		event.put("event", "talk")
 		event.put('participant', participant)
 		event.put('talk', talk)
 		recordEvent(event)

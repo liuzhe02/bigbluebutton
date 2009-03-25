@@ -20,7 +20,7 @@ public class VoiceRoom {
 	public VoiceRoom(String name) {
 		this.name = name
 		listeners   = new ConcurrentHashMap<String, IVoiceRoomListener>()
-		participants = new ConcurrentHashMap<Long, HashMap>()
+		participants = new ConcurrentHashMap<String, HashMap>()
 	}
 	
 	public String getName() {
@@ -98,4 +98,8 @@ public class VoiceRoom {
 			listener.talk(participant, talk)
 		}
 	}	
+	
+	def participants() {
+		return new HashMap(participants)
+	}
 }

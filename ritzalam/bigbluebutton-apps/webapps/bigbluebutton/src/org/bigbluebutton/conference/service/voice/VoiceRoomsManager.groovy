@@ -122,4 +122,15 @@ public class VoiceRoomsManager {
 		
 		log.warn("Talk participant on a non-existing room ${room}")
 	}
+	
+	def participants(room) {
+		log.debug("participants: $room")
+		VoiceRoom r = getRoom(room)
+		if (r != null) {
+			log.debug("participants: $room FOUND")
+			return r.participants
+		}
+		
+		log.warn("Getting participants on a non-existing room ${room}")
+	}
 }

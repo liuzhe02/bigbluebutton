@@ -67,6 +67,11 @@ public class VoiceApplication {
 		roomsManager.talk(participant, room, talk)
 	}
 	
+	def participants(room) {
+		log.debug("getting partiicpnats for $room")
+		roomsManager.participants(room)
+	}
+	
 	public void setRoomsManager(VoiceRoomsManager r) {
 		log.debug("Setting room manager")
 		roomsManager = r

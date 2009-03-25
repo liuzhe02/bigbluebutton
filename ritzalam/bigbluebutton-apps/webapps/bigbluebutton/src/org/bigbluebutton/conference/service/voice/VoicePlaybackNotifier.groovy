@@ -17,12 +17,47 @@ public class VoicePlaybackNotifier implements IPlaybackNotifier{
 	}
 	
 	def sendMessage(Map event){
-		log.debug("Playback chat message...")
-		def message = event['message']
-		so.sendMessage("newChatMessage", [message])
+		log.debug("Playing event " + event['event'])
+		switch (event['event']) {
+		case 'joined':
+			joined(event['participant'], event['name'], event['muted'], event['talking'])
+			break
+		case 'left':
+			left(event['participant'])
+			break
+		case 'mute':
+			mute(event['participant'], event['mute'])
+			break
+		case 'talk':
+			talk(event['participant'], event['talk'])
+			break
+		}
 	}
 	
 	def notifierName(){
 		return name
+	}
+	
+	def joined(participant, name, muted, talking){
+		log.debug("Participant $name joining")
+		
+		// Just send the name to represent callerId number for now
+		so.sendMessage("userJoin", [participant, name, name, muted, talking])		
+	}
+	
+	def left(participant){
+		log.debug("Participant $participant leaving")
+		so.sendMessage("userLeft", [participant])
+	}
+	
+	def mute(participant, mute){
+		log.debug("Participant $participant mute $mute")
+		so.sendMessage("userMute", [participant, mute])
+	}
+	
+
+	def talk(participant, talk){
+		log.debug("Participant $participant talk $talk")
+		so.sendMessage("userTalk", [participant, talk])
 	}
 }
