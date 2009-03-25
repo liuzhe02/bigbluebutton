@@ -41,7 +41,6 @@ package org.bigbluebutton.modules.chat.view.components
 		 * @param conference for setting LoginWindow.mxml
 		 * @param password for setting LoginWindow.mxml
 		 * @param message for seting ChatWindow.mxml
-		 * 
 		 */		
 		public function ChatWindowTestCase(url:String, fullname:String, conference:String, password:String, message:String)
 		{
