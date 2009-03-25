@@ -33,7 +33,7 @@
 			uri="rtmp://localhost/bigbluebutton" 
 			host="http://localhost:8080" 
 			loadNextModule="ListenersModule"
-			onUserJoinedEvent="START"
+			onUserJoinedEvent="START" 
 			onUserLogoutEvent="STOP"
 	/>
 </modules>
