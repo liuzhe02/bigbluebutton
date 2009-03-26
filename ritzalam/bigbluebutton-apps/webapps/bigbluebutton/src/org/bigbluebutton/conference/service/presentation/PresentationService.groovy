@@ -22,6 +22,41 @@ public class PresentationService {
 		presentationApplication.assignPresenter(scope.name, presenter)
 	}
 	
+	def getPresentationInfo() {
+		log.debug("Getting presentation information.")
+		IScope scope = Red5.connectionLocal.scope
+		def curPresenter = presentationApplication.getCurrentPresenter(scope.name)
+		def curSlide = presentationApplication.getCurrentSlide(scope.name)
+		def isSharing = presentationApplication.getSharingPresentation(scope.name)
+		
+		Map presenter = new HashMap()		
+		if (curPresenter != null) {
+			presenter.put('hasPresenter', true)
+			presenter.put('user', curPresenter[0])
+			presenter.put('name', curPresenter[1])
+			presenter.put('assignedBy',curPresenter[2] )
+			log.debug("Presenter: ${curPresenter[0]} ${curPresenter[1]} ${curPresenter[2]}")
+		} else {
+			presenter.put('hasPresenter', false)
+		}
+				
+		Map presentation = new HashMap()
+		if (isSharing) {
+			presentation.put('sharing', true)
+			presentation.put('slide', curSlide)
+			log.debug("Presentation: slide= $curSlide")
+		} else {
+			presentation.put('sharing', false)
+		}
+		
+		Map presentationInfo = new HashMap()
+		presentationInfo.put('presenter', presenter)
+		presentationInfo.put('presentation', presentation)
+		
+		log.info("getPresentationInfo::service - Sending presentation information...");
+		return presentationInfo
+	}
+	
 	public void gotoSlide(slideNum) {
 		log.debug("Request to go to slide $slideNum")
 		IScope scope = Red5.connectionLocal.scope

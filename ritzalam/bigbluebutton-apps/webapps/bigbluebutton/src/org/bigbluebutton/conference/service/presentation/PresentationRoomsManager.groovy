@@ -79,6 +79,14 @@ public class PresentationRoomsManager {
 		log.warn("Getting presenter from a non-existing room $room")	
 	}
 	
+	def getSharingPresentation = {room ->
+		PresentationRoom r = getRoom(room)
+		if (r != null) {
+			return r.sharing			
+		}	
+		log.warn("Getting sharing from a non-existing room $room")	
+	}
+	
 	def assignPresenter = {room, presenter ->
 		PresentationRoom r = getRoom(room)
 		if (r != null) {

@@ -38,7 +38,7 @@ public class PresentationApplication {
 	}
 	
 	public String getCurrentSlide(String room) {
-		return roomsManager.getChatMessages(room)
+		return roomsManager.getCurrentSlide(room)
 	}
 	
 	def sendUpdateMessage = {message ->
@@ -62,6 +62,13 @@ public class PresentationApplication {
 			return roomsManager.getCurrentSlide(room)			
 		}
 		log.warn("Getting slide on a non-existant room ${room}")	
+	}
+	
+	def getSharingPresentation = {room ->
+		if (roomsManager.hasRoom(room)){
+			return roomsManager.getSharingPresentation(room)			
+		}
+		log.warn("Getting share information on a non-existant room ${room}")	
 	}
 	
 	def assignPresenter = {room, presenter ->
