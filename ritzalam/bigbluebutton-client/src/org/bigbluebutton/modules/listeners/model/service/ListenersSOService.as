@@ -25,6 +25,7 @@ package org.bigbluebutton.modules.listeners.model.service
 	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
+	import org.bigbluebutton.modules.listeners.ListenersModuleConstants;
 	import org.bigbluebutton.modules.listeners.model.vo.IListeners;
 	import org.bigbluebutton.modules.listeners.model.vo.Listener;
 
@@ -54,14 +55,11 @@ package org.bigbluebutton.modules.listeners.model.service
 		
 		public function connect(uri:String):void {
 			_uri = uri;
-			//netConnectionDelegate = new NetConnectionDelegate(uri, connectionListener);
-			//netConnectionDelegate.connect();
 			join();
 		}
 		
 		public function disconnect():void {
 			leave();
-			//netConnectionDelegate.disconnect();
 		}
 		
 		private function connectionListener(connected:Boolean, errors:Array=null):void {
@@ -115,6 +113,16 @@ package org.bigbluebutton.modules.listeners.model.service
 				n.talking = talking;
 				LogUtil.info(LOGNAME + "Adding listener [" + n.callerName + "," + userId + "]");
 				_listeners.addListener(n);
+				/**
+				 * Let's send an event that the first user has joined the voice conference.
+				 * We use this as a trigger to playback the recorded audio.
+				 * NOTE: THis is just a hack...need to do this properly. (ralam - march 26, 2009)
+				 */
+				if (_module.mode == 'PLAYBACK') {
+					if (_listeners.listeners.length == 1) {
+						sendMessage(ListenersModuleConstants.FIRST_LISTENER_JOINED_EVENT);
+					}
+				}				
 			} else {
 				LogUtil.debug(LOGNAME + "There is a listener with userid " + userId + " " + cidName + " in the conference.");
 			}

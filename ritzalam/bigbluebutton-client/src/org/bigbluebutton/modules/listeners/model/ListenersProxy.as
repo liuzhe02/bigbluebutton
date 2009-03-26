@@ -2,19 +2,21 @@ package org.bigbluebutton.modules.listeners.model
 {
 	import mx.collections.ArrayCollection;
 	
-	import org.bigbluebutton.common.IBigBlueButtonModule;
 	import org.bigbluebutton.modules.listeners.ListenersModuleConstants;
 	import org.bigbluebutton.modules.listeners.model.service.IListenersService;
 	import org.bigbluebutton.modules.listeners.model.service.ListenersSOService;
 	import org.bigbluebutton.modules.listeners.model.vo.IListeners;
 	import org.bigbluebutton.modules.listeners.model.vo.Listeners;
+	import org.bigbluebutton.modules.listeners.model.service.RecordingService;
 	import org.puremvc.as3.multicore.interfaces.IProxy;
 	import org.puremvc.as3.multicore.patterns.proxy.Proxy;
 
 	public class ListenersProxy extends Proxy implements IProxy
 	{
 		public static const NAME:String = "ListenersProxy";
-
+		
+		private var recordingService:RecordingService;
+		
 		private var _module:ListenersModule;		
 		private var _listenersService:IListenersService;
 		private var _listeners:IListeners = null;
@@ -26,6 +28,7 @@ package org.bigbluebutton.modules.listeners.model
 		{
 			super(NAME);
 			_module = module;
+			recordingService = new RecordingService(_module);
 			connect();
 		}
 		
@@ -39,6 +42,7 @@ package org.bigbluebutton.modules.listeners.model
 			_listenersService = new ListenersSOService(_listeners, _module);
 			_listenersService.addConnectionStatusListener(connectionStatusListener);
 			_listenersService.addMessageSender(messageSender);	
+			recordingService.addMessageSender(messageSender);
 			manualDisconnect = false;
 			_listenersService.connect(_module.uri);		
 		}
@@ -55,6 +59,10 @@ package org.bigbluebutton.modules.listeners.model
 		
 		public function get listeners():ArrayCollection {
 			return _listeners.listeners;
+		}
+		
+		public function convertRecodingToMp3():void {
+			recordingService.convertRecordedAudioToMP3();
 		}
 		
 		private function connectionStatusListener(connected:Boolean, errors:Array=null):void {

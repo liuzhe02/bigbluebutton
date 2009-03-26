@@ -25,6 +25,7 @@
 	/>
 	<module name="ListenersModule" url="ListenersModule.swf" 
 			uri="rtmp://localhost/bigbluebutton" 
+			recordingHost="http://134.117.254.226"
 			loadNextModule="VideoModule"
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"
