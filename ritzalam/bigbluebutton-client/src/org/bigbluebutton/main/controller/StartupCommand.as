@@ -43,6 +43,7 @@ package org.bigbluebutton.main.controller
 			facade.registerMediator(new MainApplicationMediator());
 			var med:MainEndpointMediator = new MainEndpointMediator();
 			facade.registerMediator(med);
+			LogUtil.debug("StartupCommand mode=" + app.mode);
 			facade.registerProxy(new ModulesProxy(med.router, app.mode));
 		}		
 	}

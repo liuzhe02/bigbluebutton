@@ -19,6 +19,7 @@ package org.bigbluebutton.main.model
 		{
 			super(NAME);
 			_router = router;
+			_mode = mode;
 			modulesManager = new BbbModuleManager(_router, _mode);
 			modulesManager.addInitializedListener(onInitializeComplete);
 			modulesManager.addModuleLoadedListener(onModuleLoadedListener);
