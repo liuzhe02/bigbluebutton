@@ -29,7 +29,6 @@ package org.bigbluebutton.modules.presentation.model.business
 		private static const CONVERT_RC:String = "CONVERT";
 		
 		private var _presentationSO:SharedObject;
-//		private var netConnectionDelegate:NetConnectionDelegate;
 		
 		private var _slides:IPresentationSlides;
 		private var _module:PresentationModule;
@@ -37,11 +36,12 @@ package org.bigbluebutton.modules.presentation.model.business
 		private var _messageSender:Function;
 		private var _soErrors:Array;
 		
+		private var currentSlide:Number = -1;
+		
 		public function PresentSOService(module:PresentationModule, slides:IPresentationSlides)
 		{			
 			_module = module;
-			_slides = slides;
-//			netConnectionDelegate = new NetConnectionDelegate(uri, connectionListener);			
+			_slides = slides;			
 		}
 		
 		public function connect():void {
@@ -75,7 +75,8 @@ package org.bigbluebutton.modules.presentation.model.business
 			_presentationSO.client = this;
 			_presentationSO.connect(_module.connection);
 			LogUtil.debug(NAME + ": PresentationModule is connected to Shared object");
-			notifyConnectionStatusListener(true);			
+			notifyConnectionStatusListener(true);	
+			if (_module.mode == 'LIVE')	getPresentationInfo();		
 		}
 		
 	    private function leave():void
@@ -185,6 +186,33 @@ package org.bigbluebutton.modules.presentation.model.business
 			_presentationSO.setProperty(PRESENTER, presenterName);
 		}
 		
+		public function getPresentationInfo():void {
+			var nc:NetConnection = _module.connection;
+			nc.call(
+				"presentation.getPresentationInfo",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Object):void { 	
+						LogUtil.debug("Successfully querried for presentation information.");					 
+						if (result.presenter.hasPresenter) {
+							sendMessage(PresentModuleConstants.VIEWER_MODE);							
+						}	
+						
+						if (result.presentation.sharing) {
+							currentSlide = Number(result.presentation.slide);
+							sendMessage(PresentModuleConstants.START_SHARE);
+						}
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				) //new Responder
+			); //_netConnection.call
+		}
 		
 		public function assignPresenter(userid:Number, name:String, assignedBy:Number):void {
 			var nc:NetConnection = _module.connection;
@@ -268,8 +296,8 @@ package org.bigbluebutton.modules.presentation.model.business
 		}
 
 		public function getCurrentSlideNumber():void {
-			if (_presentationSO.data[CURRENT_PAGE] != null) {
-				sendMessage(PresentModuleConstants.DISPLAY_SLIDE, _presentationSO.data[CURRENT_PAGE]);
+			if (currentSlide >= 0) {
+				sendMessage(PresentModuleConstants.DISPLAY_SLIDE, currentSlide);
 			}				
 		}
 		
