@@ -41,7 +41,12 @@ public class ChatRoom {
 	}
 	
 	def sendMessage = {
-		messages += it 
+		if (messages == null) {
+			messages = it
+		} else {
+			messages += it 
+		}
+		
 		for (Iterator iter = listeners.values().iterator(); iter.hasNext();) {
 			log.debug("calling on listener")
 			IChatRoomListener listener = (IChatRoomListener) iter.next()
