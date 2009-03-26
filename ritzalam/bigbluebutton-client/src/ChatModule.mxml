@@ -44,6 +44,16 @@
 				return _attributes.connection;
 			}
 			
+			public function get mode():String {
+				if (_attributes.mode == null) {					
+					//_attributes.mode = "PLAYBACK"
+					_attributes.mode = "LIVE"
+					LogUtil.debug('Setting ChatModule mode: ' + _attributes.mode);
+				}
+				LogUtil.debug('ChatModule mode: ' + _attributes.mode);
+				return _attributes.mode;
+			}
+						
 			public function get userid():Number {
 				return _attributes.userid as Number;
 			}

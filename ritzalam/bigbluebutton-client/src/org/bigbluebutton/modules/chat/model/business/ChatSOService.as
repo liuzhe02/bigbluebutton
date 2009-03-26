@@ -42,20 +42,9 @@ package org.bigbluebutton.modules.chat.model.business
 		
 		public function ChatSOService(module:ChatModule)
 		{			
-			this.module = module;
-//			netConnectionDelegate = new NetConnectionDelegate(uri, connectionListener);			
+			this.module = module;		
 		}
-		
-//		public function connect(uri:String):void {
-//			_uri = uri
-//			netConnectionDelegate.connect();
-//		}
-		
-//		public function disconnect():void {
-//			leave();
-//			netConnectionDelegate.disconnect();
-//		}
-		
+				
 		private function connectionListener(connected:Boolean, errors:Array=null):void {
 			if (connected) {
 				LogUtil.debug(NAME + ":Connected to the Chat application");
@@ -71,14 +60,13 @@ package org.bigbluebutton.modules.chat.model.business
 	    public function join() : void
 		{
 			chatSO = SharedObject.getRemote("chatSO", module.uri, false);
-//			chatSO.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
-//			chatSO.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
-//			chatSO.addEventListener(SyncEvent.SYNC, sharedObjectSyncHandler);
 			chatSO.client = this;
 			chatSO.connect(module.connection);
 			LogUtil.debug(NAME + ":Chat is connected to Shared object");
 			notifyConnectionStatusListener(true);
-						
+			if (module.mode == 'LIVE') {
+				getChatTranscript();
+			}						
 		}
 		
 	    public function leave():void
@@ -113,7 +101,7 @@ package org.bigbluebutton.modules.chat.model.business
 						} 
 					}
 				),//new Responder
-				message + '<br/>'
+				message
 			); //_netConnection.call
 		}
 		
@@ -134,7 +122,9 @@ package org.bigbluebutton.modules.chat.model.business
 	        		// On successful result
 					function(result:Object):void { 
 						LogUtil.debug("Successfully sent message: "); 
-						newChatMessage(result as String);
+						if (result != null) {
+							newChatMessage(result as String);
+						}	
 					},	
 					// status - On error occurred
 					function(status:Object):void { 
@@ -155,8 +145,6 @@ package org.bigbluebutton.modules.chat.model.business
 				LogUtil.debug("_connectionListener is null");
 			}
 		}
-
-
 		
 		private function addError(error:String):void {
 			if (_soErrors == null) {
