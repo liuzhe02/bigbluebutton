@@ -55,7 +55,6 @@ public class PlaybackSession {
 	}
 	
 	public void playMessage() {
-		print "in playMessage"
 		if (playing) {
 			IPlaybackNotifier n = notifiers.get(currentMessage["application"])
 			def playDate = new Date()
