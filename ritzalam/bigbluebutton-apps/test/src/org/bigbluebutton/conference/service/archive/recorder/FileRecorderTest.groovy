@@ -39,7 +39,7 @@ public class FileRecorderTest{
 		recorder.deleteRecording()
 	}
 
-	@Test
+	@Test(groups = ["checkintest", "broken"] )
 	public void writeEventToFileTest() {
 		Map event1 = new HashMap()
 		event1.put("date", 1237212144317)
