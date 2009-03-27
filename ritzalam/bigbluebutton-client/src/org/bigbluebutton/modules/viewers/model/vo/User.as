@@ -31,6 +31,7 @@ package org.bigbluebutton.modules.viewers.model.vo
 		[Bindable] public var hasStream:Boolean = false;
 		[Bindable] public var streamName:String = "";
 		[Bindable] public var presenter:Boolean = false;
+		[Bindable] public var raiseHand:Boolean = false;
 		[Bindable] public var role:String = Role.VIEWER;	
 		[Bindable] public var room:String = "";
 		[Bindable] public var authToken:String = "";
@@ -63,6 +64,9 @@ package org.bigbluebutton.modules.viewers.model.vo
 					break;
 				case "streamName":
 					streamName = status.value as String;
+					break;
+				case "raiseHand":
+					raiseHand = status.value as Boolean;
 					break;
 			}
 		}

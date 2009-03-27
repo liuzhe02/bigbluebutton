@@ -102,8 +102,17 @@ package org.bigbluebutton.modules.viewers.model
 			_viewersService.addStream(userid, streamName);
 		}
 		
-		public function removeStream(userid:Number, streamName:String):void {
+		public function removeStream(userid:Number, streamName:String):void {			
 			_viewersService.removeStream(userid, streamName);
+		}
+		
+		public function raiseHand(raise:Boolean):void {
+			var userid:Number = _participants.me.userid;
+			_viewersService.raiseHand(userid, raise);
+		}
+		
+		public function lowerHand(userid:Number):void {
+			_viewersService.raiseHand(userid, false);
 		}
 		
 		public function queryPresenter():void {

@@ -13,6 +13,7 @@ package org.bigbluebutton.modules.viewers.model.services
 //		function newStatus(userid:Number, newStatus:Status):void;
 //		function changeStatus(userid:Number, newStatus:Status):void;
 //		function removeStatus(userid:Number, statusName:String):void;
+		function raiseHand(userid:Number, raise:Boolean):void;
 		function addStream(userid:Number, streamName:String):void;
 		function removeStream(userid:Number, streamName:String):void;
 		function addMessageSender(msgSender:Function):void;

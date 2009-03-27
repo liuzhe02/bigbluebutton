@@ -21,12 +21,11 @@ package org.bigbluebutton.modules.viewers.view
 {
 	import flash.events.Event;
 	
-	import mx.collections.ArrayCollection;
-	
 	import org.bigbluebutton.modules.viewers.ViewersModuleConstants;
 	import org.bigbluebutton.modules.viewers.model.ViewersProxy;
 	import org.bigbluebutton.modules.viewers.view.components.ViewersWindow;
 	import org.bigbluebutton.modules.viewers.view.events.AssignPresenterEvent;
+	import org.bigbluebutton.modules.viewers.view.events.LowerHandEvent;
 	import org.bigbluebutton.modules.viewers.view.events.ViewCameraEvent;
 	import org.puremvc.as3.multicore.interfaces.IMediator;
 	import org.puremvc.as3.multicore.interfaces.INotification;
@@ -45,6 +44,7 @@ package org.bigbluebutton.modules.viewers.view
 		public static const ASSIGN_PRESENTER_EVENT:String = "ASSIGN_PRESENTER_EVENT";
 		
 		private var _viewersWindow:ViewersWindow;
+		private var handRaised:Boolean = false;
 		
 		/**
 		 * The constructor. Registers this mediator with the gui component 
@@ -59,6 +59,7 @@ package org.bigbluebutton.modules.viewers.view
 			_viewersWindow.addEventListener(ASSIGN_PRESENTER_EVENT, onAssignPresenter);
 			_viewersWindow.addEventListener(ViewersModuleConstants.VIEWER_SELECTED_EVENT, onViewerSelectedEvent);
 			_viewersWindow.addEventListener(ViewCameraEvent.VIEW_CAMERA_EVENT, onViewCameraEvent);
+			_viewersWindow.addEventListener(LowerHandEvent.LOWER_HAND_EVENT, onLowerHandEvent);
 		}
 		
 		private function onViewCameraEvent(e:ViewCameraEvent):void {
@@ -69,6 +70,12 @@ package org.bigbluebutton.modules.viewers.view
 			if (proxy.isModerator()) {
 				_viewersWindow.presentBtn.enabled = true;
 				_viewersWindow.presentBtn.toolTip = "Make selected web participant the presenter.";
+			}
+		}
+		
+		private function onLowerHandEvent(e:LowerHandEvent):void {
+			if (proxy.isModerator()) {
+				proxy.lowerHand(e.userid);
 			}
 		}
 		
@@ -133,19 +140,8 @@ package org.bigbluebutton.modules.viewers.view
 		 * 
 		 */		
 		private function changeStatus(e:Event):void{
-		var newStatus : String;
-		
-//			if (viewersWindow.conference.me.status == "raisehand") {
-//				newStatus = "lowerhand";	
-//				viewersWindow.toggleTooltip = "Click to raise hand.";
-//				viewersWindow.toggleIcon = viewersWindow.images.raisehand;
-//			} else {
-//				newStatus = "raisehand";
-//				viewersWindow.toggleTooltip = "Click to lower hand.";
-//				viewersWindow.toggleIcon = viewersWindow.images.participant;
-//			}
-//
-//			proxy.sendNewStatus(newStatus);
+			handRaised = !handRaised;
+			proxy.raiseHand(handRaised);
 		}
 		
 		private function get proxy():ViewersProxy {

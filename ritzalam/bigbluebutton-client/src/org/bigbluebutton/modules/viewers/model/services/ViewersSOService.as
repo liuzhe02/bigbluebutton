@@ -269,6 +269,32 @@ package org.bigbluebutton.modules.viewers.model.services
 		}
 */
 
+		public function raiseHand(userid:Number, raise:Boolean):void {
+			var nc:NetConnection = netConnectionDelegate.connection;			
+			nc.call(
+				"participants.setParticipantStatus",// Remote function name
+				new Responder(
+	        		// participants - On successful result
+					function(result:Boolean):void { 
+						 
+						if (result) {
+							LogUtil.debug("Successfully assigned raise hand to: " + userid);							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						LogUtil.error("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+					}
+				), //new Responder
+				userid,
+				"raiseHand",
+				raise
+			); //_netConnection.call
+		}
+		
 		public function addStream(userid:Number, streamName:String):void {
 			var nc:NetConnection = netConnectionDelegate.connection;
 			nc.call(
