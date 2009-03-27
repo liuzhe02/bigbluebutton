@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author srt
  * @version $Id: PingThread.java 729 2007-05-26 05:16:57Z sprior $
  */
-public class PingThread{
+public class PingThread extends Thread {
     /**
      * Default value for the interval attribute.
      */

@@ -30,29 +30,36 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 	 * is no traffic.
 	 */
 	private PingThread pingThread;
+	private boolean waitForMessage = true;
+	def amiThread
 	
 	def start(){
-		try {
-			log.debug("Logging at " + managerConnection.getHostname() + ":" + 
-					managerConnection.getPort())
-			
-			managerConnection.login()
-			((DefaultAsteriskServer)asteriskServer).setManagerConnection(managerConnection)	
-			asteriskServer.addAsteriskServerListener(this)
-			((DefaultAsteriskServer)asteriskServer).initialize()
-			
-			pingThread = new PingThread(managerConnection)
-			pingThread.setTimeout(40000)
-			pingThread.start()
-		} catch (IOException e) {
-			log.error("IOException while connecting to Asterisk server.")
-		} catch (TimeoutException e) {
-			log.error("TimeoutException while connecting to Asterisk server.")
-		} catch (AuthenticationFailedException e) {
-			log.error("AuthenticationFailedException while connecting to Asterisk server.")
-		} catch (ManagerCommunicationException e) {
-			log.error(e.printStackTrace())
+		amiThread = new Thread() {
+	        log.info("Staring AMI Asterisk service...");
+	        
+			try {
+				log.debug("Logging at " + managerConnection.getHostname() + ":" + 
+						managerConnection.getPort())
+				
+				managerConnection.login()
+				((DefaultAsteriskServer)asteriskServer).setManagerConnection(managerConnection)	
+				asteriskServer.addAsteriskServerListener(this)
+				((DefaultAsteriskServer)asteriskServer).initialize()
+				
+				pingThread = new PingThread(managerConnection)
+				pingThread.setTimeout(40000)
+				pingThread.start()
+			} catch (IOException e) {
+				log.error("IOException while connecting to Asterisk server.")
+			} catch (TimeoutException e) {
+				log.error("TimeoutException while connecting to Asterisk server.")
+			} catch (AuthenticationFailedException e) {
+				log.error("AuthenticationFailedException while connecting to Asterisk server.")
+			} catch (ManagerCommunicationException e) {
+				log.error(e.printStackTrace())
+			}
 		}
+		amiThread.start()
 	}
 	
 
@@ -62,6 +69,8 @@ public class AsteriskVoiceServer extends AbstractAsteriskServerListener implemen
 			managerConnection.logoff()
 		} catch (IllegalStateException e) {
 			log.error("Logging off when Asterisk Server is not connected.")
+		} finally {
+			amiThread.stop()
 		}
 	}
 	
