@@ -61,7 +61,8 @@ class PresentationService {
 		if (dir.exists()) deleteDirectory(dir)
 		
 		dir.mkdirs()
-		def pres = new File( dir.absolutePath + File.separatorChar + presentation.getOriginalFilename() )
+		def newFilename = presentation.getOriginalFilename().replace(' ', '-')
+		def pres = new File( dir.absolutePath + File.separatorChar + newFilename )
 		presentation.transferTo( pres )
 		new Timer().runAfter(1000) {
 			convertUploadedPresentation(conf, room, pres)	
