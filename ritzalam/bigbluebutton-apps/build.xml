@@ -349,7 +349,7 @@
 		      	</sequential>
 		</macrodef>
 	
-	<target name="dist" description="Make Binary distribution" depends="jar">
+	<target name="dist" description="Make Binary distribution" depends="testng-reports, jar">
 		<!--copy-app name="astmeetme">
 			<copy-assets>
 				<logback webapp="astmeetme"/>
