@@ -222,7 +222,6 @@
 		
 		<build-groovy name="bigbluebutton"/>
 		<!-- build apps -->
-		<build-app name="astmeetme"/>
 		<build-app name="bigbluebutton"/>
 	</target>
 
@@ -242,7 +241,6 @@
 	
 	<target name="jar" description="Make Archive" depends="compile">
 		<!-- create jar files for apps -->
-		<compile-jarapp name="astmeetme"/>
 		<compile-jarapp name="bigbluebutton"/>
 	</target>
 
@@ -259,7 +257,6 @@
 		<!-- need to do this one-by-one as it seems like macrodef does not support delete -->
 		<delete dir="${red5.home}/webapps/astmeetme"/>
 		<delete dir="${red5.home}/webapps/bigbluebutton"/>
-		<delete dir="${red5.home}/webapps/chatServer"/>
 		<copy todir="${red5.home}/webapps">
 			   	<fileset dir="${dist.webapps.dir}"/>
 		</copy>		
@@ -326,7 +323,6 @@
 	   		<sequential>		
 				<copy todir="${dist.webapps.dir}/@{webapp}/WEB-INF/lib/">
 					<fileset dir="${lib.dir}">
-						<!--include name="backport-util-concurrent-2.1.jar"/-->
 						<include name="spring-jms-2.0.8.jar"/>
 						<include name="activemq-core-5.1.0.jar"/>
 						<include name="geronimo-j2ee-management_1.0_spec-1.0.jar"/>
@@ -350,12 +346,6 @@
 		</macrodef>
 	
 	<target name="dist" description="Make Binary distribution" depends="testng-reports, jar">
-		<!--copy-app name="astmeetme">
-			<copy-assets>
-				<logback webapp="astmeetme"/>
-				<astmeetme-lib webapp="astmeetme"/>
-			</copy-assets>
-		</copy-app-->
 		<copy-app name="bigbluebutton">
 			<copy-assets>
 				<logback webapp="bigbluebutton"/>
