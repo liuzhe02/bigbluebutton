@@ -127,7 +127,7 @@ class PresentationService {
             
             while ((info = stdError.readLine()) != null) {
             	System.out.println("Got error getting info from file):\n");
-            	System.out.println(s);
+            	System.out.println(info);
             }
             
             def page
@@ -170,7 +170,7 @@ class PresentationService {
 	            
 	            while ((convertInfo = stdError.readLine()) != null) {
 	            	System.out.println("Got error converting file):\n");
-	            	System.out.println(s);
+	            	System.out.println(convertInfo);
 	            }
 	        }
             stdInput.close();
