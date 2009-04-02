@@ -225,7 +225,7 @@
    		<attribute name="name"/>
 		<element name="copy-assets" optional="yes"/>
    		<sequential>
-   			<copy todir="${webapps.build.dir}/@{name}" file="${webapp.src.dir}/@{name}/WEB-INF/logback.xml" overwrite="true"/>
+   			<copy todir="${webapps.build.dir}/@{name}" file="${webapp.src.dir}/@{name}/WEB-INF/logback-@{name}.xml" overwrite="true"/>
   
 			<jar destfile="${build.dir}/@{name}.jar">
 				<fileset dir="${webapps.build.dir}/@{name}">
