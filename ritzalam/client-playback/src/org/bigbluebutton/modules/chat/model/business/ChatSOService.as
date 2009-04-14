@@ -32,7 +32,6 @@ package org.bigbluebutton.modules.chat.model.business
 		
 		private static const TRANSCRIPT:String = "TRANSCRIPT";
 		private var chatSO : SharedObject;
-		private var netConnectionDelegate: NetConnectionDelegate;
 		private var module:ChatModule;
 		private var _msgListener:Function;
 		private var _connectionListener:Function;

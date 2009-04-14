@@ -90,8 +90,7 @@ package org.bigbluebutton.main.model
 				callbackHandler(MainApplicationConstants.MODULE_LOAD_READY, _attributes.name);
 			} else {
 				LogUtil.error("Module loaded is null.");
-			}
-			
+			}			
 		}	
 
 		private function onLoadProgress(e:ProgressEvent):void {

@@ -8,14 +8,13 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import net.digitalprimates.fluint.unitTests.frameworkSuite.FrameworkSuite;
-			import org.bigbluebutton.suites.SampleSuite;
+			import org.bigbluebutton.suites.ApplicationTestSuite;
 			
 			protected function startTestProcess( event:Event ) : void
 			{
 				var suiteArray:Array = new Array();
-					//suiteArray.push( new FrameworkSuite() );
-					suiteArray.push(new SampleSuite());
+					
+				suiteArray.push(new ApplicationTestSuite());
 					
 				testRunner.startTests( suiteArray );
 			}
