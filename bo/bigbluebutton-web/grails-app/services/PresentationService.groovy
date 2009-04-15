@@ -138,8 +138,7 @@ class PresentationService {
 		def info
 		def numPages = 0
         def page = 0
-        def error = 0
-		def str //for output
+		def str //output information to console for stdInput and stdError
 
         try 
         {
@@ -177,7 +176,6 @@ class PresentationService {
 
 		    println "\nPresentationService.groory::convertUploadedPresentation()... p.exitValue()=" + p.exitValue() + "  numPages=" + numPages
             
-            error = 0
 	        for (page = 1; page <= new Integer(numPages); page++) {
 	            /* Now we convert the pdf file to swf 
 	             * We start the output with a page number starting at zero (0) so it's consistent
@@ -221,20 +219,13 @@ class PresentationService {
 	            	System.out.println(s);
 	            }
 
-		    	println "PresentationService.groory::convertUploadedPresentation()... p.exitValue()=" + p.exitValue() + "  page=" + page
-				if(p.exitValue()!=0) {
-					error = 1
-					break
-				}	
-	        }
-            stdInput.close();
-            stdError.close();
-            
-            //got error for "pdf-swf" way with swftools, so now we switch to "pdf-jpeg-swf" way with ImageMagick
-            if(error == 1) 
-            {
-            	//convert pdf-png with ImageMagick
-					System.out.println("PresentationService.groory::convertUploadedPresentation()... got error for 'pdf-swf' way with swftools, so now we switch to 'pdf-jpeg-swf' way with ImageMagick&swftools(jpeg2swf)");
+		    	println "PresentationService.groory::convertUploadedPresentation()... p.exitValue()=" + p.exitValue() + "  numPages=" + numPages + "  page=" + page
+
+	            //got error for "pdf-swf" way with swftools, so now we switch to "pdf-jpeg-swf" way with ImageMagick
+				if(p.exitValue()!=0) 
+				{
+	            	//convert pdf-png with ImageMagick
+					System.out.println("PresentationService.groory::convertUploadedPresentation()... got error for 'pdf-swf' with swftools, so now we switch to 'pdf-jpeg-swf' with ImageMagick&swftools(jpeg2swf)");
 				 	def tempDir = new File(presentation.getParent() + File.separatorChar + "temp")
 		 			tempDir.mkdir()
 
@@ -257,11 +248,8 @@ class PresentationService {
     	        	stdInput.close();
 	        	    stdError.close();
 	        	
-	        	//now convert jpeg to swf with swftools(jpeg2swf)
-				System.out.println("PresentationService.groory::convertUploadedPresentation()... now convert jpeg to swf with swftools(jpeg2swf)  numPages=" + numPages);
-		        //def num = new Integer(numPages)
-		        for (page = 1; page <= new Integer(numPages); page++) {
-		            //if(num == 1) command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp.jpeg"
+	        		//now convert jpeg to swf with swftools(jpeg2swf)
+					System.out.println("PresentationService.groory::convertUploadedPresentation()... now convert jpeg to swf with swftools(jpeg2swf)  numPages=" + numPages + "  page=" + page);
 		            command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
 					System.out.println("PresentationService.groory::convertUploadedPresentation()... command=" + command);
 
@@ -279,8 +267,11 @@ class PresentationService {
         	    	}
     	        	stdInput.close();
 	        	    stdError.close();
-		        }	
-            }
+				}	
+	        }
+            stdInput.close();
+            stdError.close();
+            
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
