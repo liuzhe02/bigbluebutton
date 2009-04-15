@@ -4,7 +4,6 @@
 	creationComplete="onCreationComplete()">
 	<mx:Script>
 		<![CDATA[
-			import org.bigbluebutton.modules.join.JoinFacade;
 			import org.bigbluebutton.common.messaging.Router;
 			
 			private var _router:Router;			
@@ -49,13 +48,11 @@
 			}
 			
 			public function start(attributes:Object):void {	
-				LogUtil.debug("JoinModule start");
-				_attributes = attributes;	
-				JoinFacade.getInstance().startup(this);	
+
 			}
 		
 			public function stop():void {
-				JoinFacade.getInstance().stop(this);
+
 			}
 		]]>
 	</mx:Script>

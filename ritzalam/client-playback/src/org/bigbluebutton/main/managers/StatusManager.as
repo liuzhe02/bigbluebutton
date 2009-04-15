@@ -2,18 +2,22 @@ package org.bigbluebutton.main.managers
 {
 	import flash.events.EventDispatcher;
 
-	[Bindable]
+	
 	public class StatusManager extends EventDispatcher
 	{
-		 /**
-         * The current status text.
-         */
-        public var status:String = "";
-        
-        /**
-         * More detailed information about the status.
-         */
-        public var message:String = "";
+        [Bindable]
+        public var loadedModuleStatus:String = "";
+        [Bindable]
+        public var loadingStatus:String = "";
 
+		public function setLoadedModuleStatus(moduleName:String):void {
+			LogUtil.debug("receieved status...");
+			loadedModuleStatus += moduleName + " (loaded) ";
+		}
+		
+		public function setLoadingStatus(moduleName:String, progress:String):void {
+			LogUtil.debug("receieved status...");
+			loadingStatus = "Loading: " + moduleName + " " + progress + "% loaded."
+		}
 	}
 }

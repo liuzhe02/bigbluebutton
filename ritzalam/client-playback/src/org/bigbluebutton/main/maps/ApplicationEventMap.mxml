@@ -7,7 +7,16 @@
 	<!--
 	This is the main event map for the application, think of it as the application controller.
 	-->
-	<EventHandlers type="{FlexEvent.INITIALIZE}">        
+	<EventHandlers type="{FlexEvent.PREINITIALIZE}">
+		<!--
+		The FlexEvent.PREINITIALIZE event is a good place for creating and initializing managers.
+		-->
+		<ObjectBuilder generator="{ModulesManager}">
+			<Properties dispatcher="{scope.dispatcher}"/>
+		</ObjectBuilder>
+	</EventHandlers>
+	
+	<EventHandlers type="{FlexEvent.CREATION_COMPLETE}">        
         <MethodInvoker generator="{ModeInitializer}" method="getUrl" />
         <MethodInvoker generator="{ModeInitializer}" method="queryMode" arguments="{lastReturn}" />
         <EventAnnouncer generator="{ModeEvent}" type="{ModeEvent.MODE_INIT_EVENT}">
@@ -18,11 +27,31 @@
 	<EventHandlers type="{ModeEvent.MODE_INIT_EVENT}">
         <HTTPServiceInvoker instance="{configService}">
 			<resultHandlers>
+				<MethodInvoker generator="{ConfigLoader}" method="setMode" arguments="{event.mode}"/>
 				<MethodInvoker generator="{ConfigLoader}" method="parse" arguments="{resultObject}" /> 
+				<EventAnnouncer generator="{ConfigEvent}" type="{ConfigEvent.CONFIG_LOADED_EVENT}">
+            		<Properties numberOfModules="{lastReturn.numberOfModules}" moduleDescriptors="{lastReturn.moduleDescriptors}"/>
+        		</EventAnnouncer>
 			</resultHandlers>
 		</HTTPServiceInvoker>   
     </EventHandlers>
 
+	<EventHandlers type="{ConfigEvent.CONFIG_LOADED_EVENT}">
+		<MethodInvoker generator="{MainModel}" method="setStatus" arguments="Loading {event.numberOfModules} modules."/>  
+		<MethodInvoker generator="{ModulesManager}" method="numberOfModules" arguments="{event.numberOfModules}"/>
+		<MethodInvoker generator="{ModulesManager}" method="moduleDescriptors" arguments="{event.moduleDescriptors}"/>
+		<MethodInvoker generator="{ModulesManager}" method="loadFirstModule"/>
+	</EventHandlers>
+	
+	<EventHandlers type="{ModuleEvent.MODULE_LOADED_EVENT}">
+		<MethodInvoker generator="{StatusManager}" method="setLoadedModuleStatus" arguments="{[event.moduleName]}"/>
+		<MethodInvoker generator="{ModulesManager}" method="loadNextModule" arguments="{[event.moduleName]}"/>
+	</EventHandlers>
+	
+	<EventHandlers type="{ModuleEvent.MODULE_LOAD_PROGRESS_EVENT}">
+		<MethodInvoker generator="{StatusManager}" method="setLoadingStatus" arguments="{[event.moduleName,event.percentLoaded]}"/>
+	</EventHandlers>
+	
 	<Injectors target="{MainView}">
 		<!--
 		This creates the Presentation Model object for the MainView, notice the registerTarget
@@ -37,9 +66,9 @@
 	
 	<Injectors target="{MainModel}">
 		<!--
-		DocumentModel is not a view class, but can be used as a target for injection because an instance
+		MainModel is not a view class, but can be used as a target for injection because an instance
 		of the class was created with an ObjectBuilder that had the registerTarget property set to true,
-		see the Injectors for DocumentView.
+		see the Injectors for MainView.
 		-->
 
 		<!--
@@ -48,10 +77,13 @@
 		object is that since it's not a view class events that it dispatches don't bubble up, and so it needs
 		a way to dispatch events that can be heard by this event map.
 		-->
-		<PropertyInjector targetKey="dispatcher"      source="{scope.dispatcher}"/>
+		<PropertyInjector targetKey="dispatcher" source="{scope.dispatcher}"/>
 		
+		<ObjectBuilder generator="{StatusManager}" registerTarget="true" />
+
+		<!-- This injects the StatusManager instance created by the last tag into the MainModel instance -->
+		<PropertyInjector targetKey="status" source="{lastReturn}" />
 	</Injectors>
-	
 	<mx:Script>
 	<![CDATA[
 			
@@ -61,6 +93,12 @@
 	import org.bigbluebutton.main.services.ConfigLoader;
 	import org.bigbluebutton.main.views.model.MainModel;
 	import org.bigbluebutton.main.views.components.MainView;
+	import org.bigbluebutton.main.events.ConfigEvent;
+	import org.bigbluebutton.main.managers.ModulesManager;
+	import org.bigbluebutton.main.managers.LoadModuleManager;
+	import org.bigbluebutton.main.events.ModuleEvent;
+	import org.bigbluebutton.main.events.AppEvent;
+	import org.bigbluebutton.main.managers.StatusManager;
 	]]>
 	</mx:Script>
 	
