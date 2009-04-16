@@ -4,18 +4,6 @@ import javax.jms.JMSException
 import javax.jms.MapMessage
 import org.springframework.jms.core.JmsTemplate
 
-/*
-//for itext
-import java.io.FileOutputStream;
-import com.lowagie.text.Document;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
-*/
-
 class PresentationService {
 
     boolean transactional = false
@@ -314,86 +302,6 @@ class PresentationService {
 	        	    stdError.close();
 
 					assert(p.exitValue() == 0)
-	        	    
-					/*
-	            	//convert pdf-png with itext: itext cannot convert some kinds of pdf correctly so we just leave the code here temoprory for reference
-					try{	        	    
-        			    // we create a reader for a certain document
-			            PdfReader reader = new PdfReader(presentation.getAbsolutePath());
-            			// we retrieve the total number of pages
-			            int n = reader.getNumberOfPages();
-
-            			// we retrieve the size of this-page
-			            Rectangle psize = reader.getPageSize(page);
-            			float width = psize.getHeight();
-			            float height = psize.getWidth();
-
-						System.out.println("getNumberOfPages=" + n + "  w=" + width + "  height=" + height);
-            
-			            // step 1: creation of a document-object
-            			Document document = new Document(new Rectangle(width, height));
-            
-			            // step 2: we create a writer that listens to the document
-			            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(tempDir.getAbsolutePath() + "/temp.pdf"));
-
-            			// step 3: we open the document
-			            document.open();
-
-            			// step 4: we add content
-			            PdfContentByte cb = writer.getDirectContent();
-
-            			document.newPage();
-
-		                PdfImportedPage pageTmp = writer.getImportedPage(reader, page);
-        		        cb.addTemplate(pageTmp, 1, 0, 0, 1, 0, 0);
-
-                		BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-
-			            // step 5: we close the document
-            			document.close();
-        			}
-       				catch (Exception de) {
-			            de.printStackTrace();
-        			}
-
-					//change that temp-pdf to jpeg with ImageMagick
-		            command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + tempDir.getAbsolutePath() + "/temp-0.jpeg"         
-            
-    		        p = Runtime.getRuntime().exec(command);            
-        		    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            		stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-	    	        while ((str = stdInput.readLine()) != null) {
-    	    	        System.out.println(str);
-        	    	}
-            
-	        	    // read any errors from the attempted command
-	    	        System.out.println("Here is the standard error of the command (if any):\n");
-    	    	    while ((str = stdError.readLine()) != null) {
-        	    		System.out.println(str);
-	        	    }
-    	        	stdInput.close();
-	        	    stdError.close();
-	        	
-	        		//now convert that jpeg to swf with swftools(jpeg2swf)
-					System.out.println("PresentationService.groory::convertUploadedPresentation()... now convert jpeg to swf with swftools(jpeg2swf)  numPages=" + numPages + "  page=" + page);
-		            command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
-					System.out.println("PresentationService.groory::convertUploadedPresentation()... command=" + command);
-
-   			        p = Runtime.getRuntime().exec(command);            
-       			    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-           			stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-    	        	while ((str = stdInput.readLine()) != null) {
-   	    	        	System.out.println(s);
-        	    	}
-            
-	        	    // read any errors from the attempted command
-    		        System.out.println("Here is the standard error of the command (if any):\n");
-   	    		    while ((str = stdError.readLine()) != null) {
-       	    			System.out.println(str);
-        	    	}
-    	        	stdInput.close();
-	        	    stdError.close();
-					*/
 				}
 				else{
 					println("PresentationService.groory::convertUploadedPresentation()... convert this page to swf with swftools OK, page=" + page);
