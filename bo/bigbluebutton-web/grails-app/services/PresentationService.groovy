@@ -4,6 +4,8 @@ import javax.jms.JMSException
 import javax.jms.MapMessage
 import org.springframework.jms.core.JmsTemplate
 
+/*
+//for itext
 import java.io.FileOutputStream;
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
@@ -12,12 +14,14 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
+*/
 
 class PresentationService {
 
     boolean transactional = false
 	def jmsTemplate	
 	def imageMagick
+	def ghostScript
 	def swfTools
 	def presentationDir
 	
@@ -153,6 +157,7 @@ class PresentationService {
         {
         	/** Let's get how many pages this presentation has */
 			command = swfTools + "/pdf2swf -I " + presentation.getAbsolutePath()        
+		    println "PresentationService.groory::convertUploadedPresentation()... first get how many pages in this pdf with swftools:  command=" + command 
           	p = Runtime.getRuntime().exec(command);            
 
 			//p.waitFor();
@@ -183,7 +188,8 @@ class PresentationService {
             	System.out.println(s);
             }
 
-		    println "\nPresentationService.groory::convertUploadedPresentation()... p.exitValue()=" + p.exitValue() + "  numPages=" + numPages
+			assert(p.exitValue() == 0)
+		    println "PresentationService.groory::convertUploadedPresentation()... numPages=" + numPages + "  now start to convert this pdf one page by one page....."
             
 	        for (page = 1; page <= new Integer(numPages); page++) {
 	            /* Now we convert the pdf file to swf 
@@ -192,6 +198,7 @@ class PresentationService {
 	             * uses zero-base when creating the thumbnails.	
 	            */                         
 	            command = swfTools + "/pdf2swf -p " + page + " " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf"         
+			    println "PresentationService.groory::convertUploadedPresentation()... first we use swftools to convert this page:  command=" + command 
 				p = Runtime.getRuntime().exec(command)
 				stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -228,20 +235,16 @@ class PresentationService {
 	            	System.out.println(s);
 	            }
 
-		    	println "PresentationService.groory::convertUploadedPresentation()... p.exitValue()=" + p.exitValue() + "  numPages=" + numPages + "  page=" + page
-
 	            //got error for "pdf-swf" way with swftools, so now we switch to "pdf-jpeg-swf" way with ImageMagick
 				if(p.exitValue()!=0) 
 				{
-					System.out.println("PresentationService.groory::convertUploadedPresentation()... got error for 'pdf-swf' with swftools, so now we switch to 'pdf-jpeg-swf' with ImageMagick&swftools(jpeg2swf)");
+					println("PresentationService.groory::convertUploadedPresentation()... got error for 'pdf-swf' with swftools, so now we switch to 'pdf-jpeg-swf' with GhostScript&ImageMagick&swftools(jpeg2swf), page=" + page);
 				 	def tempDir = new File(presentation.getParent() + File.separatorChar + "temp")
 		 			tempDir.mkdir()
 					
-					/*
-	            	//convert pdf-png with ImageMagick
-			        def num = new Integer(numPages)
-		            if(num == 1) command = imageMagick + "/convert " + presentation.getAbsolutePath() + " " + tempDir.getAbsolutePath() + "/temp-0.jpeg"         
-		            else         command = imageMagick + "/convert " + presentation.getAbsolutePath() + " " + tempDir.getAbsolutePath() + "/temp.jpeg"         
+	            	//extract that specific page and create a temp-pdf(only one page) with GhostScript
+					command = ghostScript + " -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage=" + page +" -dLastPage=" + page + " -sOutputFile=" + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + presentation.getAbsolutePath()          
+					println("PresentationService.groory::convertUploadedPresentation()... extract this page from pdf and create a temp-pdf(one page only) with GhostScript:  command=" + command);
             
     		        p = Runtime.getRuntime().exec(command);            
         		    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -258,10 +261,30 @@ class PresentationService {
     	        	stdInput.close();
 	        	    stdError.close();
 	        	
-	        		//now convert jpeg to swf with swftools(jpeg2swf)
-					System.out.println("PresentationService.groory::convertUploadedPresentation()... now convert jpeg to swf with swftools(jpeg2swf)  numPages=" + numPages + "  page=" + page);
+	            	//convert that temp-pdf to jpeg with ImageMagick
+			        def num = new Integer(numPages)
+		            if(num == 1) command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp-0.jpeg")         
+		            else         command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp.jpeg")         
+					println("PresentationService.groory::convertUploadedPresentation()... convert that temp-pdf to jpeg with ImageMagick:  command=" + command);
+            
+    		        p = Runtime.getRuntime().exec(command);            
+        		    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            		stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+	    	        while ((str = stdInput.readLine()) != null) {
+    	    	        System.out.println(str);
+        	    	}
+            
+	        	    // read any errors from the attempted command
+	    	        System.out.println("Here is the standard error of the command (if any):\n");
+    	    	    while ((str = stdError.readLine()) != null) {
+        	    		System.out.println(str);
+	        	    }
+    	        	stdInput.close();
+	        	    stdError.close();
+	        	
+	        		//now convert that jpeg to swf with swftools(jpeg2swf)
 		            command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
-					System.out.println("PresentationService.groory::convertUploadedPresentation()... command=" + command);
+					println("PresentationService.groory::convertUploadedPresentation()... convert that jpeg to swf with swftools(jpeg2swf):  command=" + command);
 
    			        p = Runtime.getRuntime().exec(command);            
        			    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -277,11 +300,15 @@ class PresentationService {
         	    	}
     	        	stdInput.close();
 	        	    stdError.close();
-	        	    */
+	        	    
+	        	    
+	        	    
+	        	    
+	        	    
 
 
 
-
+					/*
 	            	//convert pdf-png with itext
 					try{	        	    
         			    // we create a reader for a certain document
@@ -340,7 +367,7 @@ class PresentationService {
     	        	stdInput.close();
 	        	    stdError.close();
 	        	
-	        		//now convert jpeg to swf with swftools(jpeg2swf)
+	        		//now convert that jpeg to swf with swftools(jpeg2swf)
 					System.out.println("PresentationService.groory::convertUploadedPresentation()... now convert jpeg to swf with swftools(jpeg2swf)  numPages=" + numPages + "  page=" + page);
 		            command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
 					System.out.println("PresentationService.groory::convertUploadedPresentation()... command=" + command);
@@ -359,7 +386,7 @@ class PresentationService {
         	    	}
     	        	stdInput.close();
 	        	    stdError.close();
-
+					*/
 	        	    
 				}	
 	        }
