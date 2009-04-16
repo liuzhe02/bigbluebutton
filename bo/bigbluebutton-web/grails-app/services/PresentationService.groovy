@@ -152,7 +152,6 @@ class PresentationService {
 			
             stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
 			numPages = 0
             while ((info = stdInput.readLine()) != null) {
             	//The output would be something like this 'page=21 width=718.00 height=538.00'.
@@ -170,12 +169,10 @@ class PresentationService {
 				    println "no match info: ${info}"
 				}
             }
-            
             while ((info = stdError.readLine()) != null) {
             	System.out.println("Got error getting info from file):\n");
             	System.out.println(s);
             }
-
         	stdInput.close();
        	    stdError.close();
 
@@ -183,7 +180,8 @@ class PresentationService {
 
 		    println "PresentationService.groory::convertUploadedPresentation()... numPages=" + numPages + "  now start to convert this pdf one page by one page....."
             
-	        for (page = 1; page <= new Integer(numPages); page++) {
+	        for (page = 1; page <= new Integer(numPages); page++) 
+	        {
 	            /* Now we convert the pdf file to swf 
 	             * We start the output with a page number starting at zero (0) so it's consistent
 	             * with the naming convention when we create the thumbnails. Looks like ImageMagick
@@ -192,9 +190,9 @@ class PresentationService {
 	            command = swfTools + "/pdf2swf -p " + page + " " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf"         
 			    println "PresentationService.groory::convertUploadedPresentation()... first we use swftools to convert this page:  command=" + command 
 				p = Runtime.getRuntime().exec(command)
+
 				stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-	            
 				System.out.println("Converting slide: ${page}\n");
 				def numSlidesProcessed = 0
 				def convertInfo
@@ -220,12 +218,10 @@ class PresentationService {
 					    println "no match convert: ${convertInfo}"
 					}
 	            }
-	            
 	            while ((convertInfo = stdError.readLine()) != null) {
 	            	System.out.println("Got error converting file):\n");
 	            	System.out.println(s);
 	            }
-
    	        	stdInput.close();
         	    stdError.close();
 
@@ -239,20 +235,18 @@ class PresentationService {
 	            	//extract that specific page and create a temp-pdf(only one page) with GhostScript
 					command = ghostScript + " -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage=" + page +" -dLastPage=" + page + " -sOutputFile=" + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + presentation.getAbsolutePath()          
 					println("PresentationService.groory::convertUploadedPresentation()... extract this page from pdf and create a temp-pdf(one page only) with GhostScript:  command=" + command);
-            
     		        p = Runtime.getRuntime().exec(command);            
+
         		    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             		stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 	    	        while ((str = stdInput.readLine()) != null) {
     	    	        System.out.println(str);
         	    	}
-            
 	        	    // read any errors from the attempted command
 	    	        System.out.println("Here is the standard error of the command (if any):\n");
     	    	    while ((str = stdError.readLine()) != null) {
         	    		System.out.println(str);
 	        	    }
-
     	        	stdInput.close();
 	        	    stdError.close();
 
@@ -263,14 +257,13 @@ class PresentationService {
 		            if(num == 1) command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp-0.jpeg")         
 		            else         command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp.jpeg")         
 					println("PresentationService.groory::convertUploadedPresentation()... convert that temp-pdf to jpeg with ImageMagick:  command=" + command);
-            
     		        p = Runtime.getRuntime().exec(command);            
+
         		    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             		stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 	    	        while ((str = stdInput.readLine()) != null) {
     	    	        System.out.println(str);
         	    	}
-            
 	        	    // read any errors from the attempted command
 	    	        System.out.println("Here is the standard error of the command (if any):\n");
     	    	    while ((str = stdError.readLine()) != null) {
@@ -284,20 +277,18 @@ class PresentationService {
 	        		//now convert that jpeg to swf with swftools(jpeg2swf)
 		            command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
 					println("PresentationService.groory::convertUploadedPresentation()... convert that jpeg to swf with swftools(jpeg2swf):  command=" + command);
-
    			        p = Runtime.getRuntime().exec(command);            
+
        			    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
            			stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
     	        	while ((str = stdInput.readLine()) != null) {
    	    	        	System.out.println(s);
         	    	}
-            
 	        	    // read any errors from the attempted command
     		        System.out.println("Here is the standard error of the command (if any):\n");
    	    		    while ((str = stdError.readLine()) != null) {
        	    			System.out.println(str);
         	    	}
-
     	        	stdInput.close();
 	        	    stdError.close();
 
@@ -307,9 +298,6 @@ class PresentationService {
 					println("PresentationService.groory::convertUploadedPresentation()... convert this page to swf with swftools OK, page=" + page);
 				}	
 	        }
-            //stdInput.close();
-            //stdError.close();
-            
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
@@ -318,7 +306,6 @@ class PresentationService {
         
         return numPages
 	}
-
 	
 	def createThumbnails = {numPages, presentation ->
 		/* We create thumbnails for the uploaded presentation. */ 
