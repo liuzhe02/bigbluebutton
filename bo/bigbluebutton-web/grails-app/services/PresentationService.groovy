@@ -188,7 +188,11 @@ class PresentationService {
             	System.out.println(s);
             }
 
+        	stdInput.close();
+       	    stdError.close();
+
 			assert(p.exitValue() == 0)
+
 		    println "PresentationService.groory::convertUploadedPresentation()... numPages=" + numPages + "  now start to convert this pdf one page by one page....."
             
 	        for (page = 1; page <= new Integer(numPages); page++) {
@@ -227,13 +231,15 @@ class PresentationService {
 					} else {
 					    println "no match convert: ${convertInfo}"
 					}
-
 	            }
 	            
 	            while ((convertInfo = stdError.readLine()) != null) {
 	            	System.out.println("Got error converting file):\n");
 	            	System.out.println(s);
 	            }
+
+   	        	stdInput.close();
+        	    stdError.close();
 
 	            //got error for "pdf-swf" way with swftools, so now we switch to "pdf-jpeg-swf" way with ImageMagick
 				if(p.exitValue()!=0) 
@@ -258,9 +264,12 @@ class PresentationService {
     	    	    while ((str = stdError.readLine()) != null) {
         	    		System.out.println(str);
 	        	    }
+
     	        	stdInput.close();
 	        	    stdError.close();
-	        	
+
+					assert(p.exitValue() == 0)
+		        	
 	            	//convert that temp-pdf to jpeg with ImageMagick
 			        def num = new Integer(numPages)
 		            if(num == 1) command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp-0.jpeg")         
@@ -281,6 +290,8 @@ class PresentationService {
 	        	    }
     	        	stdInput.close();
 	        	    stdError.close();
+
+					assert(p.exitValue() == 0)
 	        	
 	        		//now convert that jpeg to swf with swftools(jpeg2swf)
 		            command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
@@ -298,18 +309,14 @@ class PresentationService {
    	    		    while ((str = stdError.readLine()) != null) {
        	    			System.out.println(str);
         	    	}
+
     	        	stdInput.close();
 	        	    stdError.close();
-	        	    
-	        	    
-	        	    
-	        	    
-	        	    
 
-
-
+					assert(p.exitValue() == 0)
+	        	    
 					/*
-	            	//convert pdf-png with itext
+	            	//convert pdf-png with itext: itext cannot convert some kinds of pdf correctly so we just leave the code here temoprory for reference
 					try{	        	    
         			    // we create a reader for a certain document
 			            PdfReader reader = new PdfReader(presentation.getAbsolutePath());
@@ -387,11 +394,13 @@ class PresentationService {
     	        	stdInput.close();
 	        	    stdError.close();
 					*/
-	        	    
+				}
+				else{
+					println("PresentationService.groory::convertUploadedPresentation()... convert this page to swf with swftools OK, page=" + page);
 				}	
 	        }
-            stdInput.close();
-            stdError.close();
+            //stdInput.close();
+            //stdError.close();
             
         }
         catch (IOException e) {
