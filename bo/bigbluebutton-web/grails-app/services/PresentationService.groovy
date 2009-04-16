@@ -3,6 +3,8 @@ import javax.jms.Session
 import javax.jms.JMSException
 import javax.jms.MapMessage
 import org.springframework.jms.core.JmsTemplate
+import java.util.*;
+import java.util.concurrent.*;
 
 class PresentationService {
 
@@ -14,6 +16,9 @@ class PresentationService {
 	def presentationDir
 	
 	private static String JMS_UPDATES_Q = 'UpdatesQueue'
+	
+	//using java.util.concurrent.* for converting presentation
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 	
     def deletePresentation = {conf, room, filename ->
     	def directory = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename)
@@ -64,14 +69,65 @@ class PresentationService {
 		dir.mkdirs()
 		def pres = new File( dir.absolutePath + File.separatorChar + presentation.getOriginalFilename() )
 		presentation.transferTo( pres )
-		
-		Thread.start
+	
+		Thread.start //for "fast-return" this http request
 		{
-			new Timer().runAfter(1000) {
-				def numPages = convertUploadedPresentation(conf, room, presentation_name, pres)	
-				createThumbnails(numPages, pres)		
+			new Timer().runAfter(1000) 
+			{
+				/*
+				//inner class problem by grails??
+				Callable<Integer> task_convertUploadedPresentation = 
+					new Callable<Integer>(){
+						public Integer call(){
+							//return convertUploadedPresentation(conf, room, presentation_name, pres);
+							return null;
+						}
+					};	
+				*/
+
+				//first we need to know how many pages in this pdf
+				def numPages = getPresentationNumPages(conf, room, presentation_name, pres)
+			    println "PresentationService.groory::processUploadedPresentation()... now we get how many pages in this pdf with swftools:  numPages=" + numPages 
+
+				//then do processUploadedPresentation
+			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_convertUploadedPresentation" 
+				Callable<Integer> task_convertUploadedPresentation = new Callable_convertUploadedPresentation(this, conf, room, presentation_name, pres, numPages);
+				Future<Integer> future_convertUploadedPresentation = executor.submit(task_convertUploadedPresentation);
+
+				//createThumbnails(numPages, pres)		
+				//then do createThumbnails
+			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_createThumbnails" 
+				Callable<Integer> task_createThumbnails = new Callable_createThumbnails(this, pres, numPages);
+				Future<Integer> future_createThumbnails = executor.submit(task_createThumbnails);
+
+				//future_convertUploadedPresentation.get() 
+				try{				
+					int retcode = future_convertUploadedPresentation.get().intValue();	
+		        } catch (InterruptedException e) {
+        		    // Re-assert the thread's interrupted status
+		            Thread.currentThread().interrupt();
+        		    // We don't need the result, so cancel the task too
+		            future_convertUploadedPresentation.cancel(true);
+        		} catch (ExecutionException e) {
+            		//throw launderThrowable(e.getCause());
+            		println(e);
+        		}
+
+				//future_createThumbnails 
+				try{				
+					int retcode = future_createThumbnails.get().intValue();	
+		        } catch (InterruptedException e) {
+        		    // Re-assert the thread's interrupted status
+		            Thread.currentThread().interrupt();
+        		    // We don't need the result, so cancel the task too
+		            future_convertUploadedPresentation.cancel(true);
+        		} catch (ExecutionException e) {
+            		//throw launderThrowable(e.getCause());
+            		println(e);
+        		}
 	
 				/* We just assume that everything is OK. Send a SUCCESS message to the client */
+			    println "PresentationService.groory::processUploadedPresentation()... now converting is OK, we send message by JMS" 
 				def msg = new HashMap()
 				msg.put("room", room)
 				msg.put("presentationName", presentation_name)
@@ -83,103 +139,100 @@ class PresentationService {
 		}
 	}
 	
-	//handle external presentation server 
-	def processDelegatedPresentation = {conf, room, presentation_name, returnCode, totalSlides, slidesCompleted ->
-		println "\nprocessDelegatedPresentation"
+	def getPresentationNumPages = {conf, room, presentation_name, presentation ->
+		def numPages //total numbers of this pdf	
 
-		if(returnCode.equals("CONVERT"))
-		{
-			def msg = new HashMap()
-			msg.put("room", room)
-			msg.put("presentationName", presentation_name)
-			msg.put("returnCode", "CONVERT")
-			msg.put("totalSlides", totalSlides)
-	       	msg.put("slidesCompleted", slidesCompleted)
-		    jmsTemplate.convertAndSend(JMS_UPDATES_Q, msg)		
-		}
-		
-		else if(returnCode.equals("SUCCESS"))
-		{
-			def msg = new HashMap()
-			msg.put("room", room)
-			msg.put("presentationName", presentation_name)
-			msg.put("returnCode", "SUCCESS")
-		    msg.put("message", "The presentation is now ready.")
-		    jmsTemplate.convertAndSend(JMS_UPDATES_Q, msg)		
-			System.out.println("Sending presentation conversion success.")
-		}
-		
+        try 
+   		{
+			def command = swfTools + "/pdf2swf -I " + presentation.getAbsolutePath()        
+		    println "PresentationService.groory::processUploadedPresentation()... first get how many pages in this pdf with swftools:  command=" + command 
+   			def p = Runtime.getRuntime().exec(command);            
+
+			//p.waitFor();
+			
+       		def stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            def stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			def info
+			def str //output information to console for stdInput and stdError
+       		while ((info = stdInput.readLine()) != null) {
+    	    	//The output would be something like this 'page=21 width=718.00 height=538.00'.
+   	    		//We need to extract the page number (i.e. 21) from it.
+       			def infoRegExp = /page=([0-9]+)(?: .+)/
+				def matcher = (info =~ infoRegExp)
+				if (matcher.matches()) {
+		    		//if ((matcher[0][1]) > numPages) {
+				    	numPages = matcher[0][1]
+					    //	println "Number of pages = ${numPages}"
+				   // } else {
+						   // 	println "Number of pages = ${numPages} match=" + matcher[0][1]
+				   // }
+				} else {
+				    println "no match info: ${info}"
+				}
+        	}
+	   	    while ((info = stdError.readLine()) != null) {
+	           	System.out.println("Got error getting info from file):\n");
+            	System.out.println(s);
+    	    }
+    		stdInput.close();
+       		stdError.close();
+
+			assert(p.exitValue() == 0)
+	    }
+    	catch (IOException e) {
+	        System.out.println("exception happened - here's what I know: ");
+    	    e.printStackTrace();
+    	}		
+
+		return numPages
 	}
 
+class Callable_convertUploadedPresentation implements Callable
+{
+	def caller
+	def conf
+	def room
+	def presentation_name
+	def presentation
+	def numPages
 
-	def showSlide(String conf, String room, String presentationName, String id) {
-		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + "slide-${id}.swf")
+	/*	
+	def Callable_convertUploadedPresentation = {caller, conf, room, presentation_name, presentation, numPages ->
+		this.caller = caller;
+		this.conf = conf;
+		this.room = room;
+		this.presentation_name = presentation_name;
+		this.presentation = presentation;
+		this.numPages = numPages;
+	}
+	*/
+
+	Callable_convertUploadedPresentation(PresentationService caller, String conf, String room, String presentation_name, File presentation, String numPages)
+	{
+		this.caller = caller;
+		this.conf = conf;
+		this.room = room;
+		this.presentation_name = presentation_name;
+		this.presentation = presentation;
+		this.numPages = numPages;
 	}
 	
-	def showPresentation = {conf, room, filename ->
-		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename + File.separatorChar + "slides.swf")
+	public Integer call(){
+		return convertUploadedPresentation(conf, room, presentation_name, presentation, numPages);
 	}
-	
-	def showThumbnail = {conf, room, presentationName, thumb ->
-		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + 
-			"thumbnails" + File.separatorChar + "thumb-${thumb}.png")
-	}
-	
-	def numberOfThumbnails = {conf, room, name ->
-		def thumbDir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name + File.separatorChar + "thumbnails")
-		System.out.println(thumbDir.absolutePath + " " + thumbDir.listFiles().length)
-		thumbDir.listFiles().length
-	}
-	
-	def convertUploadedPresentation = {conf, room, presentation_name, presentation ->
+
+	def convertUploadedPresentation = {conf, room, presentation_name, presentation, numPages ->
 		def command        
        	def Process p            
         def BufferedReader stdInput
         def BufferedReader stdError
 		def info
-		def numPages = 0
         def page = 0
 		def str //output information to console for stdInput and stdError
 
+	    println "PresentationService.groory@Callable_convertUploadedPresentation::convertUploadedPresentation()... numPages=" + numPages + "  now start to convert this pdf one page by one page....."
         try 
         {
-        	/** Let's get how many pages this presentation has */
-			command = swfTools + "/pdf2swf -I " + presentation.getAbsolutePath()        
-		    println "PresentationService.groory::convertUploadedPresentation()... first get how many pages in this pdf with swftools:  command=" + command 
-          	p = Runtime.getRuntime().exec(command);            
-
-			//p.waitFor();
-			
-            stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			numPages = 0
-            while ((info = stdInput.readLine()) != null) {
-            	//The output would be something like this 'page=21 width=718.00 height=538.00'.
-            	//We need to extract the page number (i.e. 21) from it.
-            	def infoRegExp = /page=([0-9]+)(?: .+)/
-				def matcher = (info =~ infoRegExp)
-				if (matcher.matches()) {
-				    //if ((matcher[0][1]) > numPages) {
-				    	numPages = matcher[0][1]
-				    //	println "Number of pages = ${numPages}"
-				   // } else {
-				   // 	println "Number of pages = ${numPages} match=" + matcher[0][1]
-				   // }
-				} else {
-				    println "no match info: ${info}"
-				}
-            }
-            while ((info = stdError.readLine()) != null) {
-            	System.out.println("Got error getting info from file):\n");
-            	System.out.println(s);
-            }
-        	stdInput.close();
-       	    stdError.close();
-
-			assert(p.exitValue() == 0)
-
-		    println "PresentationService.groory::convertUploadedPresentation()... numPages=" + numPages + "  now start to convert this pdf one page by one page....."
-            
 	        for (page = 1; page <= new Integer(numPages); page++) 
 	        {
 	            /* Now we convert the pdf file to swf 
@@ -187,7 +240,7 @@ class PresentationService {
 	             * with the naming convention when we create the thumbnails. Looks like ImageMagick
 	             * uses zero-base when creating the thumbnails.	
 	            */                         
-	            command = swfTools + "/pdf2swf -p " + page + " " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf"         
+	            command = caller.swfTools + "/pdf2swf -p " + page + " " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf"         
 			    println "PresentationService.groory::convertUploadedPresentation()... first we use swftools to convert this page:  command=" + command 
 				p = Runtime.getRuntime().exec(command)
 
@@ -213,7 +266,7 @@ class PresentationService {
 					    numSlidesProcessed++ // increment the number of slides processed
 					    msg.put("slidesCompleted", page)
 	            	    println "number of slides completed ${page}"
-	            	    jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
+	            	    caller.jmsTemplate.convertAndSend(caller.JMS_UPDATES_Q,msg)
 					} else {
 					    println "no match convert: ${convertInfo}"
 					}
@@ -233,7 +286,7 @@ class PresentationService {
 		 			tempDir.mkdir()
 					
 	            	//extract that specific page and create a temp-pdf(only one page) with GhostScript
-					command = ghostScript + " -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage=" + page +" -dLastPage=" + page + " -sOutputFile=" + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + presentation.getAbsolutePath()          
+					command = caller.ghostScript + " -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage=" + page +" -dLastPage=" + page + " -sOutputFile=" + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + presentation.getAbsolutePath()          
 					println("PresentationService.groory::convertUploadedPresentation()... extract this page from pdf and create a temp-pdf(one page only) with GhostScript:  command=" + command);
     		        p = Runtime.getRuntime().exec(command);            
 
@@ -254,8 +307,8 @@ class PresentationService {
 		        	
 	            	//convert that temp-pdf to jpeg with ImageMagick
 			        def num = new Integer(numPages)
-		            if(num == 1) command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp-0.jpeg")         
-		            else         command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp.jpeg")         
+		            if(num == 1) command = caller.imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp-0.jpeg")         
+		            else         command = caller.imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp.jpeg")         
 					println("PresentationService.groory::convertUploadedPresentation()... convert that temp-pdf to jpeg with ImageMagick:  command=" + command);
     		        p = Runtime.getRuntime().exec(command);            
 
@@ -275,7 +328,7 @@ class PresentationService {
 					assert(p.exitValue() == 0)
 	        	
 	        		//now convert that jpeg to swf with swftools(jpeg2swf)
-		            command = swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
+		            command = caller.swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
 					println("PresentationService.groory::convertUploadedPresentation()... convert that jpeg to swf with swftools(jpeg2swf):  command=" + command);
    			        p = Runtime.getRuntime().exec(command);            
 
@@ -304,10 +357,30 @@ class PresentationService {
             e.printStackTrace();
         }		
         
-        return numPages
+        return new Integer(0)
+	}
+}	
+
+
+
+class Callable_createThumbnails implements Callable
+{
+	def caller
+	def presentation
+	def numPages
+
+	Callable_createThumbnails(PresentationService caller, File presentation, String numPages)
+	{
+		this.caller = caller;
+		this.presentation = presentation;
+		this.numPages = numPages;
 	}
 	
-	def createThumbnails = {numPages, presentation ->
+	public Integer call(){
+		return createThumbnails(presentation, numPages);
+	}
+
+	def createThumbnails = {presentation, numPages ->
 		/* We create thumbnails for the uploaded presentation. */ 
 		try {
 			System.out.println("Creating thumbnails:\n");
@@ -316,10 +389,10 @@ class PresentationService {
             
             def command
             def num = new Integer(numPages)
-            if(num == 1) command = imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb-0.png"         
-            else         command = imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"
-            
+            if(num == 1) command = caller.imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb-0.png"         
+            else         command = caller.imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"
             Process p = Runtime.getRuntime().exec(command);            
+
             BufferedReader stdInput = new BufferedReader(new 
                  InputStreamReader(p.getInputStream()));
             BufferedReader stdError = new BufferedReader(new 
@@ -328,7 +401,6 @@ class PresentationService {
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
             }
-            
             // read any errors from the attempted command
             System.out.println("Here is the standard error of the command (if any):\n");
             while ((s = stdError.readLine()) != null) {
@@ -336,11 +408,55 @@ class PresentationService {
             }
             stdInput.close();
             stdError.close();
+            
+			assert(p.exitValue() == 0)
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
             e.printStackTrace();
         }
+
+		return new Integer(0);
+	}
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	def showSlide(String conf, String room, String presentationName, String id) {
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + "slide-${id}.swf")
+	}
+	
+	def showPresentation = {conf, room, filename ->
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename + File.separatorChar + "slides.swf")
+	}
+	
+	def showThumbnail = {conf, room, presentationName, thumb ->
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + 
+			"thumbnails" + File.separatorChar + "thumb-${thumb}.png")
+	}
+	
+	def numberOfThumbnails = {conf, room, name ->
+		def thumbDir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name + File.separatorChar + "thumbnails")
+		System.out.println(thumbDir.absolutePath + " " + thumbDir.listFiles().length)
+		thumbDir.listFiles().length
 	}
 	
 	def roomDirectory = {conf, room ->
