@@ -187,6 +187,34 @@ class PresentationService {
 		return numPages
 	}
 
+	def showSlide(String conf, String room, String presentationName, String id) {
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + "slide-${id}.swf")
+	}
+	
+	def showPresentation = {conf, room, filename ->
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename + File.separatorChar + "slides.swf")
+	}
+	
+	def showThumbnail = {conf, room, presentationName, thumb ->
+		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + 
+			"thumbnails" + File.separatorChar + "thumb-${thumb}.png")
+	}
+	
+	def numberOfThumbnails = {conf, room, name ->
+		def thumbDir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name + File.separatorChar + "thumbnails")
+		System.out.println(thumbDir.absolutePath + " " + thumbDir.listFiles().length)
+		thumbDir.listFiles().length
+	}
+	
+	def roomDirectory = {conf, room ->
+		return new File(presentationDir + File.separatorChar + conf + File.separatorChar + room)
+	}
+}
+
+
+
+
+
 class Callable_convertUploadedPresentation implements Callable
 {
 	def caller
@@ -233,8 +261,136 @@ class Callable_convertUploadedPresentation implements Callable
 	    println "PresentationService.groory@Callable_convertUploadedPresentation::convertUploadedPresentation()... numPages=" + numPages + "  now start to convert this pdf one page by one page....."
         try 
         {
+        	Future<Integer>[] futures = new Future<Integer>[numPages];
+
 	        for (page = 1; page <= new Integer(numPages); page++) 
 	        {
+			    println "PresentationService.groory@Callable_convertUploadedPresentation::convertUploadedPresentation()... submit task:  page=" + page
+				Callable<Integer> task_convertOnePage = new Callable_convertOnePage(caller, conf, room, presentation_name, presentation, numPages, page);
+				futures[page-1] = caller.executor.submit(task_convertOnePage);
+	        }
+
+	        for (page = 1; page <= new Integer(numPages); page++) 
+	        {
+			    println "PresentationService.groory@Callable_convertUploadedPresentation::convertUploadedPresentation()... get future:  page=" + page
+				try{				
+					int retcode = futures[page-1].get().intValue();	
+		        } catch (InterruptedException e) {
+        		    // Re-assert the thread's interrupted status
+		            Thread.currentThread().interrupt();
+        		    // We don't need the result, so cancel the task too
+		            futures[page-1].cancel(true);
+        		} catch (ExecutionException e) {
+            		//throw launderThrowable(e.getCause());
+            		println(e);
+        		}
+	        }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }		
+        
+        return new Integer(0)
+	}
+}	
+
+class Callable_createThumbnails implements Callable
+{
+	def caller
+	def presentation
+	def numPages
+
+	Callable_createThumbnails(PresentationService caller, File presentation, String numPages)
+	{
+		this.caller = caller;
+		this.presentation = presentation;
+		this.numPages = numPages;
+	}
+	
+	public Integer call(){
+		return createThumbnails(presentation, numPages);
+	}
+
+	def createThumbnails = {presentation, numPages ->
+		/* We create thumbnails for the uploaded presentation. */ 
+		try {
+			System.out.println("Creating thumbnails:\n");
+		 	def thumbsDir = new File(presentation.getParent() + File.separatorChar + "thumbnails")
+		 	thumbsDir.mkdir()
+            
+            def command
+            def num = new Integer(numPages)
+            if(num == 1) command = caller.imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb-0.png"         
+            else         command = caller.imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"
+            Process p = Runtime.getRuntime().exec(command);            
+
+            BufferedReader stdInput = new BufferedReader(new 
+                 InputStreamReader(p.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new 
+                 InputStreamReader(p.getErrorStream()));
+			def s
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+            }
+            // read any errors from the attempted command
+            System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+            	System.out.println(s);
+            }
+            stdInput.close();
+            stdError.close();
+            
+			assert(p.exitValue() == 0)
+        }
+        catch (IOException e) {
+            System.out.println("exception happened - here's what I know: ");
+            e.printStackTrace();
+        }
+
+		return new Integer(0);
+	}
+}	
+
+
+
+
+
+class Callable_convertOnePage implements Callable
+{
+	def caller
+	def conf
+	def room
+	def presentation_name
+	def presentation
+	def numPages
+	def page
+
+	Callable_convertOnePage(PresentationService caller, String conf, String room, String presentation_name, File presentation, String numPages, Integer page)
+	{
+		this.caller = caller;
+		this.conf = conf;
+		this.room = room;
+		this.presentation_name = presentation_name;
+		this.presentation = presentation;
+		this.numPages = numPages;
+		this.page = page;
+	}
+	
+	public Integer call(){
+		return convertOnePage(conf, room, presentation_name, presentation, numPages, page);
+	}
+
+	def convertOnePage = {conf, room, presentation_name, presentation, numPages, page ->
+		def command        
+       	def Process p            
+        def BufferedReader stdInput
+        def BufferedReader stdError
+		def info
+		def str //output information to console for stdInput and stdError
+
+	    println "PresentationService.groory@Callable_convertOnePage::convertOnePage()... numPages=" + numPages + "  now start to convert this page by one page..... page=" + page
+        try 
+        {
 	            /* Now we convert the pdf file to swf 
 	             * We start the output with a page number starting at zero (0) so it's consistent
 	             * with the naming convention when we create the thumbnails. Looks like ImageMagick
@@ -350,7 +506,6 @@ class Callable_convertUploadedPresentation implements Callable
 				else{
 					println("PresentationService.groory::convertUploadedPresentation()... convert this page to swf with swftools OK, page=" + page);
 				}	
-	        }
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
@@ -360,189 +515,3 @@ class Callable_convertUploadedPresentation implements Callable
         return new Integer(0)
 	}
 }	
-
-
-
-class Callable_createThumbnails implements Callable
-{
-	def caller
-	def presentation
-	def numPages
-
-	Callable_createThumbnails(PresentationService caller, File presentation, String numPages)
-	{
-		this.caller = caller;
-		this.presentation = presentation;
-		this.numPages = numPages;
-	}
-	
-	public Integer call(){
-		return createThumbnails(presentation, numPages);
-	}
-
-	def createThumbnails = {presentation, numPages ->
-		/* We create thumbnails for the uploaded presentation. */ 
-		try {
-			System.out.println("Creating thumbnails:\n");
-		 	def thumbsDir = new File(presentation.getParent() + File.separatorChar + "thumbnails")
-		 	thumbsDir.mkdir()
-            
-            def command
-            def num = new Integer(numPages)
-            if(num == 1) command = caller.imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb-0.png"         
-            else         command = caller.imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"
-            Process p = Runtime.getRuntime().exec(command);            
-
-            BufferedReader stdInput = new BufferedReader(new 
-                 InputStreamReader(p.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new 
-                 InputStreamReader(p.getErrorStream()));
-			def s
-            while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
-            }
-            // read any errors from the attempted command
-            System.out.println("Here is the standard error of the command (if any):\n");
-            while ((s = stdError.readLine()) != null) {
-            	System.out.println(s);
-            }
-            stdInput.close();
-            stdError.close();
-            
-			assert(p.exitValue() == 0)
-        }
-        catch (IOException e) {
-            System.out.println("exception happened - here's what I know: ");
-            e.printStackTrace();
-        }
-
-		return new Integer(0);
-	}
-}	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	def showSlide(String conf, String room, String presentationName, String id) {
-		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + "slide-${id}.swf")
-	}
-	
-	def showPresentation = {conf, room, filename ->
-		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename + File.separatorChar + "slides.swf")
-	}
-	
-	def showThumbnail = {conf, room, presentationName, thumb ->
-		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + 
-			"thumbnails" + File.separatorChar + "thumb-${thumb}.png")
-	}
-	
-	def numberOfThumbnails = {conf, room, name ->
-		def thumbDir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name + File.separatorChar + "thumbnails")
-		System.out.println(thumbDir.absolutePath + " " + thumbDir.listFiles().length)
-		thumbDir.listFiles().length
-	}
-	
-	def roomDirectory = {conf, room ->
-		return new File(presentationDir + File.separatorChar + conf + File.separatorChar + room)
-	}
-
-	/** THis converts PDF to SWF using new swftool where we don't need to explode the PDF into single file 
-	 * we dont' use this for now since it involves more changes on the client.
-	 * Will tackle this later on.
-	 */
-	def convertUploadedPresentation_New = {conf, room, presentation_name, presentation ->
-        try {
-        	
-        	/** Let's get how many pages this presentation has */
-			def infoCmd = swfTools + "/pdf2swf -I " + presentation.getAbsolutePath()        
-          	Process p = Runtime.getRuntime().exec(infoCmd);            
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-			def info
-			def numPages = 0
-            while ((info = stdInput.readLine()) != null) {
-            	/* The output would be something like this 'page=21 width=718.00 height=538.00'.
-            	 * We need to extract the page number (i.e. 21) from it.
-            	 */            	 
-            	def infoRegExp = /page=([0-9]+)(?: .+)/
-				def matcher = (info =~ infoRegExp)
-				if (matcher.matches()) {
-				    //if ((matcher[0][1]) > numPages) {
-				    	numPages = matcher[0][1]
-				    //	println "Number of pages = ${numPages}"
-				   // } else {
-				   // 	println "Number of pages = ${numPages} match=" + matcher[0][1]
-				   // }
-				} else {
-				    println 'no match info'
-				}
-            }
-            
-            while ((info = stdError.readLine()) != null) {
-            	System.out.println("Got error getting info from file):\n");
-            	System.out.println(s);
-            }
-            
-            /* Now we convert the pdf file to swf */                         
-            def command = swfTools + "pdf2swf -tT 9 " + presentation.getAbsolutePath() + " -o " + presentation.parent + File.separatorChar + "slides.swf"         
-			p = Runtime.getRuntime().exec(command)
-			stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            
-			System.out.println("Converting slide:\n");
-			def numSlidesProcessed = 0
-			def convertInfo
-            while ((convertInfo = stdInput.readLine()) != null) {
-				def msg = new HashMap()
-				msg.put("room", room)
-				msg.put("presentationName", presentation_name)
-				msg.put("returnCode", "CONVERT")
-				msg.put("totalSlides", numPages)
-				
-				/* The convert output is something like ''NOTICE  processing PDF page 2 (718x538:0:0) (move:-37:-37)'.
-				 * We extract the page number from it taking it as a successful conversion.
-				 */
-				def convertRegExp = /NOTICE (?: .+) page ([0-9]+)(?: .+)/
-				def matcher = (convertInfo =~ convertRegExp)
-				if (matcher.matches()) {
-				    //println matcher[0][1]
-				    numSlidesProcessed++ // increment the number of slides processed
-				} else {
-				    println 'no match convert'
-				}
-            	msg.put("slidesCompleted", numSlidesProcessed)
-            	jmsTemplate.convertAndSend(JMS_UPDATES_Q,msg)
-            }
-            
-            while ((convertInfo = stdError.readLine()) != null) {
-            	System.out.println("Got error converting file):\n");
-            	System.out.println(s);
-            }
-            stdInput.close();
-            stdError.close();
-        }
-        catch (IOException e) {
-            System.out.println("exception happened - here's what I know: ");
-            e.printStackTrace();
-        }		
-	}
-
-}
