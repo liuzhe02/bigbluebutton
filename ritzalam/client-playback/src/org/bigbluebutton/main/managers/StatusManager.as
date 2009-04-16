@@ -11,13 +11,16 @@ package org.bigbluebutton.main.managers
         public var loadingStatus:String = "";
 
 		public function setLoadedModuleStatus(moduleName:String):void {
-			LogUtil.debug("receieved status...");
 			loadedModuleStatus += moduleName + " (loaded) ";
 		}
 		
 		public function setLoadingStatus(moduleName:String, progress:String):void {
-			LogUtil.debug("receieved status...");
 			loadingStatus = "Loading: " + moduleName + " " + progress + "% loaded."
+		}
+		
+		public function clear():void {
+			loadedModuleStatus = "";
+			loadingStatus = "";
 		}
 	}
 }

@@ -16,5 +16,6 @@
 		]]>
 	</mx:Script>			
 	<maps:ApplicationEventMap />
+	<maps:AppEventMapMock />
 	<view:MainView/>
 </mx:Application>

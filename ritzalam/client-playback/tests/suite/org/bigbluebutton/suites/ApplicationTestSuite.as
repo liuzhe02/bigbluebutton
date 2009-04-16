@@ -4,6 +4,7 @@ package org.bigbluebutton.suites
 	
 	import org.bigbluebutton.common.TestAsync;
 	import org.bigbluebutton.main.services.ConfigLoaderTest;
+	import org.bigbluebutton.main.services.JoiningParticipantTest;
 	import org.bigbluebutton.main.services.ModeInitializerTest;
 
 	public class ApplicationTestSuite extends TestSuite
@@ -14,6 +15,7 @@ package org.bigbluebutton.suites
 			addTestCase( new ConfigLoaderTest() ); 
 			addTestCase( new TestAsync() );       
 			addTestCase( new ModeInitializerTest());
+			addTestCase( new JoiningParticipantTest());
 		}
 		
 	}

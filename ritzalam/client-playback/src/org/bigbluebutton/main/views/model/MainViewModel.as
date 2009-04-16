@@ -5,7 +5,7 @@ package org.bigbluebutton.main.views.model
 	
 	import org.bigbluebutton.main.managers.StatusManager;
 
-	public class MainModel extends EventDispatcher
+	public class MainViewModel extends EventDispatcher
 	{
 		/** This property is injected by the application. */
 		public var dispatcher : IEventDispatcher;
@@ -13,7 +13,7 @@ package org.bigbluebutton.main.views.model
 		[Bindable]
 		public var status:StatusManager;
 		
-		public function MainModel(target:IEventDispatcher=null)
+		public function MainViewModel(target:IEventDispatcher=null)
 		{
 			super(target);
 		}

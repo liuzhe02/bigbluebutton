@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
 	implements="org.bigbluebutton.common.IBigBlueButtonModule"
+	xmlns:maps="org.bigbluebutton.modules.join.maps.*"
+	xmlns:mate="http://mate.asfusion.com/"
 	creationComplete="onCreationComplete()">
+	
+	<maps:JoinEventMap />
+	<maps:ModuleLocalEventMap dispatcher="{this}"/>
+	<mate:Listener type="{LoginEvent.LOGIN_EVENT}" method="handleLoginEvent" />
+	
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.main.events.LoginEvent;
 			import org.bigbluebutton.common.messaging.Router;
 			
 			private var _router:Router;			
@@ -12,7 +20,8 @@
 			private var _attributes:Object;
 			
 			private function onCreationComplete():void {
-				LogUtil.debug("JoinModule Initialized");			
+				LogUtil.debug("JoinModule Initialized");		
+				dispatchEvent(new LoginEvent(LoginEvent.LOGIN_EVENT));	
 			}
 			
 			public function acceptRouter(router:Router):void{
@@ -53,6 +62,10 @@
 		
 			public function stop():void {
 
+			}
+			
+			private function handleLoginEvent(event:LoginEvent):void {
+				LogUtil.debug("Handling login event");
 			}
 		]]>
 	</mx:Script>
