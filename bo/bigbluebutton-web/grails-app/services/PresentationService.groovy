@@ -75,7 +75,7 @@ class PresentationService {
 			new Timer().runAfter(1000) 
 			{
 				/*
-				//inner class problem by grails??
+				//this code cannot be built by grails:  inner class problem by grails??
 				Callable<Integer> task_convertUploadedPresentation = 
 					new Callable<Integer>(){
 						public Integer call(){
@@ -87,6 +87,8 @@ class PresentationService {
 
 				//first we need to know how many pages in this pdf
 				def numPages = getPresentationNumPages(conf, room, presentation_name, pres)
+				assert((new Integer(numPages).intValue()) != -1)
+				
 			    println "PresentationService.groory::processUploadedPresentation()... now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
 				//then do processUploadedPresentation
@@ -94,15 +96,15 @@ class PresentationService {
 				Callable<Integer> task_convertUploadedPresentation = new Callable_convertUploadedPresentation(this, conf, room, presentation_name, pres, numPages);
 				Future<Integer> future_convertUploadedPresentation = executor.submit(task_convertUploadedPresentation);
 
-				//createThumbnails(numPages, pres)		
 				//then do createThumbnails
 			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_createThumbnails" 
 				Callable<Integer> task_createThumbnails = new Callable_createThumbnails(this, pres, numPages);
 				Future<Integer> future_createThumbnails = executor.submit(task_createThumbnails);
 
-				//future_convertUploadedPresentation.get() 
+				//future_convertUploadedPresentation.get()
 				try{				
-					int retcode = future_convertUploadedPresentation.get().intValue();	
+					int errorcode = future_convertUploadedPresentation.get().intValue();
+					assert(errorcode != -1)	
 		        } catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
 		            Thread.currentThread().interrupt();
@@ -113,9 +115,10 @@ class PresentationService {
             		println(e);
         		}
 
-				//future_createThumbnails 
+				//future_createThumbnails() 
 				try{				
-					int retcode = future_createThumbnails.get().intValue();	
+					int errorcode = future_createThumbnails.get().intValue();	
+					assert(errorcode != -1)	
 		        } catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
 		            Thread.currentThread().interrupt();
@@ -140,7 +143,7 @@ class PresentationService {
 	}
 	
 	def getPresentationNumPages = {conf, room, presentation_name, presentation ->
-		def numPages //total numbers of this pdf	
+		def numPages = -1 //total numbers of this pdf, also used as errorcode(-1)	
 
         try 
    		{
@@ -177,7 +180,8 @@ class PresentationService {
     		stdInput.close();
        		stdError.close();
 
-			assert(p.exitValue() == 0)
+			//assert(p.exitValue() == 0)
+			if(p.exitValue() != 0) return -1;
 	    }
     	catch (IOException e) {
 	        System.out.println("exception happened - here's what I know: ");
@@ -224,17 +228,6 @@ class Callable_convertUploadedPresentation implements Callable
 	def presentation
 	def numPages
 
-	/*	
-	def Callable_convertUploadedPresentation = {caller, conf, room, presentation_name, presentation, numPages ->
-		this.caller = caller;
-		this.conf = conf;
-		this.room = room;
-		this.presentation_name = presentation_name;
-		this.presentation = presentation;
-		this.numPages = numPages;
-	}
-	*/
-
 	Callable_convertUploadedPresentation(PresentationService caller, String conf, String room, String presentation_name, File presentation, String numPages)
 	{
 		this.caller = caller;
@@ -273,9 +266,12 @@ class Callable_convertUploadedPresentation implements Callable
 	        for (page = 1; page <= new Integer(numPages); page++) 
 	        {
 			    println "PresentationService.groory@Callable_convertUploadedPresentation::convertUploadedPresentation()... get future:  page=" + page
-				try{				
-					int retcode = futures[page-1].get().intValue();	
-		        } catch (InterruptedException e) {
+				try
+				{				
+					int errorcode = futures[page-1].get().intValue();
+					if(errorcode != 0) return new Integer(-1)
+		        }
+		        catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
 		            Thread.currentThread().interrupt();
         		    // We don't need the result, so cancel the task too
@@ -340,7 +336,8 @@ class Callable_createThumbnails implements Callable
             stdInput.close();
             stdError.close();
             
-			assert(p.exitValue() == 0)
+			//assert(p.exitValue() == 0)
+			if(p.exitValue() != 0) return new Integer(-1);
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
@@ -350,10 +347,6 @@ class Callable_createThumbnails implements Callable
 		return new Integer(0);
 	}
 }	
-
-
-
-
 
 class Callable_convertOnePage implements Callable
 {
@@ -459,7 +452,8 @@ class Callable_convertOnePage implements Callable
     	        	stdInput.close();
 	        	    stdError.close();
 
-					assert(p.exitValue() == 0)
+					//assert(p.exitValue() == 0)
+					if(p.exitValue() != 0) return new Integer(-1);
 		        	
 	            	//convert that temp-pdf to jpeg with ImageMagick
 			        def num = new Integer(numPages)
@@ -481,7 +475,8 @@ class Callable_convertOnePage implements Callable
     	        	stdInput.close();
 	        	    stdError.close();
 
-					assert(p.exitValue() == 0)
+					//assert(p.exitValue() == 0)
+					if(p.exitValue() != 0) return new Integer(-1);
 	        	
 	        		//now convert that jpeg to swf with swftools(jpeg2swf)
 		            command = caller.swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
@@ -501,7 +496,8 @@ class Callable_convertOnePage implements Callable
     	        	stdInput.close();
 	        	    stdError.close();
 
-					assert(p.exitValue() == 0)
+					//assert(p.exitValue() == 0)
+					if(p.exitValue() != 0) return new Integer(-1);
 				}
 				else{
 					println("PresentationService.groory::convertUploadedPresentation()... convert this page to swf with swftools OK, page=" + page);
