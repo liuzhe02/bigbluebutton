@@ -75,7 +75,7 @@ class PresentationService {
 			new Timer().runAfter(1000) 
 			{
 				/*
-				//this code cannot be built by grails:  inner class problem by grails??
+				//this code cannot be built by grails(inner class problem by grails), so we have to add more classes who implements Callable and override call() there
 				Callable<Integer> task_convertUploadedPresentation = 
 					new Callable<Integer>(){
 						public Integer call(){
@@ -91,46 +91,49 @@ class PresentationService {
 				
 			    println "PresentationService.groory::processUploadedPresentation()... now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
-				//then do processUploadedPresentation
+				//then submit a task to processUploadedPresentation
+				//swftools(0.8.1) has concurrency problem(the newer pdf2swf-thread will cancel old one), so we need to make sure to use newer one, like swftools-2009-04-13-0127.exe
 			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_convertUploadedPresentation" 
 				Callable<Integer> task_convertUploadedPresentation = new Callable_convertUploadedPresentation(this, conf, room, presentation_name, pres, numPages);
 				Future<Integer> future_convertUploadedPresentation = executor.submit(task_convertUploadedPresentation);
 
-				//then do createThumbnails
+				//then submit a task to createThumbnails
 			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_createThumbnails" 
 				Callable<Integer> task_createThumbnails = new Callable_createThumbnails(this, pres, numPages);
 				Future<Integer> future_createThumbnails = executor.submit(task_createThumbnails);
 
-				//future_convertUploadedPresentation.get()
+				//then wait for future_convertUploadedPresentation.get()
 				try{				
 					int errorcode = future_convertUploadedPresentation.get().intValue();
 					assert(errorcode != -1)	
-		        } catch (InterruptedException e) {
+		        } 
+		        catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
 		            Thread.currentThread().interrupt();
         		    // We don't need the result, so cancel the task too
 		            future_convertUploadedPresentation.cancel(true);
         		} catch (ExecutionException e) {
             		//throw launderThrowable(e.getCause());
-            		println(e);
+		    	    e.printStackTrace();
         		}
 
-				//future_createThumbnails() 
+				//then wait for future_createThumbnails.get() 
 				try{				
 					int errorcode = future_createThumbnails.get().intValue();	
 					assert(errorcode != -1)	
-		        } catch (InterruptedException e) {
+		        } 
+		        catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
 		            Thread.currentThread().interrupt();
         		    // We don't need the result, so cancel the task too
 		            future_convertUploadedPresentation.cancel(true);
         		} catch (ExecutionException e) {
             		//throw launderThrowable(e.getCause());
-            		println(e);
+		    	    e.printStackTrace();
         		}
 	
 				/* We just assume that everything is OK. Send a SUCCESS message to the client */
-			    println "PresentationService.groory::processUploadedPresentation()... now converting is OK, we send message by JMS" 
+			    println "PresentationService.groory::processUploadedPresentation()... now converting(slides & thumbnails) is OK, we send message by JMS" 
 				def msg = new HashMap()
 				msg.put("room", room)
 				msg.put("presentationName", presentation_name)
