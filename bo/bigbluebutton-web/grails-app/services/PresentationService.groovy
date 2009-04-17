@@ -261,7 +261,7 @@ class Callable_convertUploadedPresentation implements Callable
 	    println "PresentationService.groory@Callable_convertUploadedPresentation::convertUploadedPresentation()... numPages=" + numPages + "  now start to convert this pdf one page by one page....."
         try 
         {
-        	Future<Integer>[] futures = new Future<Integer>[numPages];
+        	Future<Integer>[] futures = new Future<Integer>[(new Integer(numPages)).intValue()];
 
 	        for (page = 1; page <= new Integer(numPages); page++) 
 	        {
