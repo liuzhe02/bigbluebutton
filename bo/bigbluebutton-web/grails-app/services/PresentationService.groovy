@@ -91,17 +91,22 @@ class PresentationService {
 				
 			    println "PresentationService.groory::processUploadedPresentation()... now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
+		        //CompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(executor);
+
 				//then submit a task to processUploadedPresentation
 				//swftools(0.8.1) has concurrency problem(the newer pdf2swf-thread will cancel old one), so we need to make sure to use newer one, like swftools-2009-04-13-0127.exe
 			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_convertUploadedPresentation" 
 				Callable<Integer> task_convertUploadedPresentation = new Callable_convertUploadedPresentation(this, conf, room, presentation_name, pres, numPages);
 				Future<Integer> future_convertUploadedPresentation = executor.submit(task_convertUploadedPresentation);
-
+				//completionService.submit(task_convertUploadedPresentation);
+				
 				//then submit a task to createThumbnails
 			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_createThumbnails" 
 				Callable<Integer> task_createThumbnails = new Callable_createThumbnails(this, pres, numPages);
 				Future<Integer> future_createThumbnails = executor.submit(task_createThumbnails);
+				//completionService.submit(task_createThumbnails);
 
+				
 				//then wait for future_convertUploadedPresentation.get()
 				try{				
 					int errorcode = future_convertUploadedPresentation.get().intValue();
@@ -131,6 +136,24 @@ class PresentationService {
             		//throw launderThrowable(e.getCause());
 		    	    e.printStackTrace();
         		}
+        		
+        		
+        		/*
+				//then wait for the above two completionService(tasks)
+        		try {
+            		for (int t = 0; t < 2; t++) {
+	                	Future<Integer> f = completionService.take();
+						int errorcode = f.get().intValue();
+						assert(errorcode != -1)	
+            		}
+        		} catch (InterruptedException e) {
+            		Thread.currentThread().interrupt();
+        		} catch (ExecutionException e) {
+            		//throw launderThrowable(e.getCause());
+		    	    e.printStackTrace();
+		        }
+        		*/
+        		
 	
 				/* We just assume that everything is OK. Send a SUCCESS message to the client */
 			    println "PresentationService.groory::processUploadedPresentation()... now converting(slides & thumbnails) is OK, we send message by JMS" 
@@ -178,7 +201,7 @@ class PresentationService {
         	}
 	   	    while ((info = stdError.readLine()) != null) {
 	           	System.out.println("Got error getting info from file):\n");
-            	System.out.println(s);
+            	System.out.println(str);
     	    }
     		stdInput.close();
        		stdError.close();
@@ -327,14 +350,14 @@ class Callable_createThumbnails implements Callable
                  InputStreamReader(p.getInputStream()));
             BufferedReader stdError = new BufferedReader(new 
                  InputStreamReader(p.getErrorStream()));
-			def s
-            while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
+			def str
+            while ((str = stdInput.readLine()) != null) {
+                System.out.println(str);
             }
             // read any errors from the attempted command
             System.out.println("Here is the standard error of the command (if any):\n");
-            while ((s = stdError.readLine()) != null) {
-            	System.out.println(s);
+            while ((str = stdError.readLine()) != null) {
+            	System.out.println(str);
             }
             stdInput.close();
             stdError.close();
@@ -400,8 +423,7 @@ class Callable_convertOnePage implements Callable
 	            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 				System.out.println("Converting slide: ${page}\n");
 				def numSlidesProcessed = 0
-				def convertInfo
-	            while ((convertInfo = stdInput.readLine()) != null) {
+	            while ((str = stdInput.readLine()) != null) {
 					def msg = new HashMap()
 					msg.put("room", room)
 					msg.put("presentationName", presentation_name)
@@ -412,7 +434,7 @@ class Callable_convertOnePage implements Callable
 					 * We extract the page number from it taking it as a successful conversion.
 					 */
 					def convertRegExp = /NOTICE (?: .+) page ([0-9]+)(?: .+)/
-					def matcher = (convertInfo =~ convertRegExp)
+					def matcher = (str =~ convertRegExp)
 					if (matcher.matches()) {
 					    //println matcher[0][1]
 					    numSlidesProcessed++ // increment the number of slides processed
@@ -420,12 +442,12 @@ class Callable_convertOnePage implements Callable
 	            	    println "number of slides completed ${page}"
 	            	    caller.jmsTemplate.convertAndSend(caller.JMS_UPDATES_Q,msg)
 					} else {
-					    println "no match convert: ${convertInfo}"
+					    println "no match convert: ${str}"
 					}
 	            }
-	            while ((convertInfo = stdError.readLine()) != null) {
+	            while ((str = stdError.readLine()) != null) {
 	            	System.out.println("Got error converting file):\n");
-	            	System.out.println(s);
+	            	System.out.println(str);
 	            }
    	        	stdInput.close();
         	    stdError.close();
@@ -489,7 +511,7 @@ class Callable_convertOnePage implements Callable
        			    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
            			stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
     	        	while ((str = stdInput.readLine()) != null) {
-   	    	        	System.out.println(s);
+   	    	        	System.out.println(str);
         	    	}
 	        	    // read any errors from the attempted command
     		        System.out.println("Here is the standard error of the command (if any):\n");
