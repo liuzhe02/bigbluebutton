@@ -49,6 +49,10 @@ log4j {
     appender.'errors.layout'="org.apache.log4j.PatternLayout"
     appender.'errors.layout.ConversionPattern'='[%r] %c{2} %m%n'
     appender.'errors.File'="stacktrace.log"
+    appender.logfile = "org.apache.log4j.DailyRollingFileAppender "
+    appender.'logfile.File' = "bbb-web.log"
+    appender.'logfile.layout' = "org.apache.log4j.PatternLayout"
+    appender.'logfile.layout.ConversionPattern' = '%d{[dd.MM.yy HH:mm:ss.SSS]} %-5p %c %x - %m%n'
     rootLogger="error,stdout"
     logger {
         grails="error"
@@ -69,4 +73,36 @@ log4j {
     additivity.StackTrace=false
 }
 
+environments {
+    development {
+        log4j {
+        	appender.'logfile.File' = "bbb-web-dev.log"
+        	logger {
+        		org {
+	               bigbluebutton.web.controllers.AuthController="debug"
+	            }
+            }
+       }
+   }
+   production {
+       log4j {
+	       	appender.'logfile.File' = "bbb-web-prod.log"
+	        logger {
+	            org {
+	               bigbluebutton.web="stdout,logfile"
+	               }
+	            }
+       }
+   }
+   test {
+       log4j {
+    	   appender.'logfile.File' = "bbb-web-test.log"
+           logger {
+    		   org {
+	               bigbluebutton.web="stdout,logfile"
+	               }
+           }
+       }
+   }
+}
 
