@@ -28,7 +28,7 @@ class PresentationService {
 	}
 	
 	def deleteDirectory = {directory ->
-		System.out.println("delete = ${directory}")
+		log.debug "delete = ${directory}"
 		/**
 		 * Go through each directory and check if it's not empty.
 		 * We need to delete files inside a directory before a
@@ -49,7 +49,7 @@ class PresentationService {
 	def listPresentations = {conf, room ->
 		def presentationsList = []
 		def directory = roomDirectory(conf, room)
-		println "directory ${directory.absolutePath}"
+		log.debug "directory ${directory.absolutePath}"
 		if( directory.exists() ){
 			directory.eachFile(){ file->
 				System.out.println(file.name)
@@ -62,7 +62,7 @@ class PresentationService {
 	
 	def processUploadedPresentation = {conf, room, presentation_name, presentation ->
 		def dir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentation_name)
-		println "upload to directory ${dir.absolutePath}"
+		log.debug "upload to directory ${dir.absolutePath}"
 		
 		/* If the presentation name already exist, delete it. We should provide a check later on to notify user
 			that there is already a presentation with that name. */
@@ -92,19 +92,19 @@ class PresentationService {
 				def numPages = getPresentationNumPages(conf, room, presentation_name, pres)
 				assert((new Integer(numPages).intValue()) != -1)
 				
-			    println "PresentationService.groory::processUploadedPresentation()... now we get how many pages in this pdf with swftools:  numPages=" + numPages 
+			    log.debug "now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
 		        //CompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(executor);
 
 				//then submit a task to processUploadedPresentation
 				//swftools(0.8.1) has concurrency problem(the newer pdf2swf-thread will cancel old one), so we need to make sure to use newer one, like swftools-2009-04-13-0127.exe
-			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_convertUploadedPresentation" 
+			    log.debug "now call Callable_convertUploadedPresentation" 
 				Callable<Integer> task_convertUploadedPresentation = new Callable_convertUploadedPresentation(this, conf, room, presentation_name, pres, numPages);
 				Future<Integer> future_convertUploadedPresentation = executor.submit(task_convertUploadedPresentation);
 				//completionService.submit(task_convertUploadedPresentation);
 				
 				//then submit a task to createThumbnails
-			    println "PresentationService.groory::processUploadedPresentation()... now call Callable_createThumbnails" 
+			    log.debug "now call Callable_createThumbnails" 
 				Callable<Integer> task_createThumbnails = new Callable_createThumbnails(this, pres, numPages);
 				Future<Integer> future_createThumbnails = executor.submit(task_createThumbnails);
 				//completionService.submit(task_createThumbnails);

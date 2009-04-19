@@ -6,11 +6,9 @@ import org.jsecurity.SecurityUtils
 import org.jsecurity.session.Session
 import org.jsecurity.subject.Subject
 import org.bigbluebutton.web.domain.User
-import org.apache.log4j.Logger
 
 class AuthController {
-	static Logger log = Logger.getLogger(AuthController.class)
-	
+
     def jsecSecurityManager
 
     def index = { redirect(action: 'login', params: params) }
@@ -20,8 +18,6 @@ class AuthController {
     }
 
     def signIn = {
-    	println "Loggind in as ${params.username} with password ${params.password}"
-    	log.debug "Debug Log: Logging in as ${params.username} with password ${params.password}"
         def authToken = new UsernamePasswordToken(params.username, params.password)
 
         // Support for "remember me"
@@ -45,14 +41,12 @@ class AuthController {
             // If a controller redirected to this page, redirect back
             // to it. Otherwise redirect to the root URI.
             def targetUri = params.targetUri ?: "/"
-
-            println "Redirecting to '${targetUri}'."
             redirect(uri: targetUri)
         }
         catch (AuthenticationException ex){
             // Authentication failed, so display the appropriate message
             // on the login page.
-            println "Authentication failure for user '${params.username}'."
+            log.debug "Authentication failure for user '${params.username}'."
             flash.message = message(code: "login.failed")
 
             // Keep the username and "remember me" setting so that the

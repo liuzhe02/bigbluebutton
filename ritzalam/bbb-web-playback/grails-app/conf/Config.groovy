@@ -34,11 +34,11 @@ grails.converters.encoding="UTF-8"
 grails.enable.native2ascii = true
 
 // set per-environment serverURL stem for creating absolute links
-environments {
-    production {
-        grails.serverURL = "http://www.changeme.com"
-    }
-}
+//environments {
+//    production {
+//        grails.serverURL = "http://www.changeme.com"
+//    }
+//}
 
 // log4j configuration
 log4j {
@@ -68,7 +68,7 @@ log4j {
             codehaus.groovy.grails.orm.hibernate="error" // hibernate integration
             springframework="off"
             hibernate="off"
-        }
+        }        
     }
     additivity.StackTrace=false
 }
@@ -77,31 +77,35 @@ environments {
     development {
         log4j {
         	appender.'logfile.File' = "bbb-web-dev.log"
-        	logger {
-        		org {
-	               bigbluebutton.web.controllers.AuthController="debug"
-	            }
-            }
+        	/* GRAILS 1.04 doesn't seem to like this format (ralam 04/19/2009)
+        	 * logger {
+        	 * 	 grails.app.controller="debug, stdout, logfile"
+        	 * }
+        	 */
+        	logger.grails.app="debug, stdout, logfile"
        }
    }
    production {
+	   grails.serverURL = "http://www.changeme.com"
        log4j {
 	       	appender.'logfile.File' = "bbb-web-prod.log"
-	        logger {
-	            org {
-	               bigbluebutton.web="stdout,logfile"
-	               }
-	            }
+	       	/* GRAILS 1.04 doesn't seem to like this format (ralam 04/19/2009)
+	         * logger {
+	         * 	 grails.app.controller="debug, stdout, logfile"
+	         * }
+	         */
+	        logger.grails.app="debug, stdout, logfile"
        }
    }
    test {
        log4j {
     	   appender.'logfile.File' = "bbb-web-test.log"
-           logger {
-    		   org {
-	               bigbluebutton.web="stdout,logfile"
-	               }
-           }
+   	       	/* GRAILS 1.04 doesn't seem to like this format (ralam 04/19/2009)
+   	         * logger {
+   	         * 	 grails.app.controller="debug, stdout, logfile"
+   	         * }
+   	         */
+   	        logger.grails.app="debug, stdout, logfile"
        }
    }
 }
