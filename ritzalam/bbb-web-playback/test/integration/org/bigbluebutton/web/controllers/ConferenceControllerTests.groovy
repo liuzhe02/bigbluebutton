@@ -1,6 +1,6 @@
 package org.bigbluebutton.web.controllers
 
-import org.bigbluebutton.web.domains.Conference
+import org.bigbluebutton.web.domain.Conference
 
 class ConferenceControllerTests extends GroovyTestCase {
 
