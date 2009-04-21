@@ -5,6 +5,8 @@ import org.jsecurity.authc.UsernamePasswordToken
 import org.jsecurity.SecurityUtils
 import org.jsecurity.session.Session
 import org.jsecurity.subject.Subject
+import grails.converters.*
+import org.bigbluebutton.web.domain.Conference
 
 class JoinController {
  
@@ -21,12 +23,16 @@ class JoinController {
 		def role = ''
 		
 		if (!conference) {
-	        def returnString = """
-				  	<join>
-						<returncode>FAILED</returncode>
-						<message>Could not find conference ${params.conference}.</message>
-					</join> """
-	        render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
+			withFormat {				
+				xml {
+					render(contentType:"text/xml") {
+						'join'() {
+							returnCode("FAILED")
+							message("Could not find conference ${params.conference}.")
+						}
+					}
+				}
+			}
 		} else {
 			def long _10_minutes = 10*60*1000
 			def now = new Date().time
@@ -47,14 +53,16 @@ class JoinController {
 			}
 			
 	        if (!schedule) {
-	        	def returnString = """
-				  	<join>
-						<returncode>FAILED</returncode>
-						<message>Either you typed the wrong password or you are early. Please
-						try 10 minutes before the scheduled conference.
-						</message>
-					</join> """
-	        	render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
+	        	withFormat {				
+					xml {
+						render(contentType:"text/xml") {
+							'join'() {
+								returnCode("FAILED")
+								message("Could not find schedule for conference ${params.conference}.")
+							}
+						}
+					}
+				}
 	        } else {
 	        	Subject currentUser = SecurityUtils.getSubject() 
 				Session session = currentUser.getSession()
@@ -68,17 +76,21 @@ class JoinController {
 	        	def cnf = session.getAttribute("conference")
 	        	def rm = session.getAttribute("room")
 	        	
-	        	def returnString = """
-				  	<join>
-						<returncode>SUCCESS</returncode>
-						<principal>${currentUser.principal}</principal>
-						<name>${schedule.scheduleName}</name>
-						<fullname>${fname}</fullname>
-						<role>${rl}</role>
-						<conference>${cnf}</conference>
-						<room>${rm}</room>
-					</join> """
-	        	render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
+	        	withFormat {				
+	        		xml {
+	        			render(contentType:"text/xml") {
+	        				'join'() {
+	        					returnCode("SUCCESS")
+	        					principal("${currentUser.principal}")
+	        					name("${schedule.scheduleName}")
+	        					fullname("$fname")
+	        					role("$rl")
+	        					conference("$cnf")
+	        					room("$rm")
+	        				}
+	        			}
+	        		}
+	        	}
 	        }
 		}   
     }
@@ -93,24 +105,30 @@ class JoinController {
 	    def rm = session.getAttribute("room")
 	        	
 	    if (!rm) {
-	    	def returnString = """
-				  	<join>
-						<returncode>FAILED</returncode>
-						<message>Either you typed the wrong password or you are early. Please
-						try 10 minutes before the scheduled conference.
-						</message>
-					</join> """
-	        render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
-	    } else {	        	
-	        def returnString = """
-				  	<join>
-						<returncode>SUCCESS</returncode>
-						<fullname>${fname}</fullname>
-						<role>${rl}</role>
-						<conference>${cnf}</conference>
-						<room>${rm}</room>
-					</join> """
-	        render(text:"${returnString}",contentType:"text/xml",encoding:"UTF-8")
+	    	withFormat {				
+				xml {
+					render(contentType:"text/xml") {
+						'join'() {
+							returnCode("FAILED")
+							message("Could not find conference ${params.conference}.")
+						}
+					}
+				}
+			}
+	    } else {	
+	    	withFormat {				
+				xml {
+					render(contentType:"text/xml") {
+						'join'() {
+							returnCode("SUCCESS")
+							fullname("$fname")
+	        				role("$rl")
+	        				conference("$cnf")
+	        				room("$rm")
+						}
+					}
+				}
+			}
 	    }    
     }
 
