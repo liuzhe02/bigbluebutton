@@ -40,6 +40,8 @@ grails.enable.native2ascii = true
 //    }
 //}
 
+
+/*
 // log4j configuration
 log4j {
     appender.stdout = "org.apache.log4j.ConsoleAppender"
@@ -71,6 +73,40 @@ log4j {
         }        
     }
     additivity.StackTrace=false
+}
+*/
+
+// log4j configuration
+log4j {
+    appender.stdout = "org.apache.log4j.ConsoleAppender"
+    appender.'stdout.layout'="org.apache.log4j.PatternLayout"
+     appender.'stdout.layout.ConversionPattern'='[%r] %c{2} %m%n'
+
+     appender.logfile = "org.apache.log4j.DailyRollingFileAppender "
+     appender.'logfile.File' = "z_logfile.log"
+     appender.'logfile.layout' = "org.apache.log4j.PatternLayout"
+     appender.'logfile.layout.ConversionPattern' = '%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n'
+
+     rootLogger="error,stdout"
+    logger {
+ 
+        //grails="info,stdout,logfile"
+        grails="all,stdout,logfile"
+ 
+        org {
+            codehaus.groovy.grails.web.servlet= "info,stdout,logfile"  //  controllers
+            codehaus.groovy.grails.web.pages="info,stdout,logfile" //  GSP
+            codehaus.groovy.grails.web.sitemesh="info,stdout,logfile" //  layouts
+            codehaus.groovy.grails."web.mapping.filter"="info,stdout,logfile" // URL mapping
+            codehaus.groovy.grails."web.mapping"="info,stdout,logfile" // URL mapping
+            codehaus.groovy.grails.commons="info,stdout,logfile" // core / classloading
+            codehaus.groovy.grails.plugins="info,stdout,logfile" // plugins
+            codehaus.groovy.grails.orm.hibernate= "info,stdout,logfile" // hibernate integration
+            springframework="off,stdout,logfile"
+            hibernate="off,stdout,logfile"
+            //org.codehaus.groovy.grails.plugins.acegi= "all,stdout,logfile"
+        }
+    }
 }
 
 environments {
