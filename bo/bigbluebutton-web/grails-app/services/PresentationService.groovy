@@ -99,7 +99,8 @@ class PresentationService {
 			{
 				//first we need to know how many pages in this pdf
 				def numPages = getPresentationNumPages(conf, room, presentation_name, pres)
-				assert((new Integer(numPages).intValue()) != -1)
+				//assert((new Integer(numPages).intValue()) != -1)
+				if((new Integer(numPages).intValue()) != 0) return -1;
 				
 			    log.debug "now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
@@ -122,7 +123,8 @@ class PresentationService {
 				//then wait for future_convertUploadedPresentation.get()
 				try{				
 					int errorcode = future_convertUploadedPresentation.get().intValue();
-					assert(errorcode != -1)	
+					//assert(errorcode != -1)	
+					if(errorcode != 0) return -1
 		        } 
 		        catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
@@ -137,7 +139,9 @@ class PresentationService {
 				//then wait for future_createThumbnails.get() 
 				try{				
 					int errorcode = future_createThumbnails.get().intValue();	
-					assert(errorcode != -1)	
+					//assert(errorcode != -1)	
+					if(errorcode != 0) return -1
+					
 		        } 
 		        catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
@@ -157,6 +161,8 @@ class PresentationService {
 	                	Future<Integer> f = completionService.take();
 						int errorcode = f.get().intValue();
 						assert(errorcode != -1)	
+						if(errorcode != 0) return -1
+						
             		}
         		} catch (InterruptedException e) {
             		Thread.currentThread().interrupt();
@@ -178,8 +184,12 @@ class PresentationService {
 				sendJMSMessage(msg)
 				
 				tearDown()		
+				
+				return 0
 			}
 		}
+		
+		return 0
 	}
 	
 	def getPresentationNumPages = {conf, room, presentation_name, presentation ->
