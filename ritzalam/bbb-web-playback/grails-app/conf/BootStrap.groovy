@@ -10,19 +10,19 @@ class BootStrap {
      	log.debug "Bootstrapping"
      	// Administrator user and role.
 		def adminRole = new Role(name: "Administrator").save()
-		def adminUser = new User(username: "admin", passwordHash: new Sha1Hash("admin").toHex(),
-									email: "admin@test.com", fullName: "Admin").save()
+		def adminUser = new User(username: "admin@test.com", passwordHash: new Sha1Hash("admin").toHex(),
+									fullName: "Admin").save()
 		new UserRoleRel(user: adminUser, role: adminRole).save()
 		
 		// A normal user.
 		def userRole = new Role(name: "User").save()
-		def normalUser = new User(username: "phil", passwordHash: new Sha1Hash("password").toHex(),
-									email: "phil@test.com", fullName: "Phil").save()
+		def normalUser = new User(username: "phil@test.com", passwordHash: new Sha1Hash("password").toHex(),
+									fullName: "Phil").save()
 		new UserRoleRel(user: normalUser, role: userRole).save()
 		
 		// Give another user the "User" role.
-		normalUser = new User(username: "alice", passwordHash: new Sha1Hash("changeit").toHex(),
-									email: "alice@test.com", fullName: "Alice").save()
+		normalUser = new User(username: "alice@test.com", passwordHash: new Sha1Hash("changeit").toHex(),
+									fullName: "Alice").save()
 		new UserRoleRel(user: normalUser, role: userRole).save()
      }
      

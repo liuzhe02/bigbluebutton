@@ -15,7 +15,7 @@ class ScheduledSession implements Comparable {
 	Date startDateTime = new Date()
 	/* Is there a time limit for this session? */
 	Boolean timeLimited = true
-	/* If there is a time limit, for how long (minutes)? */
+	/* If there is a time limit, for how long (hours)? */
 	Integer duration
 	/* Is this session going to be recorded? */
 	Boolean record = false
@@ -31,7 +31,7 @@ class ScheduledSession implements Comparable {
 		name(maxLength:50, blank:false)
 		tokenId(blank:false)
 		sessionId(blank:false)
-		duration(range:30-300)
+		duration(inList:[1, 2, 3, 4])
 		numberOfAttendees()
 	}
 	

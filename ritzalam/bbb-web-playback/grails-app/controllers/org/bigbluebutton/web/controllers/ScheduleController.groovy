@@ -79,7 +79,7 @@ class ScheduleController {
     	def conference = Conference.get(params.conferenceId)
     	params.conference = conference
         def scheduleInstance = new Schedule(params)
-        scheduleInstance.scheduleId = UUID.randomUUID();
+        scheduleInstance.scheduleId = UUID.randomUUID()
         scheduleInstance.scheduledBy = session.username
         
         if(!scheduleInstance.hasErrors() && scheduleInstance.save()) {

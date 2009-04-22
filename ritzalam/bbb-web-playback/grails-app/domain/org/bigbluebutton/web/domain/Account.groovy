@@ -3,11 +3,11 @@ package org.bigbluebutton.web.domain
 class Account implements Comparable {
 	Date created
 	Date lastUpdated
+	String createdBy
+	String updatedBy
 	String type
 	String name
 	String description
-	String createdBy
-	String modifiedBy
 	
 	static belongsTo = [owner:User]
 	static hasMany = [users:User, conferences:Conference]

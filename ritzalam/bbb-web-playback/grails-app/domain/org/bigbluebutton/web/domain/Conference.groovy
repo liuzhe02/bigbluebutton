@@ -4,25 +4,23 @@ class Conference implements Comparable {
 	Date dateCreated
 	Date lastUpdated
 	String createdBy
-	String modifiedBy
+	String updatedBy
 	String name
+	User user
 	
-	SortedSet schedules
+	SortedSet sessions
 	
-	static hasMany = [ schedules : Schedule ]
-	static belongsTo = [user : User]
+	static hasMany = [sessions:ScheduledSession]
 			
 	static constraints = {
-		username(blank:false)
-		conferenceName(maxLength:50, blank:false)
-		conferenceNumber(maxLength:10, unique:true, blank:false)
+		name(maxLength:50, blank:false)
 	}
 
-	String toString() {"${this.conferenceName}"}
+	String toString() {"${this.id}:${this.name} ${this.user}"}
 
     int compareTo(obj) {
-        obj.id.compareTo(id)
-    }
+       obj.id.compareTo(id)
+   }
 
 }
 
