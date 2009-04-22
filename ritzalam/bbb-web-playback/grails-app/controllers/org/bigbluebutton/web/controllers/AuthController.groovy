@@ -33,10 +33,14 @@ class AuthController {
 
 			// Store the username in the session
 			Subject currentUser = SecurityUtils.getSubject(); 
-			Session session = currentUser.getSession();  
-   			session.setAttribute( "username", params.username );  
+			Session jsecSession = currentUser.getSession();  
+   			jsecSession.setAttribute( "username", params.username );  
 			User user = User.findByUsername(params.username)
-			session.setAttribute( "userid", user.id );
+			jsecSession.setAttribute( "userid", user.id );
+			
+			session["username"] = params.username
+			session["userid"] = user.id
+			log.debug "$params.username has signedin."
 			
             // If a controller redirected to this page, redirect back
             // to it. Otherwise redirect to the root URI.
@@ -69,7 +73,7 @@ class AuthController {
     def signOut = {
         // Log the user out of the application.
         SecurityUtils.subject?.logout()
-
+        session.invalidate()
         // For now, redirect back to the home page.
         redirect(uri: '/')
     }

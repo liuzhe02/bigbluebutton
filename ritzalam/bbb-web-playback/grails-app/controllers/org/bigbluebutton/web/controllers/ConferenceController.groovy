@@ -15,10 +15,10 @@ class ConferenceController {
     def list = {
         if(!params.max) params.max = 10
         
-		Subject currentUser = SecurityUtils.getSubject(); 
-		Session session = currentUser.getSession();  
-   		def username = session.getAttribute( "username");  
-
+//		Subject currentUser = SecurityUtils.getSubject(); 
+//		Session session = currentUser.getSession();  
+   		def username = session["username"]
+   		log.debug "Getting conference owned by $username"
    		def conferenceList = Conference.findAllByUsername(username)
    		if (conferenceList == null) conferenceList = []
         return [ conferenceList: conferenceList]       	
@@ -82,19 +82,19 @@ class ConferenceController {
     def create = {
         def conference = new Conference()
         conference.properties = params     
-        Subject currentUser = SecurityUtils.getSubject(); 
-		Session session = currentUser.getSession();  
-   		conference.username = session.getAttribute( "username"); 
+//        Subject currentUser = SecurityUtils.getSubject(); 
+//		Session session = currentUser.getSession();  
+   		conference.username = session["username"] 
         def now = new Date()
         conference.conferenceName = "$now Conference"   
         return ['conference':conference]
     }
 
     def save = {
-        Subject currentUser = SecurityUtils.getSubject(); 
-		Session session = currentUser.getSession();  
-   		params.username = session.getAttribute("username");
-   		def userid =  session.getAttribute( "userid");
+//        Subject currentUser = SecurityUtils.getSubject(); 
+//		Session session = currentUser.getSession();  
+   		params.username = session["username"]
+   		def userid =  session["userid"]
    		def user = User.get(userid)
    		params.user = user
    		
@@ -109,7 +109,9 @@ class ConferenceController {
         }
         conference.conferenceNumber = nextConfId
 */        
+		
         if(!conference.hasErrors() && conference.save()) {
+        	log.debug "Saving conference for $params.username"
             flash.message = "You have successfully created a conference."
             redirect(action:show,id:conference.id)
         }

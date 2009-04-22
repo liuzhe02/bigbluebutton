@@ -67,6 +67,6 @@ class JoinControllerTests extends GroovyTestCase {
 		controller.params.conference = 85115
 		controller.signIn()
 		def result = new XmlSlurper().parseText(controller.response.contentAsString)
-		println result 
+		assertEquals 'Richard', result.participantname.toString() 
 	 }
 }

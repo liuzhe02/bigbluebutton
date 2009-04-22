@@ -3,9 +3,10 @@ package org.bigbluebutton.web.domain
 class Conference implements Comparable {
 	Date dateCreated
 	Date lastUpdated
-	String username
-	String conferenceName
-	Integer conferenceNumber
+	String createdBy
+	String modifiedBy
+	String name
+	
 	SortedSet schedules
 	
 	static hasMany = [ schedules : Schedule ]

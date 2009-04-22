@@ -64,29 +64,28 @@ class JoinController {
 					}
 				}
 	        } else {
-	        	Subject currentUser = SecurityUtils.getSubject() 
-				Session session = currentUser.getSession()
-   				session.setAttribute( "fullname", params.fullname )  
-				session.setAttribute( "role", role )
-				session.setAttribute( "conference", params.conference )
-				session.setAttribute( "room", schedule.scheduleId )
+//	        	Subject currentUser = SecurityUtils.getSubject() 
+//				Session session = currentUser.getSession()
+   				session["fullname"] = params.fullname 
+				session["role"] = role
+				session["conference"] = params.conference
+				session["room"] = schedule.scheduleId
 	        	
-	        	def fname = session.getAttribute("fullname")
-	        	def rl = session.getAttribute("role")
-	        	def cnf = session.getAttribute("conference")
-	        	def rm = session.getAttribute("room")
+	        	def fname = session["fullname"]
+	        	def rl = session["role"]
+	        	def cnf = session["conference"]
+	        	def rm = session["room"]
 	        	
 	        	withFormat {				
 	        		xml {
 	        			render(contentType:"text/xml") {
 	        				'join'() {
-	        					returnCode("SUCCESS")
-	        					principal("${currentUser.principal}")
-	        					name("${schedule.scheduleName}")
-	        					fullname("$fname")
-	        					role("$rl")
-	        					conference("$cnf")
-	        					room("$rm")
+	        					returncode("SUCCESS")
+	        					schedulename("${schedule.scheduleName}")
+	        					participantname("$fname")
+	        					participantrole("$rl")
+	        					conferencenumber("$cnf")
+	        					conferenceroom("$rm")
 	        				}
 	        			}
 	        		}
@@ -96,13 +95,13 @@ class JoinController {
     }
     
     def enter = {
-    	Subject currentUser = SecurityUtils.getSubject() 
-		Session session = currentUser.getSession()
+//    	Subject currentUser = SecurityUtils.getSubject() 
+//		Session session = currentUser.getSession()
 
-	    def fname = session.getAttribute("fullname")
-	    def rl = session.getAttribute("role")
-	    def cnf = session.getAttribute("conference")
-	    def rm = session.getAttribute("room")
+	    def fname = session["fullname"]
+	    def rl = session["role"]
+	    def cnf = session["conference"]
+	    def rm = session["room"]
 	        	
 	    if (!rm) {
 	    	withFormat {				
@@ -134,7 +133,7 @@ class JoinController {
 
     def signOut = {
         // Log the user out of the application.
-        SecurityUtils.subject?.logout()
+        session.invalidate()
 
         // For now, redirect back to the home page.
         redirect(uri: '/')

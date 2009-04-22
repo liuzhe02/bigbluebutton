@@ -9,8 +9,9 @@ class User {
 	Date dateCreated
 	Date lastUpdated
 
-	static hasMany = [ conferences: Conference ]
-	
+	static hasMany = [conferences:Conference]
+	static hasMany = [accounts:Account]
+    
     static constraints = {
         username(nullable: false, blank: false)
 		email(email:true,unique:true)

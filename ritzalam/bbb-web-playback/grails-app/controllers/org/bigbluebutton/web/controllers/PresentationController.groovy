@@ -213,13 +213,13 @@ class PresentationController {
 	}
 	
 	def confInfo = {
-    	Subject currentUser = SecurityUtils.getSubject() 
-		Session session = currentUser.getSession()
+//    	Subject currentUser = SecurityUtils.getSubject() 
+//		Session session = currentUser.getSession()
 
-	    def fname = session.getAttribute("fullname")
-	    def rl = session.getAttribute("role")
-	    def conf = session.getAttribute("conference")
-	    def rm = session.getAttribute("room")
+	    def fname = session["fullname"]
+	    def rl = session["role"]
+	    def conf = session["conference"]
+	    def rm = session["room"]
 	    println "Conference info: ${conf} ${rm}"
 		return [conference:conf, room:rm]
 	}
