@@ -32,6 +32,10 @@ class PresentationService {
     def sendJMSMessage = {msg ->
 		jmsTemplate.convertAndSend(JMS_UPDATES_Q, msg)		
 	}
+
+	//this is an empty method which is supposed to be orverided by PresentationServiceTests.groovy to send notifying-signal, because "grails test-app" launches a daemon thread as main-testing-thread which will exit-out before all sub-threads-tasks got finished. 
+    def tearDown = { ->
+	}
 	
     def deletePresentation = {conf, room, filename ->
     	def directory = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + filename)
@@ -86,17 +90,19 @@ class PresentationService {
 		dir.mkdirs()
 		def newFilename = presentation.getOriginalFilename().replace(' ', '-')
 		def pres = new File( dir.absolutePath + File.separatorChar + newFilename )
+		
 		presentation.transferTo( pres )
 
-		log.debug "PresentationService::processUploadedPresentation()... newFilename=" + newFilename
+		log.debug "PresentationService::processUploadedPresentation()..... after transferTo: newFilename=" + newFilename
 
 		Thread.start //for "fast-return" this http request
 		{
-			//new Timer().runAfter(1000) 
-			//{
+			new Timer().runAfter(1000) 
+			{
 				//first we need to know how many pages in this pdf
 				def numPages = getPresentationNumPages(conf, room, presentation_name, pres)
-				assert((new Integer(numPages).intValue()) != -1)
+				//assert((new Integer(numPages).intValue()) != -1)
+				if((new Integer(numPages).intValue()) != 0) return -1;
 				
 			    log.debug "now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
@@ -119,7 +125,8 @@ class PresentationService {
 				//then wait for future_convertUploadedPresentation.get()
 				try{				
 					int errorcode = future_convertUploadedPresentation.get().intValue();
-					assert(errorcode != -1)	
+					//assert(errorcode != -1)	
+					if(errorcode != 0) return -1
 		        } 
 		        catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
@@ -134,7 +141,9 @@ class PresentationService {
 				//then wait for future_createThumbnails.get() 
 				try{				
 					int errorcode = future_createThumbnails.get().intValue();	
-					assert(errorcode != -1)	
+					//assert(errorcode != -1)	
+					if(errorcode != 0) return -1
+					
 		        } 
 		        catch (InterruptedException e) {
         		    // Re-assert the thread's interrupted status
@@ -154,6 +163,8 @@ class PresentationService {
 	                	Future<Integer> f = completionService.take();
 						int errorcode = f.get().intValue();
 						assert(errorcode != -1)	
+						if(errorcode != 0) return -1
+						
             		}
         		} catch (InterruptedException e) {
             		Thread.currentThread().interrupt();
@@ -162,7 +173,6 @@ class PresentationService {
 		    	    e.printStackTrace();
 		        }
         		*/
-        		
 	
 				/* We just assume that everything is OK. Send a SUCCESS message to the client */
        			log.debug "PresentationService.groory::processUploadedPresentation()... now converting(slides & thumbnails) is OK, we send message by JMS" 
@@ -174,8 +184,14 @@ class PresentationService {
 				log.debug "PresentationService.groory::processUploadedPresentation()... Sending presentation conversion success."
 				//jmsTemplate.convertAndSend(JMS_UPDATES_Q, msg)		
 				sendJMSMessage(msg)
-			//}
+				
+				tearDown()		
+				
+				return 0
+			}
 		}
+		
+		return 0
 	}
 	
 	def getPresentationNumPages = {conf, room, presentation_name, presentation ->
@@ -193,39 +209,33 @@ class PresentationService {
 			
        		def stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             def stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			def info
 			def str //output information to console for stdInput and stdError
 
-log.debug "aaaaaaaaaaaaaaaaaaaaa" 
-
-       		while ((info = stdInput.readLine()) != null) {
-
-log.debug "info=" + info 
-
+       		while ((str = stdInput.readLine()) != null) 
+       		{
     	    	//The output would be something like this 'page=21 width=718.00 height=538.00'.
    	    		//We need to extract the page number (i.e. 21) from it.
        			def infoRegExp = /page=([0-9]+)(?: .+)/
-				def matcher = (info =~ infoRegExp)
+				def matcher = (str =~ infoRegExp)
 				if (matcher.matches()) {
 		    		//if ((matcher[0][1]) > numPages) {
 				    	numPages = matcher[0][1]
 					    //	log.debug "Number of pages = ${numPages}"
 				   // } else {
-						   // 	log.debug "Number of pages = ${numPages} match=" + matcher[0][1]
+						   //log.debug "Number of pages = ${numPages} match=" + matcher[0][1]
 				   // }
 				} else {
-				    log.debug "no match info: ${info}"
+				    log.debug "no match info: ${str}"
 				}
         	}
-	   	    while ((info = stdError.readLine()) != null) {
+	   	    while ((str = stdError.readLine()) != null) {
 	           	log.debug "Got error getting info from file):\n"
             	log.debug str
     	    }
     		stdInput.close();
        		stdError.close();
 
-
-log.debug "p.exitValue()=" + p.exitValue()
+			log.debug "p.exitValue()=" + p.exitValue()
 
 			//assert(p.exitValue() == 0)
 			if(p.exitValue() != 0) return -1;
@@ -234,7 +244,6 @@ log.debug "p.exitValue()=" + p.exitValue()
 	        log.debug "exception happened - here's what I know: "
     	    e.printStackTrace();
     	}		
-
 
 	    log.debug "PresentationService.groory::getPresentationNumPages()... numPages=" + numPages 
 
@@ -298,7 +307,6 @@ class Callable_convertUploadedPresentation implements Callable
        	def Process p            
         def BufferedReader stdInput
         def BufferedReader stdError
-		def info
         def page = 0
 		def str //output information to console for stdInput and stdError
 
@@ -371,10 +379,8 @@ class Callable_createThumbnails implements Callable
             else         command = caller.imageMagick + "/convert -thumbnail 150x150 " + presentation.getAbsolutePath() + " " + thumbsDir.getAbsolutePath() + "/thumb.png"
             Process p = Runtime.getRuntime().exec(command);            
 
-            BufferedReader stdInput = new BufferedReader(new 
-                 InputStreamReader(p.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new 
-                 InputStreamReader(p.getErrorStream()));
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 			def str
             while ((str = stdInput.readLine()) != null) {
                 caller.log.debug str
@@ -429,7 +435,6 @@ class Callable_convertOnePage implements Callable
        	def Process p            
         def BufferedReader stdInput
         def BufferedReader stdError
-		def info
 		def str //output information to console for stdInput and stdError
 
 	    caller.log.debug "PresentationService.groory@Callable_convertOnePage::convertOnePage()... numPages=" + numPages + "  now start to convert this page by one page..... page=" + page
