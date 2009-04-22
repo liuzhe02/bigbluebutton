@@ -24,10 +24,6 @@ class PresentationService {
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
 	def MAX_THREADS_CONVERING_PAGES = 3  //threads numbers for converting pages concurrently
-	
-    def updateEnvironmentFields = {a, b, c ->
-		log.debug "PresentationService::updateEnvironmentFields()... ORG"
-	}
 
     def sendJMSMessage = {msg ->
 		jmsTemplate.convertAndSend(JMS_UPDATES_Q, msg)		
@@ -78,7 +74,6 @@ class PresentationService {
 	def processUploadedPresentation = {conf, room, presentation_name, presentation ->
 
 		log.debug "PresentationService::processUploadedPresentation()... swfTools=" + swfTools + "  presentationDir=" + presentationDir
-		updateEnvironmentFields("", "", "");
 
 		def dir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentation_name)
 		log.debug "PresentationService::processUploadedPresentation()... upload to directory ${dir.absolutePath}"
@@ -102,7 +97,7 @@ class PresentationService {
 				//first we need to know how many pages in this pdf
 				def numPages = getPresentationNumPages(conf, room, presentation_name, pres)
 				//assert((new Integer(numPages).intValue()) != -1)
-				if((new Integer(numPages).intValue()) != 0) return -1;
+				if((new Integer(numPages).intValue()) == -1) return -1;
 				
 			    log.debug "now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
@@ -513,9 +508,7 @@ class Callable_convertOnePage implements Callable
 					if(p.exitValue() != 0) return new Integer(-1);
 		        	
 	            	//convert that temp-pdf to jpeg with ImageMagick
-			        def num = new Integer(numPages)
-		            if(num == 1) command = caller.imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp-0.jpeg")         
-		            else         command = caller.imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp.jpeg")         
+		            command = caller.imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp.pdf") + " " + (tempDir.getAbsolutePath() + "/temp.jpeg")         
 					caller.log.debug "PresentationService.groory::convertUploadedPresentation()... convert that temp-pdf to jpeg with ImageMagick:  command=" + command
     		        p = Runtime.getRuntime().exec(command);            
 
@@ -536,7 +529,7 @@ class Callable_convertOnePage implements Callable
 					if(p.exitValue() != 0) return new Integer(-1);
 	        	
 	        		//now convert that jpeg to swf with swftools(jpeg2swf)
-		            command = caller.swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
+		            command = caller.swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp.jpeg"
 					caller.log.debug "PresentationService.groory::convertUploadedPresentation()... convert that jpeg to swf with swftools(jpeg2swf):  command=" + command
    			        p = Runtime.getRuntime().exec(command);            
 
