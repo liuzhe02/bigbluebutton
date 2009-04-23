@@ -5,6 +5,8 @@ import org.jsecurity.session.Session
 import org.jsecurity.subject.Subject
 import org.bigbluebutton.web.domain.Conference
 import org.bigbluebutton.web.domain.User
+import org.bigbluebutton.web.domain.ScheduledSession
+import org.bigbluebutton.web.vo.ScheduledSessions
 
 class ConferenceController {
     def index = { redirect(action:list,params:params) }
@@ -29,8 +31,21 @@ class ConferenceController {
             flash.message = "Conference not found with id ${params.id}"
             redirect(action:list)
         }
-        else { 
-        	return [ conference : conference ] 
+        else {         	
+        	def scheduledSessions = ScheduledSession.findAllByConference(conference)
+        	def sessionsList = []
+        	def hostUrl = grailsApplication.config.grails.serverURL
+        	
+        	scheduledSessions.each {
+        		def sss = new Expando()
+        		sss.id = it.id
+        		sss.name = it.name
+        		sss.token = it.tokenId
+        		sss.hostUrl = hostUrl
+        		sss.expired = true
+        		sessionsList << sss
+        	}
+        	return [ conference : conference, sessions : sessionsList ] 
         }
     }
 

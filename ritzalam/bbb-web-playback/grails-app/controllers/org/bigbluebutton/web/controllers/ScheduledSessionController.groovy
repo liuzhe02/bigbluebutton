@@ -73,7 +73,8 @@ class ScheduledSessionController {
     def create = {
         def scheduledSessionInstance = new ScheduledSession()
         scheduledSessionInstance.properties = params
-        return ['scheduledSessionInstance':scheduledSessionInstance]
+        println "Conference Id = ${params.id}"
+        return ['scheduledSessionInstance':scheduledSessionInstance, conferenceId:params.id]
     }
 
     def save = {
@@ -88,13 +89,40 @@ class ScheduledSessionController {
         def scheduledSessionInstance = new ScheduledSession(params)
     	scheduledSessionInstance.sessionId = UUID.randomUUID()
     	scheduledSessionInstance.tokenId = UUID.randomUUID()
-    	conf.addToSessions(scheduledSessionInstance)
-        if(!scheduledSessionInstance.hasErrors() && conf*.save(flush:true)) {
+    	scheduledSessionInstance.conference = conf
+    	
+    	scheduledSessionInstance.voiceConferenceBridge = generateUniqueVoiceConferenceBridgeNumber()
+    	    	
+        if(!scheduledSessionInstance.hasErrors() && scheduledSessionInstance.save()) {
             flash.message = "ScheduledSession ${scheduledSessionInstance.id} created"
             redirect(action:show,id:scheduledSessionInstance.id)
         }
         else {
-            render(view:'create',model:[scheduledSessionInstance:scheduledSessionInstance])
+        	println "Returning conference id ${params.conferenceId}"
+            render(view:'create',model:[scheduledSessionInstance:scheduledSessionInstance, conferenceId:params.conferenceId])
         }
+    }
+    
+    def generateVoiceConferenceBridgeNumber = {
+    	// Let's setup our conference number as six digits
+    	def MAX = 999999
+    	def MIN = 100000
+    	
+    	return new Integer((int) (Math.random() * (MAX - MIN + 1)) + MIN)
+    }
+    
+    def generateUniqueVoiceConferenceBridgeNumber() {
+    	def bridgeExists = true
+    	def voiceBridge
+    	while (bridgeExists) {
+    		voiceBridge = generateVoiceConferenceBridgeNumber()
+    		// Check if the bridge has already exists
+    		def vb = ScheduledSession.findByVoiceConferenceBridge(voiceBridge.toString())
+    		if (vb == null) {
+    			bridgeExists = false
+    		}
+    	}
+    	
+    	return voiceBridge
     }
 }

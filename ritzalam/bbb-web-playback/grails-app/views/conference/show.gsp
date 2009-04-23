@@ -11,6 +11,7 @@
             <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
             <span class="menuButton"><g:link class="list" action="list">Your Conferences</g:link></span>
             <span class="menuButton"><g:link class="create" action="create">New Conference</g:link></span>
+            <span class="menuButton"><g:link controller="schedule" class="create" id="${conference?.id}" action="create">Schedule Session</g:link></span>
         </div>
         <div class="body">
             <h1>Show Conference</h1>
@@ -58,6 +59,33 @@
                     <span class="button"><g:actionSubmit class="edit" value="Edit" /></span>
                     <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
                 </g:form>
+            </div>
+        </div>
+        <div class="body">
+            <h1>Scheduled Sessions</h1>
+            <div class="list">
+                <table>
+                    <thead>
+                        <tr>                       
+                   	        <g:sortableColumn property="name" title="Name" />                        
+                   	        <g:sortableColumn property="tokenId" title="Link" />
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <g:each in="${sessions}" status="i" var="schedSession">
+                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
+                            <td>${schedSession.name?.encodeAsHTML()}</td>
+                        	<g:if test="${schedSession.expired}">
+     							<td><g:link controller="schedule" action="show" id="${schedSession.id}">
+                            			display</g:link>
+                            	</td>
+							</g:if>
+                        	
+                           
+                        </tr>
+                    </g:each>
+                    </tbody>
+                </table>
             </div>
         </div>
     </body>

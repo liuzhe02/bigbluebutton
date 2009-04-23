@@ -15,20 +15,11 @@
         <div class="body">
             <h1>Show ScheduledSession</h1>
             <g:if test="${flash.message}">
-            <div class="message">${flash.message}</div>
+            	<div class="message">${flash.message}</div>
             </g:if>
             <div class="dialog">
                 <table>
                     <tbody>
-
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Id:</td>
-                            
-                            <td valign="top" class="value">${fieldValue(bean:scheduledSessionInstance, field:'id')}</td>
-                            
-                        </tr>
-                    
                         <tr class="prop">
                             <td valign="top" class="name">Name:</td>
                             
@@ -36,24 +27,35 @@
                             
                         </tr>
                     
-                        <tr class="prop">
-                            <td valign="top" class="name">Token Id:</td>
+                    	<tr class="prop">
+                            <td valign="top" class="name">Description:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:scheduledSessionInstance, field:'tokenId')}</td>
-                            
-                        </tr>
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Session Id:</td>
-                            
-                            <td valign="top" class="value">${fieldValue(bean:scheduledSessionInstance, field:'sessionId')}</td>
+                            <td valign="top" class="value">${fieldValue(bean:scheduledSessionInstance, field:'description')}</td>
                             
                         </tr>
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Duration:</td>
+                        
+                    	<tr class="prop">
+                            <td valign="top" class="name">Voice Conference Bridge:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:scheduledSessionInstance, field:'duration')}</td>
+                            <td valign="top" class="value">${fieldValue(bean:scheduledSessionInstance, field:'voiceConferenceBridge')}</td>
+                            
+                        </tr>
+      <!--                  
+                        <tr class="prop">
+                            <td valign="top" class="name">Link:</td>
+                            
+                            <td valign="top" class="value">
+                            	<g:link controller="play" absolute="true" 
+                            		params='[conference:"${conference?.id}",schedule:"${bean:scheduledSessionInstance.tokenId}"]'>
+                            			${bean:scheduledSessionInstance.hostUrl}</g:link>
+							</td>
+                            
+                        </tr>
+     -->               
+                        <tr class="prop">
+                            <td valign="top" class="name">End Date Time:</td>
+                            
+                            <td valign="top" class="value">${fieldValue(bean:scheduledSessionInstance, field:'endDateTime')}</td>
                             
                         </tr>
                     

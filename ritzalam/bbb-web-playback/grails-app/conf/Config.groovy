@@ -75,6 +75,7 @@ log4j {
 
 environments {
     development {
+    	grails.serverURL = "http://localhost:8080"
         log4j {
         	appender.'logfile.File' = "bbb-web-dev.log"
         	/* GRAILS 1.04 doesn't seem to like this format (ralam 04/19/2009)

@@ -22,6 +22,7 @@
             </div>
             </g:hasErrors>
             <g:form action="save" method="post" >
+            	<input type="hidden" name="conferenceId" value="${conferenceId}" />
                 <div class="dialog">
                     <table>
                         <tbody>
@@ -34,34 +35,16 @@
                                     <input type="text" id="name" name="name" value="${fieldValue(bean:scheduledSessionInstance,field:'name')}"/>
                                 </td>
                             </tr> 
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="tokenId">Token Id:</label>
+                                    <label for="name">Description:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'tokenId','errors')}">
-                                    <input type="text" id="tokenId" name="tokenId" value="${fieldValue(bean:scheduledSessionInstance,field:'tokenId')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'description','errors')}">
+                                	<g:textArea name="description" value="${fieldValue(bean:scheduledSessionInstance,field:'description')}" rows="5" cols="40"/>
                                 </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="sessionId">Session Id:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'sessionId','errors')}">
-                                    <input type="text" id="sessionId" name="sessionId" value="${fieldValue(bean:scheduledSessionInstance,field:'sessionId')}"/>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="duration">Duration:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'duration','errors')}">
-                                    <input type="text" id="duration" name="duration" value="${fieldValue(bean:scheduledSessionInstance,field:'duration')}" />
-                                </td>
-                            </tr> 
-                        
+                            </tr>
+                                                        
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="numberOfAttendees">Number Of Attendees:</label>
@@ -70,76 +53,40 @@
                                     <input type="text" id="numberOfAttendees" name="numberOfAttendees" value="${fieldValue(bean:scheduledSessionInstance,field:'numberOfAttendees')}" />
                                 </td>
                             </tr> 
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="attendeePassword">Attendee Password:</label>
+                                    <label for="record">Record:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'attendeePassword','errors')}">
-                                    <input type="text" id="attendeePassword" name="attendeePassword" value="${fieldValue(bean:scheduledSessionInstance,field:'attendeePassword')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'record','errors')}">
+                                    <g:checkBox name="record" value="${scheduledSessionInstance?.record}" ></g:checkBox>
+                                </td>
+                            </tr>
+							                            
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="timeLimited">Time Limited:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'timeLimited','errors')}">
+                                    <g:checkBox name="timeLimited" value="${scheduledSessionInstance?.timeLimited}" ></g:checkBox>
                                 </td>
                             </tr> 
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="conference">Conference:</label>
+                                    <label for="startDateTime">Start Date Time:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'conference','errors')}">
-                                    <g:select optionKey="id" from="${org.bigbluebutton.web.domain.Conference.list()}" name="conference.id" value="${scheduledSessionInstance?.conference?.id}" ></g:select>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="createdBy">Created By:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'createdBy','errors')}">
-                                    <input type="text" id="createdBy" name="createdBy" value="${fieldValue(bean:scheduledSessionInstance,field:'createdBy')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'startDateTime','errors')}">
+                                    <g:datePicker name="startDateTime" value="${scheduledSessionInstance?.startDateTime}" ></g:datePicker>
                                 </td>
                             </tr> 
-                        
-                            <tr class="prop">
+                                                                                                                                        
+                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="dateCreated">Date Created:</label>
+                                    <label for="endDateTime">End Date Time:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'dateCreated','errors')}">
-                                    <g:datePicker name="dateCreated" value="${scheduledSessionInstance?.dateCreated}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="hostPassword">Host Password:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'hostPassword','errors')}">
-                                    <input type="text" id="hostPassword" name="hostPassword" value="${fieldValue(bean:scheduledSessionInstance,field:'hostPassword')}"/>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="lastUpdated">Last Updated:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'lastUpdated','errors')}">
-                                    <g:datePicker name="lastUpdated" value="${scheduledSessionInstance?.lastUpdated}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="moderatorPassword">Moderator Password:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'moderatorPassword','errors')}">
-                                    <input type="text" id="moderatorPassword" name="moderatorPassword" value="${fieldValue(bean:scheduledSessionInstance,field:'moderatorPassword')}"/>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="modifiedBy">Modified By:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'modifiedBy','errors')}">
-                                    <input type="text" id="modifiedBy" name="modifiedBy" value="${fieldValue(bean:scheduledSessionInstance,field:'modifiedBy')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'endDateTime','errors')}">
+                                    <g:datePicker name="endDateTime" value="${scheduledSessionInstance?.endDateTime}" ></g:datePicker>
                                 </td>
                             </tr> 
                         
@@ -154,31 +101,31 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="record">Record:</label>
+                                    <label for="attendeePassword">Attendee Password:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'record','errors')}">
-                                    <g:checkBox name="record" value="${scheduledSessionInstance?.record}" ></g:checkBox>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'attendeePassword','errors')}">
+                                    <input type="text" id="attendeePassword" name="attendeePassword" value="${fieldValue(bean:scheduledSessionInstance,field:'attendeePassword')}"/>
+                                </td>
+                            </tr> 
+
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="hostPassword">Host Password:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'hostPassword','errors')}">
+                                    <input type="text" id="hostPassword" name="hostPassword" value="${fieldValue(bean:scheduledSessionInstance,field:'hostPassword')}"/>
                                 </td>
                             </tr> 
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="startDateTime">Start Date Time:</label>
+                                    <label for="moderatorPassword">Moderator Password:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'startDateTime','errors')}">
-                                    <g:datePicker name="startDateTime" value="${scheduledSessionInstance?.startDateTime}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="timeLimited">Time Limited:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'timeLimited','errors')}">
-                                    <g:checkBox name="timeLimited" value="${scheduledSessionInstance?.timeLimited}" ></g:checkBox>
+                                <td valign="top" class="value ${hasErrors(bean:scheduledSessionInstance,field:'moderatorPassword','errors')}">
+                                    <input type="text" id="moderatorPassword" name="moderatorPassword" value="${fieldValue(bean:scheduledSessionInstance,field:'moderatorPassword')}"/>
                                 </td>
                             </tr> 
-                        
+                      
                         </tbody>
                     </table>
                 </div>
