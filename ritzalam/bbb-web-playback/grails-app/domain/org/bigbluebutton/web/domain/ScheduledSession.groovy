@@ -35,7 +35,7 @@ class ScheduledSession implements Comparable {
 		numberOfAttendees()
 	}
 	
-	String toString() {"${this.name}"}
+	String toString() {"${this.id}:${this.name} - ${this.sessionId} ${this.tokenId}"}
 
     int compareTo(obj) {
         obj.id.compareTo(id)

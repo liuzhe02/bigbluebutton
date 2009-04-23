@@ -82,12 +82,12 @@ class ScheduledSessionController {
     	
        	params.createdBy = user.fullName
     	params.modifiedBy = user.fullName
-    	params.sessionId = UUID.randomUUID()
-    	params.tokenId = UUID.randomUUID()
-    	
+    	   	
     	def conf = Conference.get(params.conferenceId)
     	
         def scheduledSessionInstance = new ScheduledSession(params)
+    	scheduledSessionInstance.sessionId = UUID.randomUUID()
+    	scheduledSessionInstance.tokenId = UUID.randomUUID()
     	conf.addToSessions(scheduledSessionInstance)
         if(!scheduledSessionInstance.hasErrors() && conf*.save(flush:true)) {
             flash.message = "ScheduledSession ${scheduledSessionInstance.id} created"

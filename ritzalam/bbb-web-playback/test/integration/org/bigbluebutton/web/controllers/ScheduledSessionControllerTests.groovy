@@ -43,8 +43,8 @@ class ScheduleSessionControllerTests extends GroovyTestCase {
 		
 		ssc.save()
 		assertEquals 1, ScheduledSession.list().size()
-	   	//conf = Conference.get(conf.id)    	
-	   	//println conf.sessions
+	   	conf = Conference.get(conf.id)    	
+	   	println conf.sessions
 	   	
 	}
 }
