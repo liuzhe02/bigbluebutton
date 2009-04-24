@@ -46,13 +46,10 @@
                             
                             <td valign="top" class="value">
                             <g:if test="${expired}">
-     							play ${hostUrl}/${scheduledSessionInstance.tokenId}
-     							<g:link controller="join" action="joinIn" id="${scheduledSessionInstance.tokenId}">Join</g:link>
+     							<g:link controller="conference-session" action="joinIn" id="${scheduledSessionInstance.tokenId}">Play</g:link>
 							</g:if>
                             <g:else>
-     							join ${hostUrl}/${scheduledSessionInstance.tokenId}
-     							<g:link action="join" id="${scheduledSessionInstance.tokenId}">Join</g:link>
-     							
+     							<g:link controller="conference-session"  action="joinIn" id="${scheduledSessionInstance.tokenId}">Join</g:link>    							
 							</g:else>
                             	
 							</td>

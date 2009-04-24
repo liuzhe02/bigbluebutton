@@ -8,7 +8,7 @@
   <g:if test="${flash.message}">
     <div class="message">${flash.message}</div>
   </g:if>
-  <g:form action="signIn">
+  <g:form controller="conference-session" action="signIn">
   	<input type="hidden" name="id" value="${id}" />
     <table>
       <tbody>
