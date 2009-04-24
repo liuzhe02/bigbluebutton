@@ -24,6 +24,8 @@ class UrlMappings {
       		action = [GET:'showThumbnail']
       }
       
+      "/public/schedule/$id"(controller:"publicScheduledSession", action: 'show') 
+      
       "/schedule/$action?/$id?"(controller:"scheduledSession") {
 //    	  action = [GET:'show', POST:'create', DELETE:'delete']
       }

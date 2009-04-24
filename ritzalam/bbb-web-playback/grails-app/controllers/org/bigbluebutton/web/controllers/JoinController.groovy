@@ -12,6 +12,11 @@ class JoinController {
  
     def index = { redirect(action: 'login', params: params) }
 
+    def joinIn = {
+        println "join $params.id"
+        return [ fullname: params.fullname, id: (params.id), password: params.password ]
+    }
+    
     def login = {
         return [ fullname: params.fullname, conference: (params.conference), password: params.password ]
     }
@@ -64,8 +69,6 @@ class JoinController {
 					}
 				}
 	        } else {
-//	        	Subject currentUser = SecurityUtils.getSubject() 
-//				Session session = currentUser.getSession()
    				session["fullname"] = params.fullname 
 				session["role"] = role
 				session["conference"] = params.conference

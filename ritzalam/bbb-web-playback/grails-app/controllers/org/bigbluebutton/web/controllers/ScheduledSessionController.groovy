@@ -24,7 +24,11 @@ class ScheduledSessionController {
             flash.message = "ScheduledSession not found with id ${params.id}"
             redirect(action:list)
         }
-        else { return [ scheduledSessionInstance : scheduledSessionInstance ] }
+        else { 
+        	def hostUrl = grailsApplication.config.grails.serverURL
+        	
+        	return [ scheduledSessionInstance : scheduledSessionInstance, hostUrl:hostUrl ] 
+        }
     }
 
     def delete = {
