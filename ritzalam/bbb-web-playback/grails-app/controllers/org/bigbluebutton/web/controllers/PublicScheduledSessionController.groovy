@@ -16,8 +16,8 @@ class PublicScheduledSessionController {
 	      	def hostUrl = grailsApplication.config.grails.serverURL
 	       	def now = new Date().time
 	       	
-	       	def expired = ((now > scheduledSessionInstance.startDateTime.time) && (now < scheduledSessionInstance.endDateTime.time))
-	       	return [ scheduledSessionInstance : scheduledSessionInstance, hostUrl:hostUrl, expired:expired ] 
+	       	def inSession = ((now > scheduledSessionInstance.startDateTime.time) && (now < scheduledSessionInstance.endDateTime.time))
+	       	return [ scheduledSessionInstance : scheduledSessionInstance, hostUrl:hostUrl, inSession:inSession ] 
 	    }
 	}
 	
@@ -27,24 +27,12 @@ class PublicScheduledSessionController {
 	}
 	
     def signIn = {    
-		println 'signIn start'
-		def fullname = params.fullname		
+		println 'signIn start'		
 		def confSession = ScheduledSession.findByTokenId(params.id)
-		def schedule = null
 		def role = ''
+		def signedIn = false
 			
-		if (!confSession) {
-			println 'signIn: no conference session'
-			withFormat {				
-				xml {
-					render(contentType:"text/xml") {
-						'join'() {
-							returnCode("FAILED")
-						}
-					}
-				}
-			}
-		} else {
+		if (confSession) {
 			println 'signIn: has conference session'
 			def long _10_minutes = 10*60*1000
 			def now = new Date().time
@@ -53,79 +41,51 @@ class PublicScheduledSessionController {
 			def endTime = confSession.endDateTime.time + _10_minutes
 			
 			if ((startTime <= now) && (now <= endTime)) {
-				def signedIn = false
+				
 				println 'Found scheduled session'
 				switch (params.password) {
 					case confSession.hostPassword:
+						println 'as host'
 						role = "HOST"
 						signedIn = true
 						break
 					case confSession.moderatorPassword:
+						println 'as moderator'
 						role = "MODERATOR"
 						signedIn = true
 						break
 					case confSession.attendeePassword:
+						println 'as viewer'
 						role = "VIEWER"
 						signedIn = true
 						break
 				}
-				
-			    if (!signedIn) {
-			    	println 'Wrong password'
-			   // 	withFormat {				
-				//		xml {
-							render(contentType:"text/xml") {
-								'join'() {
-									returnCode("FAILED")
-								}
-							}
-				//		}
-				//	}
-			    } else {
+				if (signedIn) {						
 			    	println 'successful'
 		   			session["fullname"] = params.fullname 
 					session["role"] = role
-					session["conference"] = params.conference
-					session["room"] = schedule.scheduleId
+					session["conference"] = params.id
+					session["room"] = confSession.sessionId
 			        	
 			       	def fname = session["fullname"]
 			       	def rl = session["role"]
 			       	def cnf = session["conference"]
 			       	def rm = session["room"]
-			        
-		   			signInPassed()
-			       	
-			   }									
-			} else {
-				signInFailed()
-			}
-		}   
-	}
-	
-	def signInFailed = {
-		withFormat {				
-			xml {
-				render(contentType:"text/xml") {
-					'join'() {
-						returnCode("FAILED")
-					}
+			    	
+			    	println 'rendering signIn'
+			    	render(view:"signIn")
 				}
 			}
-		}			
+		}
+		
+		if (!signedIn) {
+			println 'failed'
+			flash.message = "Failed to join the conference session."
+			redirect(action:joinIn,id:params.id, params:[fullname:params.fullname])		
+		}
+
 	}
-	
-	def signInPassed = {
-		withFormat {				
-	    	xml {
-	    		render(contentType:"text/xml") {
-	    			'join'() {
-	       				returncode("SUCCESS")
-	       			}
-	       		}
-	       	}
-		}	
-	}
-	
+		
 	def enter = {
 	    def fname = session["fullname"]
 	    def rl = session["role"]

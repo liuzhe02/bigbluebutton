@@ -45,11 +45,11 @@
                             <td valign="top" class="name">Link:</td>
                             
                             <td valign="top" class="value">
-                            <g:if test="${expired}">
-     							<g:link controller="conference-session" action="joinIn" id="${scheduledSessionInstance.tokenId}">Play</g:link>
+                            <g:if test="${inSession}">
+     							<g:link controller="conference-session" action="joinIn" id="${scheduledSessionInstance.tokenId}">Join</g:link>
 							</g:if>
                             <g:else>
-     							<g:link controller="conference-session"  action="joinIn" id="${scheduledSessionInstance.tokenId}">Join</g:link>    							
+     							<g:link controller="conference-session"  action="joinIn" id="${scheduledSessionInstance.tokenId}">Play</g:link>    							
 							</g:else>
                             	
 							</td>

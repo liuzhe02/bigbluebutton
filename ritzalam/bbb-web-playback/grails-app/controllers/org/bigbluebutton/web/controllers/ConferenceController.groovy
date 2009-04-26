@@ -6,7 +6,6 @@ import org.jsecurity.subject.Subject
 import org.bigbluebutton.web.domain.Conference
 import org.bigbluebutton.web.domain.User
 import org.bigbluebutton.web.domain.ScheduledSession
-import org.bigbluebutton.web.vo.ScheduledSessions
 
 class ConferenceController {
     def index = { redirect(action:list,params:params) }
