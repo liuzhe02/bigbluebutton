@@ -56,12 +56,13 @@ class PresentationController {
 		def file = request.getFile('fileUpload')
 	    if(!file.empty) {
 	    	flash.message = 'Your file has been uploaded'
-	    	File uploadDir = presentationService.uploadedPresentationDirectory(params.conference, params.room, params.presentation_name)
+	    	def presentationName = params.presentation_name.replace(' ', '-')
+	    	File uploadDir = presentationService.uploadedPresentationDirectory(params.conference, params.room, presentationName)
 	    	
 	    	def newFilename = file.getOriginalFilename().replace(' ', '-')
 	    	def pres = new File( uploadDir.absolutePath + File.separatorChar + newFilename )
 	    	file.transferTo( pres )	
-	  		presentationService.processUploadedPresentation(params.conference, params.room, params.presentation_name, file)							             			     	
+	  		presentationService.processUploadedPresentation(params.conference, params.room, presentationName, pres)							             			     	
 		}    
 	    else {
 	       flash.message = 'file cannot be empty'
@@ -115,7 +116,6 @@ class PresentationController {
 		
 		InputStream is = null;
 		try {
-//			def f = confInfo()
 			def pres = presentationService.showThumbnail(conf, rm, presentationName, thumb)
 			if (pres.exists()) {
 				def bytes = pres.readBytes()
@@ -176,9 +176,6 @@ class PresentationController {
 		def conf = params.conference
 		def rm = params.room
 		
-		//def f = confInfo()
-		/* Let's just use the thumbnail count */
-		
 		def numThumbs = presentationService.numberOfThumbnails(conf, rm, presentationName)
 			response.addHeader("Cache-Control", "no-cache")
 			withFormat {						
@@ -187,7 +184,7 @@ class PresentationController {
 						conference(id:conf, room:rm) {
 							presentation(name:presentationName) {
 								slides(count:numThumbs) {
-								  for (def i=0; i<numThumbs;i++) {
+								  for (def i = 1; i <= numThumbs; i++) {
 								  	slide(number:"${i}", name:"slide/${i}", thumb:"thumbnail/${i}")
 								  }
 								}

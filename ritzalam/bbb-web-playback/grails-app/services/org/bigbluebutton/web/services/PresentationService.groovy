@@ -7,7 +7,7 @@ import javax.jms.MapMessage
 import org.springframework.jms.core.JmsTemplate
 import java.util.*;
 import java.util.concurrent.*;
-
+import java.lang.InterruptedException
 class PresentationService {
 
     boolean transactional = false
@@ -71,17 +71,14 @@ class PresentationService {
 		return dir
     }
 
-	def processUploadedPresentation = {conf, room, presentation_name, presentationFile ->	
+	def processUploadedPresentation = {conf, room, presentationName, presentationFile ->	
 		// Run conversion on another thread.
-		Thread.start 
+		new Timer().runAfter(1000) 
 		{
-			new Timer().runAfter(1000) 
-			{
-				//first we need to know how many pages in this pdf
-				def numPages = determineNumberOfPages(presentationFile)
-				assert((new Integer(numPages).intValue()) != -1)
-						
-			}
+			//first we need to know how many pages in this pdf
+			int numPages = determineNumberOfPages(presentationFile)
+			log.info "There are $numPages pages in $presentationFile.absolutePath"
+			convertUploadedPresentation(room, presentationName, presentationFile, numPages)		
 		}
 	}
 	
@@ -103,12 +100,7 @@ class PresentationService {
 	    		def infoRegExp = /page=([0-9]+)(?: .+)/
 	    		def matcher = (info =~ infoRegExp)
 	    		if (matcher.matches()) {
-	    			//if ((matcher[0][1]) > numPages) {
-	    				numPages = matcher[0][1]
-	    				//	println "Number of pages = ${numPages}"
-	    				// } else {
-					   // 	println "Number of pages = ${numPages} match=" + matcher[0][1]
-					   // }
+	    			numPages = matcher[0][1]
 	    		} else {
 	    			println "no match info: ${info}"
 	    		}
@@ -140,13 +132,15 @@ class PresentationService {
 	}
 	
 	def showThumbnail = {conf, room, presentationName, thumb ->
-		new File(roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar + 
-			"thumbnails" + File.separatorChar + "thumb-${thumb}.png")
+		def thumbFile = roomDirectory(conf, room).absolutePath + File.separatorChar + presentationName + File.separatorChar +
+					"thumbnails" + File.separatorChar + "thumb-${thumb}.png"
+		log.debug "showing $thumbFile"
+		
+		new File(thumbFile)
 	}
 	
 	def numberOfThumbnails = {conf, room, name ->
 		def thumbDir = new File(roomDirectory(conf, room).absolutePath + File.separatorChar + name + File.separatorChar + "thumbnails")
-		System.out.println(thumbDir.absolutePath + " " + thumbDir.listFiles().length)
 		thumbDir.listFiles().length
 	}   
 	
@@ -154,33 +148,110 @@ class PresentationService {
 		return new File(presentationDir + File.separatorChar + conf + File.separatorChar + room)
     }
 
-	public boolean convertUploadedPresentation(File presentationFile, int numPages) {
-		
-		for (page = 1; page <= numPages; page++) 
+	public boolean convertUploadedPresentation(String room, String presentationName, File presentationFile, int numPages) {		
+		log.debug "Converting uploaded presentation $presentationFile.absolutePath"
+		for (int page = 1; page <= numPages; page++) 
 	    {
-	        convertPage(presentationFile, page)
+			def msg = new HashMap()
+			msg.put("room", room)
+			msg.put("returnCode", "CONVERT")
+			msg.put("presentationName", presentationName)
+			msg.put("totalSlides", new Integer(numPages))
+			msg.put("slidesCompleted", new Integer(page))
+			sendJmsMessage(msg)
+			
+			log.debug "Converting page $page of $presentationFile.absolutePath"
+			
+			convertPage(presentationFile, page)
 	    }
+
+		log.debug "Creating thumbnails for $presentationFile.absolutePath"
+		createThumbnails(presentationFile)
+		
+		def msg = new HashMap()
+		msg.put("room", room)
+		msg.put("returnCode", "SUCCESS")
+		msg.put("presentationName", presentationName)
+		msg.put("message", "The presentation is now ready.")
+		log.info "Sending presentation conversion success for $presentationFile.absolutePath."
+		sendJmsMessage(msg)			
 	}
 
-	public void convertPage(File presentationFile, int page) {
-	    def result = convertUsingPdf2Swf(presentationFile, page)
-
-	    if (!result) {
-	    	
+	public boolean convertPage(File presentationFile, int page) {
+	    if (! convertUsingPdf2Swf(presentationFile, page)) {
+	    	log.info "cannot convert page $page"
+	    	if (extractPageUsingGhostScript(presentationFile, page)) {
+	    		log.info "created using ghostscript page $page"
+	    		if (convertUsingImageMagick(presentationFile, page)) {
+	    			log.info "created using imagemagick page $page"
+	    			if (convertUsingJpeg2Swf(presentationFile, page)) {
+	    				log.info "create using jpeg page $page"
+	    				return true
+	    			}
+	    		}
+	    	}
 	    }
-	
+
+	    return false	
 	}
 	
 	public boolean extractPageUsingGhostScript(File presentationFile, int page) {	
-		def tempDir = new File(presentationFile.getParent() + File.separatorChar + "temp")
+		def tempDir = new File(presentationFile.parent + File.separatorChar + "temp")
 		tempDir.mkdir()
 		
+		String OPTIONS = "-sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH"
+		String PAGE = "-dFirstPage=${page} -dLastPage=${page}"
+		String dest = tempDir.absolutePath + File.separator + "temp-${page}.pdf"
+		
     	//extract that specific page and create a temp-pdf(only one page) with GhostScript
-		def command = ghostScript + " -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage=" + page + " -dLastPage=" + page + " -sOutputFile=" + (tempDir.getAbsolutePath() + "/temp-${page}.pdf") + " " + presentationFile          
-        def p = Runtime.getRuntime().exec(command);            
+		def command = ghostScript + " " + OPTIONS + " " + PAGE + " " + "-sOutputFile=${dest}" + " " + presentationFile          
+        println command
+        
+        def process
+        try {
+        	process = Runtime.getRuntime().exec(command);            
+        	
+        	// Wait for the process to finish.
+        	int exitVal = process.waitFor()
+        	
+        	def stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        	def stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        	def str
+        	while ((str = stdInput.readLine()) != null) {
+        		System.out.println(str);
+        	}
+        	// read any errors from the attempted command
+        	System.out.println("Here is the standard error of the command (if any):\n");
+        	while ((str = stdError.readLine()) != null) {
+        		System.out.println(str);
+        	}
+        	stdInput.close();
+        	stdError.close();		
+        } catch (InterruptedException e) {
+        	System.out.println(e.toString());
+        }
+        
+	    if (process.exitValue() == 0) {
+	    	return true
+	    } else {
+	    	return false
+	    }
+	}
+		
+	public boolean convertUsingJpeg2Swf(File presentationFile, int page) {
+		def tempDir = new File(presentationFile.getParent() + File.separatorChar + "temp")
+		
+		def source = tempDir.absolutePath + File.separator + "temp-${page}.jpeg"
+		def dest = presentationFile.parent + File.separatorChar + "slide-${page}.swf"
+		println "converting $source to $dest"
+        def command = swfTools + "/jpeg2swf -o " + dest + " " + source
+	    def process = Runtime.getRuntime().exec(command);            
 
-	    def stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		def stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+		// Wait for the process to finish.
+		int exitValue = process.waitFor()
+		
+		def stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		def stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 		def str
         while ((str = stdInput.readLine()) != null) {
 	        System.out.println(str);
@@ -191,108 +262,103 @@ class PresentationService {
     		System.out.println(str);
 	    }
     	stdInput.close();
-	    stdError.close();		
+	    stdError.close();	
 	    
-	    if (p.exitValue() != 0) {
-	    	return true
-	    } else {
-	    	return false
-	    }
-	}
-	
-	
-	public boolean convertUsingJpeg2Swf(File presentationFile, int page) {
-		//assert(p.exitValue() == 0)
-		if(p.exitValue() != 0) return new Integer(-1);
-	
-		//now convert that jpeg to swf with swftools(jpeg2swf)
-        command = caller.swfTools + "/jpeg2swf -o " + presentation.parent + File.separatorChar + "slide-" + (page-1) + ".swf" + " " + presentation.parent + File.separatorChar + "temp/temp-" + (page-1) + ".jpeg"
-		println("PresentationService.groory::convertUploadedPresentation()... convert that jpeg to swf with swftools(jpeg2swf):  command=" + command);
-	        p = Runtime.getRuntime().exec(command);            
-
-		    stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-    	while ((str = stdInput.readLine()) != null) {
-	        	System.out.println(str);
-    	}
-	    // read any errors from the attempted command
-        System.out.println("Here is the standard error of the command (if any):\n");
-		    while ((str = stdError.readLine()) != null) {
-   			System.out.println(str);
-    	}
-    	stdInput.close();
-	    stdError.close();		
+		File destFile = new File(dest)
+		if (destFile.exists()) return true		
+		return false
 	}
 	
 	public boolean convertUsingImageMagick(File presentationFile, int page) {
 		def tempDir = new File(presentationFile.getParent() + File.separatorChar + "temp")
 		tempDir.mkdir()
 		
-        def command = imageMagick + "/convert " + (tempDir.getAbsolutePath() + "/temp-${page}.pdf") + " " + (tempDir.getAbsolutePath() + "/temp-${page}.jpeg")         
+		def source = tempDir.getAbsolutePath() + "/temp-${page}.pdf"
+		def dest = tempDir.getAbsolutePath() + "/temp-${page}.jpeg"
 		
-		def p = Runtime.getRuntime().exec(command);            
-
-//		if (p.exitValue() != 0) {
-//	    	return true
-//	    } else {
-//	    	return false
-//	    }
+        def command = imageMagick + "/convert " + source + " " + dest          
+		
+		def process = Runtime.getRuntime().exec(command);            
+		// Wait for the process to finish.
+		int exitValue = process.waitFor()
+		
+		File destFile = new File(dest)
+		if (destFile.exists()) return true		
+		return false
 	}
 		
 	public boolean convertUsingPdf2Swf(File presentationFile, int page) {
-		def command        
-	   	def Process p            
-	    def BufferedReader stdInput
-	    def BufferedReader stdError
-		def info
-		def str //output information to console for stdInput and stdError
-		def convertSuccess = false
+	    def source = presentationFile.getAbsolutePath()
+	    def dest = presentationFile.parent + File.separatorChar + "slide-" + page + ".swf"
+	       
+	    def command = swfTools + "/pdf2swf -p " + page + " " + source + " -o " + dest          
+		def process = Runtime.getRuntime().exec(command)
 		
-	    try 
-	    {
-	       /* Now we convert the pdf file to swf 
-	        * We start the output with a page number starting at zero (0) so it's consistent
-	        * with the naming convention when we create the thumbnails. Looks like ImageMagick
-	        * uses zero-base when creating the thumbnails.	
-	       */                         
-	       command = swfTools + "/pdf2swf -p " + page + " " + presentationFile.getAbsolutePath() + " -o " + presentationFile.parent + File.separatorChar + "slide-" + (page-1) + ".swf"         
-		   p = Runtime.getRuntime().exec(command)
+		// Wait for the process to finish
+		int exitValue = process.waitFor()
+		
+		File destFile = new File(dest)
+		if (destFile.exists()) return true		
+		return false
+	}
 
-		   stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	       stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+	public boolean createThumbnails(File presentationFile) { 
+		try {
+			log.debug "Creating thumbnails:"
+		 	def thumbsDir = new File(presentationFile.getParent() + File.separatorChar + "thumbnails")
+		 	thumbsDir.mkdir()
+	        
+		 	def source = presentationFile.getAbsolutePath()
+		 	def dest = thumbsDir.getAbsolutePath() + "/temp-thumb.png"
+		 	
+	        def command = imageMagick + "/convert -thumbnail 150x150 " + source + " " + dest
+	        Process p = Runtime.getRuntime().exec(command);            
+			int exitValue = p.waitFor()
+			
+	        renameThumbnails(thumbsDir)
+			
+	        if (exitValue == 0) return true
+			
+			return false
+	    }
+	    catch (InterruptedException e) {
+	        log.error "exception happened - here's what I know: "
+	        log.error e.printStackTrace()
+	        return false
+	    }
+	}	
+	
+	private renameThumbnails(File dir) {
+        dir.eachFile{file ->
+        	// filename should be something like 'c:/temp/bigluebutton/presname/thumbnails/temp-thumb-1.png'
+        	def filename = file.absolutePath
 
-           while ((str = stdInput.readLine()) != null) {
-
-        	   /* The convert output is something like ''NOTICE  processing PDF page 2 (718x538:0:0) (move:-37:-37)'.
-				* We extract the page number from it taking it as a successful conversion.
-				*/
-				def convertRegExp = /NOTICE (?: .+) page ([0-9]+)(?: .+)/
-				def matcher = (str =~ convertRegExp)
-				
-				if (matcher.matches()) {
-					convertSuccess = true
-				} else {
-				    println "no match convert: ${str}"
-				}
-	       }
-           
-	       while ((str = stdError.readLine()) != null) {
-	          	System.out.println("Got error converting file):\n");
-	           	System.out.println(str);
-	       }
-		   stdInput.close();
-	       stdError.close();	
-	    }
-	    catch (IOException e) {
-	        System.out.println("exception happened - here's what I know: ");
-	        e.printStackTrace();
-	    }
-	    
-	    if (p.exitValue() != 0) {
-	    	return true
-	    } else {
-	    	return false
-	    }
+        	// Extract the page number. There should be 3 matches.
+        	// 1. c:/temp/bigluebutton/presname/thumbnails/temp-thumb
+        	// 2. 1 ---> what we are interested in
+        	// 3. .png
+        	def infoRegExp = /(.+-thumb)-([0-9]+)(.png)/
+        	def matcher = (filename =~ infoRegExp)
+        	if (matcher.matches()) {  
+        		// We are interested in the second match.
+        	    int pageNum = new Integer(matcher[0][2]).intValue()
+        	    def newFilename = "thumb-${++pageNum}.png"
+        	    File renamedFile = new File(file.parent + File.separator + newFilename)
+        	    file.renameTo(renamedFile)
+        	}        	
+        }
+	}
+	
+	private sendJmsMessage(HashMap message) {
+		jmsTemplate.convertAndSend(JMS_UPDATES_Q, message)
 	}
 }	
 
+/*** Helper classes **/
+import java.io.FilenameFilter;
+import java.io.File;
+class PngFilter implements FilenameFilter {
+    public boolean accept(File dir, String name) {
+        return (name.endsWith(".png"));
+    }
+}

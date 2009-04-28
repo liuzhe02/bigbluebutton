@@ -20,7 +20,7 @@ class UrlMappings {
       		action = [GET:'numberOfThumbnails']
       }
       
-      "/presentation/$presentation_name/thumbnail/$id"(controller:"presentation") {
+      "/presentation/$conference/$room/$presentation_name/thumbnail/$id"(controller:"presentation") {
       		action = [GET:'showThumbnail']
       }
       
