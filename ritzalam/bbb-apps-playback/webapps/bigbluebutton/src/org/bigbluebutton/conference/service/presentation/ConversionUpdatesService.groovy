@@ -47,9 +47,7 @@ public class ConversionUpdatesService {
 						switch (code) {
 							case 'SUCCESS':
 								log.debug("SUCCESS:presentationName=" + mapMessage.getString("presentationName"))
-								message.put('presentationName', mapMessage.getString("presentationName"))
-														
-								
+								message.put('presentationName', mapMessage.getString("presentationName"))								
 								message.put('message', mapMessage.getStringProperty("message"))
 								presentationApplication.sendUpdateMessage(message)
 								break
