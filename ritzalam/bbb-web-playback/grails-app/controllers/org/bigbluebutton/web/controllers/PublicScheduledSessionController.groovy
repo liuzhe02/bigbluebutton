@@ -4,13 +4,23 @@ import org.bigbluebutton.web.domain.ScheduledSession
 import grails.converters.*
 
 class PublicScheduledSessionController {
-
+	def index = {
+	    redirect(action:show)
+	}
+	
 	def show = {
-		def scheduledSessionInstance = ScheduledSession.get( params.id )
+		def tokenId = session['conference']
+		def sessionId = session['room']
+		
+		if (!tokenId || !sessionId) {
+			redirect(action:joinIn,id:tokenId)
+		}
+		
+		def scheduledSessionInstance = ScheduledSession.findByTokenId( tokenId )
 
 		if(!scheduledSessionInstance) {
-			flash.message = "ScheduledSession not found with id ${params.id}"
-	        redirect(action:list)
+			flash.message = "Could not find conference session."
+	        redirect(action:joinIn)
 	    }
 	    else { 
 	      	def hostUrl = grailsApplication.config.grails.serverURL
@@ -23,7 +33,7 @@ class PublicScheduledSessionController {
 	
 	def joinIn = {
 	    println "join $params.id"
-	    return [ fullname: params.fullname, id: (params.id), password: params.password ]
+	    return [ fullname: params.fullname, id:(params.id), password: params.password ]
 	}
 	
     def signIn = {    
@@ -66,14 +76,16 @@ class PublicScheduledSessionController {
 					session["role"] = role
 					session["conference"] = params.id
 					session["room"] = confSession.sessionId
-			        	
+					session["voicebridge"] = confSession.voiceConferenceBridge
+					
 			       	def fname = session["fullname"]
 			       	def rl = session["role"]
 			       	def cnf = session["conference"]
 			       	def rm = session["room"]
 			    	
+			    	
 			    	println 'rendering signIn'
-			    	render(view:"signIn")
+			    	render(view:"signIn")			    	
 				}
 			}
 		}
@@ -91,7 +103,8 @@ class PublicScheduledSessionController {
 	    def rl = session["role"]
 	    def cnf = session["conference"]
 	    def rm = session["room"]
-		        	
+		def vb = session["voicebridge"]   
+	    
 	    if (!rm) {
 	    	withFormat {				
 				xml {
@@ -108,11 +121,12 @@ class PublicScheduledSessionController {
 				xml {
 					render(contentType:"text/xml") {
 						'join'() {
-							returnCode("SUCCESS")
+							returncode("SUCCESS")
 							fullname("$fname")
 	        				role("$rl")
 	        				conference("$cnf")
 	        				room("$rm")
+	        				voicebridge("${vb}")
 						}
 					}
 				}

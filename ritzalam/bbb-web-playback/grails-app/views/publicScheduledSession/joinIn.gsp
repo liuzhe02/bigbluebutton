@@ -9,13 +9,21 @@
     <div class="message">${flash.message}</div>
   </g:if>
   <g:form controller="conference-session" action="signIn">
-  	<input type="hidden" name="id" value="${id}" />
+  	<g:if test="${id}">
+  		<input type="hidden" name="id" value="${id}" />
+  	</g:if>
     <table>
       <tbody>
         <tr>
           <td>Fullname:</td>
           <td><input type="text" name="fullname" value="${fullname}" /></td>
         </tr>
+        <g:if test="${!id}">
+	        <tr>
+	          <td>Session Id:</td>
+	          <td><input type="text" name="id" value="${id}" /></td>
+	        </tr>
+        </g:if>
 		<tr>
           <td>Password:</td>
           <td><g:passwordField name="password" value="" /></td>

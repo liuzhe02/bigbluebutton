@@ -8,15 +8,15 @@ class UrlMappings {
       		action = [GET:'show', POST:'upload', DELETE:'delete']
       }
       
-      "/presentation/$presentation_name/slides"(controller:"presentation") {
+      "/presentation/$conference/$room/$presentation_name/slides"(controller:"presentation") {
       		action = [GET:'numberOfSlides']
       }
       
-      "/presentation/$presentation_name/slide/$id"(controller:"presentation") {
+      "/presentation/$conference/$room/$presentation_name/slide/$id"(controller:"presentation") {
       		action = [GET:'showSlide']
       }
       
-      "/presentation/$presentation_name/thumbnails"(controller:"presentation") {
+      "/presentation/$conference/$room/$presentation_name/thumbnails"(controller:"presentation") {
       		action = [GET:'numberOfThumbnails']
       }
       

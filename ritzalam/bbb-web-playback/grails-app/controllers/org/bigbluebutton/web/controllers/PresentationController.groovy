@@ -55,9 +55,13 @@ class PresentationController {
 		println 'PresentationController:upload'
 		def file = request.getFile('fileUpload')
 	    if(!file.empty) {
-	      flash.message = 'Your file has been uploaded'
-	      def f = confInfo()
-		  presentationService.processUploadedPresentation(params.conference, params.room, params.presentation_name, file)							             			     	
+	    	flash.message = 'Your file has been uploaded'
+	    	File uploadDir = presentationService.uploadedPresentationDirectory(params.conference, params.room, params.presentation_name)
+	    	
+	    	def newFilename = file.getOriginalFilename().replace(' ', '-')
+	    	def pres = new File( uploadDir.absolutePath + File.separatorChar + newFilename )
+	    	file.transferTo( pres )	
+	  		presentationService.processUploadedPresentation(params.conference, params.room, params.presentation_name, file)							             			     	
 		}    
 	    else {
 	       flash.message = 'file cannot be empty'
@@ -82,12 +86,14 @@ class PresentationController {
 	
 	def showSlide = {
 		def presentationName = params.presentation_name
+		def conf = params.conference
+		def rm = params.room
 		def slide = params.id
 		
 		InputStream is = null;
 		try {
-			def f = confInfo()
-			def pres = presentationService.showSlide(f.conference, f.room, presentationName, slide)
+//			def f = confInfo()
+			def pres = presentationService.showSlide(conf, rm, presentationName, slide)
 			if (pres.exists()) {
 				def bytes = pres.readBytes()
 				response.addHeader("Cache-Control", "no-cache")
@@ -103,12 +109,14 @@ class PresentationController {
 	
 	def showThumbnail = {
 		def presentationName = params.presentation_name
+		def conf = params.conference
+		def rm = params.room
 		def thumb = params.id
 		
 		InputStream is = null;
 		try {
-			def f = confInfo()
-			def pres = presentationService.showThumbnail(f.conference, f.room, presentationName, thumb)
+//			def f = confInfo()
+			def pres = presentationService.showThumbnail(conf, rm, presentationName, thumb)
 			if (pres.exists()) {
 				def bytes = pres.readBytes()
 				response.addHeader("Cache-Control", "no-cache")
@@ -164,21 +172,20 @@ class PresentationController {
 	}
 
 	def numberOfSlides = {
-		def filename = params.presentation_name
-		def f = confInfo()
+		def presentationName = params.presentation_name
+		def conf = params.conference
+		def rm = params.room
+		
+		//def f = confInfo()
 		/* Let's just use the thumbnail count */
 		
-		def numThumbs = presentationService.numberOfThumbnails(f.conference, f.room, filename)
-		//def numThumbs = 5
-		
-		
-		
+		def numThumbs = presentationService.numberOfThumbnails(conf, rm, presentationName)
 			response.addHeader("Cache-Control", "no-cache")
 			withFormat {						
 				xml {
 					render(contentType:"text/xml") {
-						conference(id:f.conference, room:f.room) {
-							presentation(name:filename) {
+						conference(id:conf, room:rm) {
+							presentation(name:presentationName) {
 								slides(count:numThumbs) {
 								  for (def i=0; i<numThumbs;i++) {
 								  	slide(number:"${i}", name:"slide/${i}", thumb:"thumbnail/${i}")
