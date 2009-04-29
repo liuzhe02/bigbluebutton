@@ -14,6 +14,7 @@
 			onUserLogoutEvent="STOP"
 	/>
 -->
+
 	<module name="VideoModule" url="VideoModule.swf" 
 			uri="rtmp://localhost/oflaDemo"
 			onUserJoinedEvent="START"
@@ -25,6 +26,7 @@
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"		 
 	/>
+
 	<module name="ViewersModule" url="ViewersModule.swf" 
 			uri="rtmp://localhost/bigbluebutton" 
 			host="conf/join-mock.xml"
@@ -32,6 +34,8 @@
 			onAppStartEvent="START"
 			onUserLogoutEvent="STOP"
 	/>
+	
+
 	<module name="ListenersModule" url="ListenersModule.swf" 
 			uri="rtmp://localhost/bigbluebutton" 
 			recordingHost="http://134.117.254.226"
