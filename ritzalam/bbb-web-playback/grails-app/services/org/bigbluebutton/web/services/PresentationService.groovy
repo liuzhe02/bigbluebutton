@@ -16,7 +16,7 @@ class PresentationService {
 	def ghostScript
 	def swfTools
 	def presentationDir
-	
+	    
 	private static String JMS_UPDATES_Q = 'UpdatesQueue'
 	    
     def deletePresentation = {conf, room, filename ->
@@ -209,11 +209,17 @@ class PresentationService {
         
         def process
         try {
+    		def now = new Date()
+    		println "GS starting $now"
+    		
         	process = Runtime.getRuntime().exec(command);            
         	
         	// Wait for the process to finish.
         	int exitVal = process.waitFor()
         	
+        	now = new Date()
+    		println "GS starting $now"
+    		
         	def stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
         	def stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         	def str
@@ -244,11 +250,18 @@ class PresentationService {
 		def source = tempDir.absolutePath + File.separator + "temp-${page}.jpeg"
 		def dest = presentationFile.parent + File.separatorChar + "slide-${page}.swf"
 		println "converting $source to $dest"
+
+		def now = new Date()
+		println "JPEG2SWF starting $now"
+		
         def command = swfTools + "/jpeg2swf -o " + dest + " " + source
 	    def process = Runtime.getRuntime().exec(command);            
 
 		// Wait for the process to finish.
 		int exitValue = process.waitFor()
+		
+		now = new Date()
+		println "JPEG2SWF ended $now"
 		
 		def stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		def stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -275,12 +288,18 @@ class PresentationService {
 		
 		def source = tempDir.getAbsolutePath() + "/temp-${page}.pdf"
 		def dest = tempDir.getAbsolutePath() + "/temp-${page}.jpeg"
+
+		def now = new Date()
+		println "IMAGEMAGICK starting $now"
 		
         def command = imageMagick + "/convert " + source + " " + dest          
 		
 		def process = Runtime.getRuntime().exec(command);            
 		// Wait for the process to finish.
 		int exitValue = process.waitFor()
+		
+		now = new Date()
+		println "IMAGEMAGICK ends $now"
 		
 		File destFile = new File(dest)
 		if (destFile.exists()) return true		

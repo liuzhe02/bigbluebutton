@@ -1,22 +1,36 @@
 package org.bigbluebutton.web.services
 
 import org.springframework.util.FileCopyUtils
+import org.codehaus.groovy.grails.commons.*
 
 class PresentationServiceTests extends GroovyTestCase {
 	
 	def SWFTOOLS = "C:/swftools-0.9"
-	def IMAGEMAGICK = "C:/ImageMagick-6.4.8-Q16/"
+	def IMAGEMAGICK = "C:/ImageMagick-6.4.9-Q16/"
 	def GHOSTSCRIPT = "C:/gs/gs8.63/bin/gswin32c.exe"
-	def PRESENTATIONDIR = "d:/temp/bigbluebutton"
+	def PRESENTATIONDIR = "c:/temp/bigbluebutton"
 	
 	def presService
 		
 	void setUp() {
-		presService = new PresentationService()
+		/* Get the values from bigbluebutton.properties
+		 * We have to set this manually unlike when running
+		 * as an application where spring injects these
+		 * values for us.
+		 */
+		def config = ConfigurationHolder.config
+		SWFTOOLS = config.swfTools
+		IMAGEMAGICK = config.imageMagick
+		PRESENTATIONDIR = config.presentationDir
+		GHOSTSCRIPT = config.ghostScript
+		
+		presService = new PresentationService()		
 		presService.swfTools = SWFTOOLS
 		presService.imageMagick = IMAGEMAGICK
 		presService.ghostScript = GHOSTSCRIPT
 		presService.presentationDir = PRESENTATIONDIR
+		
+		
 	}
 	
 	void testGetUploadDirectory() {
@@ -68,7 +82,7 @@ class PresentationServiceTests extends GroovyTestCase {
 			presService.convertUsingPdf2Swf(uploadedPresentation, page)
 		}	    
 	}
-/*
+
 	void testExtractPageUsingGhostscript() {
 		def uploadedFilename = 'sample-presentation.pdf'		
 		def uploadedFile = new File("test/resources/$uploadedFilename")
@@ -113,9 +127,7 @@ class PresentationServiceTests extends GroovyTestCase {
         files = outDir.list(filter)
         assertEquals numPages, files.length
 	}
-	
-*/
-/*    
+	    
     void testProcessOneSlideWithTooManyObjectsPresentation() {
 		def uploadedFilename = 'big.pdf'		
 		def uploadedFile = new File("test/resources/$uploadedFilename")
@@ -157,8 +169,8 @@ class PresentationServiceTests extends GroovyTestCase {
 	    files = outDir.list(filter)
 	    assertEquals numPages, files.length    	
     }
-*/
-/*    
+
+    
     void testProcessSeveralSlidesWithTooManyObjectsPresentation() {
 		def uploadedFilename = 'SeveralBigPagesPresentation.pdf'		
 			def uploadedFile = new File("test/resources/$uploadedFilename")
@@ -200,8 +212,8 @@ class PresentationServiceTests extends GroovyTestCase {
 		    files = outDir.list(filter)
 		    assertEquals numPages, files.length       	
     }
-*/
-/*
+
+
     void testConvertPage() {
 		def uploadedFilename = 'SeveralBigPagesPresentation.pdf'		
 		def uploadedFile = new File("test/resources/$uploadedFilename")
@@ -226,7 +238,7 @@ class PresentationServiceTests extends GroovyTestCase {
 		String[] files = outDir.list(filter)
 		assertEquals numPages, files.length       	
     }
-*/
+
     void testCreateThumbnails() {
 		def uploadedFilename = 'SeveralBigPagesPresentation.pdf'		
 		def uploadedFile = new File("test/resources/$uploadedFilename")
