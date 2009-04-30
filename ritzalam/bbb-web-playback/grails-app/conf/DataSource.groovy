@@ -1,7 +1,7 @@
 dataSource {
 	pooled = false
 	driverClassName = "com.mysql.jdbc.Driver"
-	username = "bbb@localhost"
+	username = "bbb"
 	password = "secret"
 }
 
@@ -17,12 +17,15 @@ environments {
 		dataSource {
 			pooled = true
 			dbCreate = "update" // one of 'create', 'create-drop','update'
+			url="jdbc:mysql://localhost/bigbluebutton_dev"
 		}
 	}
 	test {
 		dataSource {
-			dbCreate = 'create'
-			url = "jdbc:hsqldb:mem:testDb"
+			pooled = true
+			dbCreate = 'update'
+			url="jdbc:mysql://localhost/bigbluebutton_test"
+			//url = "jdbc:hsqldb:mem:testDb"
 		}
 	}
 	production {
