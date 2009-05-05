@@ -2,6 +2,8 @@ package org.bigbluebutton.modules.whiteboard
 {
 	public class WhiteboardModuleConstants
 	{	
+		public static const NEW_MESSAGE:String = "new whiteboard message";
+		
 		public static const START:String       = "start module";
 		public static const STOP:String       = "stop module";
 		public static const CONNECTED:String = "connected to server";
