@@ -2,7 +2,9 @@ package org.bigbluebutton.modules.whiteboard.controller
 {
 	import org.bigbluebutton.modules.whiteboard.WhiteboardEndpointMediator;
 	import org.bigbluebutton.modules.whiteboard.WhiteboardModuleMediator;
-	import org.bigbluebutton.modules.whiteboard.model.DrawProxy;
+//	import org.bigbluebutton.modules.whiteboard.model.DrawProxy;
+	import org.bigbluebutton.modules.whiteboard.model.business.WhiteboardProxy;
+	import org.bigbluebutton.modules.whiteboard.WhiteboardModuleConstants;
 	import org.bigbluebutton.modules.whiteboard.view.BoardMediator;
 	import org.puremvc.as3.multicore.interfaces.INotification;
 	import org.puremvc.as3.multicore.patterns.command.SimpleCommand;
@@ -29,7 +31,11 @@ package org.bigbluebutton.modules.whiteboard.controller
 			facade.registerMediator(new WhiteboardModuleMediator(m));
 			facade.registerMediator(new WhiteboardEndpointMediator(m));
 			facade.registerMediator(new BoardMediator(m));
-			facade.registerProxy(new DrawProxy(m.uri));
+			facade.registerProxy(new WhiteboardProxy(m));
+			//facade.registerProxy(new DrawProxy(m.uri));
+			//sendNotification(WhiteboardModuleConstants.CONNECTED);
+			
+			sendNotification(WhiteboardModuleConstants.OPEN_WINDOW);
 		}
 
 	}
