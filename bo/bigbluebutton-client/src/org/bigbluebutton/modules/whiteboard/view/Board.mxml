@@ -35,8 +35,8 @@
 			[Bindable] private var circle_icon:Class = images.circle_icon;
 			[Bindable] private var delete_icon:Class = images.delete_icon;
 			
-			[Bindable]
-			public var drawVO:DrawVO = new DrawVO();
+//			[Bindable]
+//			public var drawVO:DrawVO = new DrawVO();
 		
 			protected var drawFactory:DrawObjectFactory;
 			protected var shapeFactory:ShapeFactory;
