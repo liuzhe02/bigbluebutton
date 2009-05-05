@@ -4,7 +4,8 @@ package org.bigbluebutton.modules.whiteboard.view
 	
 	import org.bigbluebutton.modules.whiteboard.BoardFacade;
 	import org.bigbluebutton.modules.whiteboard.WhiteboardModuleConstants;
-	import org.bigbluebutton.modules.whiteboard.model.DrawProxy;
+	//import org.bigbluebutton.modules.whiteboard.model.DrawProxy;
+	import org.bigbluebutton.modules.whiteboard.model.business.WhiteboardProxy;
 	import org.bigbluebutton.modules.whiteboard.model.component.DrawObject;
 	import org.puremvc.as3.multicore.interfaces.IMediator;
 	import org.puremvc.as3.multicore.interfaces.INotification;
@@ -70,7 +71,7 @@ package org.bigbluebutton.modules.whiteboard.view
 		 * 
 		 */		
 		protected function sendClear(e:Event):void{
-			proxy.clearBoard();
+//			proxy.clearBoard();
 		}
 		
 		/**
@@ -79,16 +80,16 @@ package org.bigbluebutton.modules.whiteboard.view
 		 * 
 		 */		
 		protected function undoShape(e:Event):void{
-			proxy.undoShape();
+//			proxy.undoShape();
 		}
 		
 		/**
-		 * Returns the DrawProxy of this application 
+		 * Returns the WhiteboardProxy of this application 
 		 * @return 
 		 * 
 		 */		
-		public function get proxy():DrawProxy{
-			return facade.retrieveProxy(DrawProxy.NAME) as DrawProxy;
+		public function get proxy():WhiteboardProxy{
+			return facade.retrieveProxy(WhiteboardProxy.NAME) as WhiteboardProxy;
 		}
 		
 		/**
