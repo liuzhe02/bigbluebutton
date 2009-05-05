@@ -1,23 +1,4 @@
-/**
-* BigBlueButton open source conferencing system - http://www.bigbluebutton.org/
-*
-* Copyright (c) 2008 by respective authors (see below).
-*
-* This program is free software; you can redistribute it and/or modify it under the
-* terms of the GNU Lesser General Public License as published by the Free Software
-* Foundation; either version 2.1 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT ANY
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-* PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public License along
-* with this program; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-* 
-*/
-package org.bigbluebutton.modules.chat.model.business
+package org.bigbluebutton.modules.whiteboard.model.business
 {
 	import flash.events.*;
 	import flash.net.NetConnection;
@@ -53,7 +34,7 @@ package org.bigbluebutton.modules.chat.model.business
 			_netConnection.addEventListener( IOErrorEvent.IO_ERROR, netIOError );
 			
 			try {
-				LogUtil.debug( "Connecting to " + _uri);
+				LogUtil.debug( "whiteboard Connecting to " + _uri);
 				_connectionError = null;								
 				_netConnection.connect(_uri );
 				
@@ -87,38 +68,38 @@ package org.bigbluebutton.modules.chat.model.business
 			switch ( statusCode ) 
 			{
 				case "NetConnection.Connect.Success" :
-					LogUtil.debug("Connection to chat server succeeded.");
+					LogUtil.debug("Connection to Whiteboard server succeeded.");
 					_connectionListener(true);					
 					break;
 			
 				case "NetConnection.Connect.Failed" :
 					addError("Failed to connect to the application.");
 					//_connectionListener(false);					
-					LogUtil.debug("Connection to chat server failed");
+					LogUtil.debug("Connection to Whiteboard server failed");
 					break;
 					
 				case "NetConnection.Connect.Closed" :	
 					addError("Connection to application closed.");		
-					LogUtil.debug("Connection to chat application closed");		
+					LogUtil.debug("Connection to Whiteboard application closed");		
 					_connectionListener(false, _connectionError);										
 					break;
 					
 				case "NetConnection.Connect.InvalidApp" :	
 					addError("Could not find the application.");			
 					//_connectionListener(false);
-					LogUtil.debug("Chat application not found on server");
+					LogUtil.debug("Whiteboard application not found on server");
 					break;
 					
 				case "NetConnection.Connect.AppShutDown" :
 					addError("Application has shutdown.");
 					//_connectionListener(false);
-					LogUtil.debug("Chat Application has shutdown");
+					LogUtil.debug("Whiteboard Application has shutdown");
 					break;
 					
 				case "NetConnection.Connect.Rejected" :
 					addError("Connection to the application was rejected.");
 					//_connectionListener(false);
-					LogUtil.debug("No permissions to connect to the chat application" );
+					LogUtil.debug("No permissions to connect to the Whiteboard application" );
 					break;
 					
 				default :
