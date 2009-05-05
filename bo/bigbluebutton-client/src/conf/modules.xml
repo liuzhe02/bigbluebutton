@@ -20,6 +20,7 @@
 	<module name="ViewersModule" url="ViewersModule.swf" 
 			uri="rtmp://localhost/bigbluebutton" 
 			host="http://localhost:8080/bigbluebutton/join/enter"
+			loadNextModule="WhiteboardModule"
 			onUserLoggedInEvent="START"
 			onUserLogoutEvent="STOP"
 	/>
@@ -30,7 +31,12 @@
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"
 	/>
-	<module name="WhiteboardModule" url="WhiteboardModule.swf" uri="rtmp://localhost/test" />
+	<module name="WhiteboardModule" url="WhiteboardModule.swf" 
+			uri="rtmp://localhost/bigbluebutton" 
+			onUserJoinedEvent="START" 
+			onUserLogoutEvent="STOP"
+	/>
+	
 	<module name="PresentationModule" url="PresentationModule.swf" 
 			uri="rtmp://localhost/bigbluebutton" 
 			host="http://localhost:8080" 
