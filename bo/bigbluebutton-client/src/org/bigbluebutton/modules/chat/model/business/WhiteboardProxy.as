@@ -73,5 +73,13 @@ package org.bigbluebutton.modules.whiteboard.model.business
 			whiteboardService.sendShape(share);
 		}
 
+		public function clearBoard():void{
+			whiteboardService.clearBoard();
+		}
+		
+		public function undoShape():void{
+			whiteboardService.undoShape();
+		}
+
 	}
 }
