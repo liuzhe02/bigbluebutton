@@ -71,7 +71,7 @@ package org.bigbluebutton.modules.whiteboard.view
 		 * 
 		 */		
 		protected function sendClear(e:Event):void{
-//			proxy.clearBoard();
+			proxy.clearBoard();
 		}
 		
 		/**
@@ -80,7 +80,7 @@ package org.bigbluebutton.modules.whiteboard.view
 		 * 
 		 */		
 		protected function undoShape(e:Event):void{
-//			proxy.undoShape();
+			proxy.undoShape();
 		}
 		
 		/**
