@@ -180,6 +180,34 @@ package org.bigbluebutton.modules.whiteboard.model.business
 			//this.drawVO.segment = d;
 			proxy.sendNotification(BoardFacade.UPDATE, d);
 		}
+	
+		public function clearBoard():void{
+			whiteboardSO.send("clear");
+		}
+		
+		/**
+		 * Trigers the clear notification on a client 
+		 * 
+		 */		
+		public function clear():void{
+			proxy.sendNotification(BoardFacade.CLEAR_BOARD);
+		}
+		
+		/**
+		 * Sends a call out to the red5 server to notify the clients to undo a shape
+		 * 
+		 */		
+		public function undoShape():void{
+			whiteboardSO.send("undo");
+		}
+		
+		/**
+		 * Triggers the undo shape event on all clients 
+		 * 
+		 */		
+		public function undo():void{
+			proxy.sendNotification(BoardFacade.UNDO_SHAPE);
+		}
 		
 	}
 }
