@@ -12,5 +12,7 @@ package org.bigbluebutton.modules.whiteboard.model.business
 		function addConnectionStatusListener(connectionListener:Function):void;
 
 		function sendShape(shape:DrawObject):void;
+		function clearBoard():void;
+		function undoShape():void;
 	}
 }
