@@ -100,7 +100,7 @@ class PresentationService {
 				//first we need to know how many pages in this pdf
 				def numPages = getPresentationNumPages(conf, room, presentation_name, pres)
 				//assert((new Integer(numPages).intValue()) != -1)
-				if((new Integer(numPages).intValue()) != 0) return -1;
+				if((new Integer(numPages).intValue()) == -1) return -1;
 				
 			    log.debug "now we get how many pages in this pdf with swftools:  numPages=" + numPages 
 
