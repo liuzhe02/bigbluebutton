@@ -2,6 +2,12 @@ package org.bigbluebutton.modules.whiteboard.model.component
 {
 	import flash.display.Shape;
 	
+	import mx.core.*;
+	import mx.graphics.*;
+	import flash.text.*;
+	import flash.display.*;
+	import flash.geom.Matrix;
+	
 	/**
 	 * The ShapeFactory receives DrawObjects and converts them to Flash Shapes which can then be displayed
 	 * <p>
@@ -33,7 +39,10 @@ package org.bigbluebutton.modules.whiteboard.model.component
 				s = makeRectangle(Rectangle(shape));
 			} else if (shape.getType() == DrawObject.ELLIPSE){
 				s = makeEllipse(Ellipse(shape));
+			} else if (shape.getType() == DrawObject.TEXT){
+				s = makeText(Text(shape));
 			}
+
 			return s;
 		}
 		
@@ -46,8 +55,8 @@ package org.bigbluebutton.modules.whiteboard.model.component
 		 * @return A Flash Shape object
 		 * 
 		 */		
-		public function makeFeedback(segment:Array, type:String, color:uint, thickness:uint):Shape{
-			return makeShape(drawFactory.makeDrawObject(type,segment, color, thickness));
+		public function makeFeedback(segment:Array, type:String, color:uint, thickness:uint, text:String):Shape{
+			return makeShape(drawFactory.makeDrawObject(type,segment, color, thickness, text));
 		}
 		
 		/**
@@ -87,6 +96,47 @@ package org.bigbluebutton.modules.whiteboard.model.component
 			
 			return newShape;	
 		}
+
+		/**
+		 * Creates a Flash Shape from a Rectangle DrawObject 
+		 * @param r a Rectangle DrawObject
+		 * @return a Shape
+		 * 
+		 */		
+		private function makeText(r:Text):Shape
+		{
+			var newShape:Shape = new Shape();
+
+			var arrayEnd:Number = r.getShapeArray().length;
+			var x:Number = r.getShapeArray()[0];
+			var y:Number = r.getShapeArray()[1];
+			var x2:Number = r.getShapeArray()[arrayEnd-2];
+			var y2:Number = r.getShapeArray()[arrayEnd-1];
+			
+			var uit:UITextField = new UITextField();
+			uit.htmlText = "<font size='" +r.getThickness()*10 + "'>" + r.getText() + "</font>";
+			uit.textColor = r.getColor();
+			uit.autoSize = TextFieldAutoSize.LEFT;
+			var textBitmapData:BitmapData = ImageSnapshot.captureBitmapData(uit);
+			var sizeMatrix:Matrix = new Matrix();
+ 
+			var coef:Number = Math.min(uit.measuredWidth/textBitmapData.width,uit.measuredHeight/textBitmapData.height);
+			sizeMatrix.a = coef;
+			sizeMatrix.d = coef;
+			textBitmapData =ImageSnapshot.captureBitmapData(uit,sizeMatrix);
+			var sm:Matrix = new Matrix();
+			sm.tx = (x+x2)/2;
+			sm.ty = (y+y2)/2;
+			newShape.graphics.beginBitmapFill(textBitmapData,sm,false);
+
+//			newShape.graphics.lineStyle(r.getThickness(), r.getColor());
+//			newShape.graphics.lineStyle(0, r.getColor());
+			newShape.graphics.drawRect((x+x2)/2, (y+y2)/2,uit.measuredWidth, uit.measuredHeight);
+			newShape.graphics.endFill();			
+			
+			return newShape;	
+		}
+
 		
 		/**
 		 * Creates a Flash Shape from an Ellipse DrawObject 
