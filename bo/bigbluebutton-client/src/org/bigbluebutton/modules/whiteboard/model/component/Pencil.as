@@ -14,9 +14,9 @@ package org.bigbluebutton.modules.whiteboard.model.component
 		 * @param thickness the thickness of this Pencil
 		 * 
 		 */		
-		public function Pencil(segment:Array, color:uint, thickness:uint)
+		public function Pencil(segment:Array, color:uint, thickness:uint, text:String)
 		{
-			super(DrawObject.PENCIL, segment, color, thickness);
+			super(DrawObject.PENCIL, segment, color, thickness, text);
 		}
 		
 	}
