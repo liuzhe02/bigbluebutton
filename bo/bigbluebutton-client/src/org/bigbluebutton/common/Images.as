@@ -144,5 +144,9 @@ package org.bigbluebutton.common
         
         [Embed(source="assets/images/arrow_out.png")]
         public var full_screen:Class; 
+        
+        [Embed(source="assets/images/text.png")]
+        public var text_icon:Class; 
+        
 	}
 }
