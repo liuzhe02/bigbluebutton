@@ -15,22 +15,25 @@ package org.bigbluebutton.modules.whiteboard.model.component
 		public static const PENCIL:String = "pencil";
 		public static const RECTANGLE:String = "rectangle";
 		public static const ELLIPSE:String = "ellipse";
+		public static const TEXT:String = "text";
 		
 		protected var type:String;
 		protected var shape:Array;
 		protected var color:uint;
 		protected var thickness:uint;
+		protected var text:String;
 		
 		/**
 		 * The default constructor for the DrawObject 
 		 * 
 		 */		
-		public function DrawObject(type:String, segment:Array, color:uint, thickness:uint)
+		public function DrawObject(type:String, segment:Array, color:uint, thickness:uint, text:String)
 		{
 			this.type = type;
 			this.shape = segment;
 			this.color = color;
 			this.thickness = thickness;
+			this.text = text;
 			this.optimize();
 		}
 		
@@ -68,6 +71,10 @@ package org.bigbluebutton.modules.whiteboard.model.component
 		 */		
 		public function getThickness():uint{
 			return this.thickness;
+		}
+
+		public function getText():String{
+			return this.text;
 		}
 		
 		protected function optimize():void{
