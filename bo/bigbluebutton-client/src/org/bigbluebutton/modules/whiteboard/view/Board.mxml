@@ -8,6 +8,7 @@
 	 
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.TextArea;
 			import mx.core.Application;
 			import org.bigbluebutton.common.Images;
 			import org.bigbluebutton.modules.whiteboard.BoardFacade;
@@ -34,6 +35,7 @@
 			[Bindable] private var undo_icon:Class = images.undo_icon;
 			[Bindable] private var circle_icon:Class = images.circle_icon;
 			[Bindable] private var delete_icon:Class = images.delete_icon;
+			[Bindable] private var text_icon:Class = images.text_icon;
 			
 //			[Bindable]
 //			public var drawVO:DrawVO = new DrawVO();
@@ -51,13 +53,21 @@
 			//Full screen?
 			private var dispState:String;
 			
-			private function init():void{
+			private function init():void
+			{
 				drawFactory = new DrawObjectFactory();
 				shapeFactory = new ShapeFactory();
 				
 				//Initialize full screen handler
 				Application.application.stage.addEventListener(FullScreenEvent.FULL_SCREEN, fullScreenHandler);
 				dispState = Application.application.stage.displayState;
+				
+				sld.value = 2;
+				this.thickness = sld.value; 
+		        
+		        textarea.visible = false;
+				
+				LogUtil.debug("Board.mxml::init");
 			}
 			
 			private function fullScreenHandler(evt:FullScreenEvent):void {
@@ -74,36 +84,47 @@
 			}
 			
 			/**
-			*Method is invoked when the mouse is released
-			*<p>
-			*The method finalizes the shape that was being edited. The shape is then sent as 
-			*an event, which updates all client views.  
-			*<p>
-			*The method also deleted the temporary feedback shape from the screen.
-			*/
-			private function doMouseUp():void{
-				isDrawing = false;
-				this.d = drawFactory.makeDrawObject(this.shapeStyle,segment, this.drawColor, this.thickness);
-				dispatchEvent(new Event(BoardMediator.SEND_SHAPE));
-				if (canvas.rawChildren.contains(feedback)){
-					canvas.rawChildren.removeChild(feedback);
-				}
-				feedback = new Shape;
-			}
-
-			/**
 			*Method is invoked when the mouse is pressed
 			*<p>
 			*The method captures the x and y coordinates of the mouse click and uses the point as
 			*the starting point in a shape
 			*/
-			private function doMouseDown():void{
-				isDrawing = true;
-				x1 = canvas.mouseX;
-				y1 = canvas.mouseY;
-				segment.push(x1);
-				segment.push(y1);
-				canvas.rawChildren.addChild(feedback);
+			private function doMouseDown_canvas():void
+			{
+				if(this.shapeStyle==DrawObject.TEXT)
+				{
+					if(isDrawing)
+					{
+						isDrawing = false;
+						this.d = drawFactory.makeDrawObject(this.shapeStyle,segment, this.drawColor, this.thickness, textarea.text);
+						dispatchEvent(new Event(BoardMediator.SEND_SHAPE));
+						
+				        textarea.visible = false;
+					}else
+					{
+						isDrawing = true;
+						x1 = canvas.mouseX;
+						y1 = canvas.mouseY;
+						segment.push(x1);
+						segment.push(y1);
+
+						textarea.text = "";
+				        textarea.visible = true;
+						textarea.x = canvas.mouseX;
+						textarea.y = canvas.mouseY;
+						textarea.setFocus();
+						
+						locateEditor();
+					}
+				}else
+				{
+					isDrawing = true;
+					x1 = canvas.mouseX;
+					y1 = canvas.mouseY;
+					segment.push(x1);
+					segment.push(y1);
+					canvas.rawChildren.addChild(feedback);
+				}
 			}
 			
 			/**
@@ -114,20 +135,60 @@
 			*<p>
 			*Note: The method only works if the mouse is pressed, otherwise does nothing.
 			*/
-			private function doMouseMove():void{
-				if (isDrawing){
-					x2 = canvas.mouseX;
-					y2 = canvas.mouseY;
-					segment.push(x2);
-					segment.push(y2);
+			private function doMouseMove_canvas():void
+			{
+				if(this.shapeStyle==DrawObject.TEXT)
+				{
+				}else
+				{
+					if (isDrawing)
+					{
+						x2 = canvas.mouseX;
+						y2 = canvas.mouseY;
+						segment.push(x2);
+						segment.push(y2);
 					
-					canvas.rawChildren.removeChild(feedback);
-					feedback = shapeFactory.makeFeedback(segment,this.shapeStyle, this.drawColor, this.thickness);
-					canvas.rawChildren.addChild(feedback);
+						canvas.rawChildren.removeChild(feedback);
+						feedback = shapeFactory.makeFeedback(segment,this.shapeStyle, this.drawColor, this.thickness, "");
+						canvas.rawChildren.addChild(feedback);
 					
-					x1 = x2;
-					y1 = y2;
+						x1 = x2;
+						y1 = y2;
+					}
 				}
+			}
+
+			/**
+			*Method is invoked when the mouse is released
+			*<p>
+			*The method finalizes the shape that was being edited. The shape is then sent as 
+			*an event, which updates all client views.  
+			*<p>
+			*The method also deleted the temporary feedback shape from the screen.
+			*/
+			private function doMouseUp_canvas():void
+			{
+				if(this.shapeStyle==DrawObject.TEXT)
+				{
+				}else
+				{
+					isDrawing = false;
+					this.d = drawFactory.makeDrawObject(this.shapeStyle,segment, this.drawColor, this.thickness, "");
+					dispatchEvent(new Event(BoardMediator.SEND_SHAPE));
+					if (canvas.rawChildren.contains(feedback)){
+						canvas.rawChildren.removeChild(feedback);
+					}
+					feedback = new Shape;
+				}
+			}
+			
+			public function locateEditor()
+			{
+				/*
+				resizerL.x = textarea.x + textarea.width;
+				resizerL.y = textarea.y + textarea.height-resizerL.height;
+				textarea.text = String(resizerL.x);
+				*/
 			}
 			
 			/**
@@ -210,16 +271,34 @@
 			]]>
 	</mx:Script>
 	
-	<mx:Canvas id="canvas" mouseUp="doMouseUp()" height="90%" width="100%"
-		mouseDown="doMouseDown()" mouseMove="doMouseMove()" backgroundAlpha="0">
+	<mx:Canvas id="canvas" 
+		height="100%" width="100%"
+		mouseDown="doMouseDown_canvas()" mouseMove="doMouseMove_canvas()" mouseUp="doMouseUp_canvas()"
+		backgroundAlpha="0">
+
+	<mx:TextArea id="textarea" width="200" height="200"
+		verticalScrollPolicy="auto" horizontalScrollPolicy="auto" 
+		wordWrap="false"
+		color="{cpik.selectedColor}"
+		 fontSize="{sld.value*8}"
+	/>
+
 	</mx:Canvas>
+
+	<!--
+	<comp:DynamicTextArea id="textarea"   width="200"  height="100" />
+	<mx:Button   id="resizerL"   width="20"  height="20"   icon="{pencil_icon}"
+		click=""
+	/>
+	-->
 	
 	<mx:ApplicationControlBar width="100%" height="10%">
-		<mx:Button width="20" height="20"  id="btnPenc" click="setShape(DrawObject.PENCIL)"  icon="{pencil_icon}" />
-		<mx:Button width="20" height="20" id="btnRect" click="setShape(DrawObject.RECTANGLE)" icon="{square_icon}"/>
-		<mx:Button width="20" height="20" id="btnEllip" click="setShape(DrawObject.ELLIPSE)" icon="{circle_icon}"/>
-		<mx:Button width="20" height="20" id="btnClear" click="dispatchEvent(new Event(BoardMediator.CLEAR_BOARD))" icon="{delete_icon}" />
-		<mx:Button width="20" height="20" id="btnUndo" click="dispatchEvent(new Event(BoardMediator.UNDO_SHAPE))" icon="{undo_icon}" />
+		<mx:Button width="20" height="20"  id="btnPenc"  click="setShape(DrawObject.PENCIL)"  icon="{pencil_icon}" />
+		<mx:Button width="20" height="20"  id="btnRect"  click="setShape(DrawObject.RECTANGLE)" icon="{square_icon}"/>
+		<mx:Button width="20" height="20"  id="btnEllip" click="setShape(DrawObject.ELLIPSE)" icon="{circle_icon}"/>
+		<mx:Button width="20" height="20"  id="btnText"  click="setShape(DrawObject.TEXT)"  icon="{text_icon}" />
+		<mx:Button width="20" height="20"  id="btnClear" click="dispatchEvent(new Event(BoardMediator.CLEAR_BOARD))" icon="{delete_icon}" />
+		<mx:Button width="20" height="20"  id="btnUndo"  click="dispatchEvent(new Event(BoardMediator.UNDO_SHAPE))" icon="{undo_icon}" />
 		<mx:ColorPicker change="changeColor(event)" id="cpik"/>
 		<mx:HSlider width="50" id="sld" change="changeThickness(event)"/>
 	</mx:ApplicationControlBar>
