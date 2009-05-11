@@ -17,9 +17,9 @@ package org.bigbluebutton.modules.whiteboard.model.component
 		 * @param thickness the thickness of this Ellipse
 		 * 
 		 */		
-		public function Ellipse(segment:Array, color:uint, thickness:uint)
+		public function Ellipse(segment:Array, color:uint, thickness:uint, text:String)
 		{
-			super(DrawObject.ELLIPSE, segment, color, thickness);
+			super(DrawObject.ELLIPSE, segment, color, thickness, text);
 		}
 		
 		/**
