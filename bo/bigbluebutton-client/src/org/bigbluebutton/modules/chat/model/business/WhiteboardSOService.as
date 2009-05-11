@@ -156,11 +156,12 @@ package org.bigbluebutton.modules.whiteboard.model.business
 		public function sendShape(shape:DrawObject):void
 		{
 			LogUtil.debug('WhiteboardSOService::sendShape ... ');
+			LogUtil.debug('WhiteboardSOService::sendShape ... ' + shape);
 			
 			try
 			{
 				//with SharedObject.send(callback-methot-name, params.....), all participants's callback-methot-name method will be callbacked(this method should be define inside "so.client")
-				whiteboardSO.send("addSegment", shape.getShapeArray(), shape.getType(), shape.getColor(), shape.getThickness());	
+				whiteboardSO.send("addSegment", shape.getShapeArray(), shape.getType(), shape.getColor(), shape.getThickness(), shape.getText());	
 			} catch(e:Error)
 			{
 				proxy.sendNotification(BoardFacade.FAILED_CONNECTION);
@@ -172,11 +173,11 @@ package org.bigbluebutton.modules.whiteboard.model.business
 		 * @param array The array representation of a shape
 		 * 
 		 */		
-		public function addSegment(array:Array, type:String, color:uint, thickness:uint):void
+		public function addSegment(array:Array, type:String, color:uint, thickness:uint, text:String):void
 		{
 			LogUtil.debug("WhiteboardSOService::addSegment ... callback type=" + type); 
 
-			var d:DrawObject = drawFactory.makeDrawObject(type, array, color, thickness);
+			var d:DrawObject = drawFactory.makeDrawObject(type, array, color, thickness, text);
 			//this.drawVO.segment = d;
 			proxy.sendNotification(BoardFacade.UPDATE, d);
 		}
