@@ -14,9 +14,9 @@ package org.bigbluebutton.modules.whiteboard.model.component
 		 * @param thickness the thickness of this Rectangle
 		 * 
 		 */		
-		public function Rectangle(segment:Array, color:uint, thickness:uint)
+		public function Rectangle(segment:Array, color:uint, thickness:uint, text:String)
 		{
-			super(DrawObject.RECTANGLE, segment, color, thickness);
+			super(DrawObject.RECTANGLE, segment, color, thickness, text);
 		}
 		
 		/**
