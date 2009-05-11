@@ -116,8 +116,8 @@ package org.bigbluebutton.modules.whiteboard.model
 		 * @param array The array representation of a shape
 		 * 
 		 */		
-		public function addSegment(array:Array, type:String, color:uint, thickness:uint):void{
-			var d:DrawObject = drawFactory.makeDrawObject(type,array,color,thickness);
+		public function addSegment(array:Array, type:String, color:uint, thickness:uint, text:String):void{
+			var d:DrawObject = drawFactory.makeDrawObject(type,array,color,thickness, text);
 			this.drawVO.segment = d;
 			sendNotification(BoardFacade.UPDATE, d);
 		}
