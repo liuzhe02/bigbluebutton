@@ -25,6 +25,7 @@ package org.bigbluebutton.modules.whiteboard.view
 		public static const SEND_SHAPE:String = "sendShape";
 		public static const CLEAR_BOARD:String = "clearBoard";
 		public static const UNDO_SHAPE:String = "undoShape"
+		public static const SEND_MOVE:String = "sendMove";
 		
 		private var _module:WhiteboardModule;
 		private var _window:Board;
@@ -150,7 +151,7 @@ package org.bigbluebutton.modules.whiteboard.view
 		   			_window.title = "Whiteboard";
 		   			_window.showCloseButton = false;
 		   			_window.xPosition = 675;
-		   			_window.yPosition = 0;
+		   			_window.yPosition = 225;
 		   			facade.sendNotification(WhiteboardModuleConstants.ADD_WINDOW, _window); 
 		   			_whiteboardWindowOpen = true;
 		   			//proxy.getChatTranscript();
