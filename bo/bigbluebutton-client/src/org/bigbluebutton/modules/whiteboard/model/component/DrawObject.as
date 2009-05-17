@@ -16,6 +16,7 @@ package org.bigbluebutton.modules.whiteboard.model.component
 		public static const RECTANGLE:String = "rectangle";
 		public static const ELLIPSE:String = "ellipse";
 		public static const TEXT:String = "text";
+		public static const POINTER:String = "pointer";
 		
 		protected var type:String;
 		protected var shape:Array;
