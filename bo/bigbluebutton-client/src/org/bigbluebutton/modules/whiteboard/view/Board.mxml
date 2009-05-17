@@ -17,12 +17,15 @@
 			import org.bigbluebutton.modules.whiteboard.model.component.DrawObjectFactory;
 			import org.bigbluebutton.modules.whiteboard.model.component.DrawObject;
 			
+			
 			private var x1:int;
 			private var y1:int;
 			private var x2:int; 
 			private var y2:int;
 			
 			public var d:DrawObject;	
+			public var pointerX:int;	
+			public var pointerY:int;	
 			private var isDrawing:Boolean; 
 			private var feedback:Shape = new Shape();
 			private var segment:Array = new Array();
@@ -36,6 +39,7 @@
 			[Bindable] private var circle_icon:Class = images.circle_icon;
 			[Bindable] private var delete_icon:Class = images.delete_icon;
 			[Bindable] private var text_icon:Class = images.text_icon;
+			[Bindable] private var pointer_icon:Class = images.pointer_icon;
 			
 //			[Bindable]
 //			public var drawVO:DrawVO = new DrawVO();
@@ -66,6 +70,7 @@
 				this.thickness = sld.value; 
 		        
 		        textarea.visible = false;
+		        pointer.visible = false;
 				
 				LogUtil.debug("Board.mxml::init");
 			}
@@ -116,6 +121,7 @@
 						
 						locateEditor();
 					}
+				}else if(this.shapeStyle==DrawObject.POINTER){
 				}else
 				{
 					isDrawing = true;
@@ -139,6 +145,11 @@
 			{
 				if(this.shapeStyle==DrawObject.TEXT)
 				{
+				}else if(this.shapeStyle==DrawObject.POINTER)
+				{
+					pointerX = canvas.mouseX;
+					pointerY = canvas.mouseY;
+					dispatchEvent(new Event(BoardMediator.SEND_MOVE));
 				}else
 				{
 					if (isDrawing)
@@ -170,6 +181,7 @@
 			{
 				if(this.shapeStyle==DrawObject.TEXT)
 				{
+				}else if(this.shapeStyle==DrawObject.POINTER){
 				}else
 				{
 					isDrawing = false;
@@ -197,13 +209,25 @@
 			 * This method is executed by the BoardMediator upon reception of an Update request. The method
 			 * is executed on all clients, even the one which sent the update request.
 			 */
-			public function drawSegment(draw:DrawObject):void{
+			public function drawSegment(draw:DrawObject):void
+			{
+				LogUtil.debug("draw.getType()=" + draw.getType() + "  " + draw.getShapeArray()[0] + "  " + draw.getShapeArray()[1]);	
+				
+				if(pointer.visible) pointer.visible = false;
+
 				newShape = shapeFactory.makeShape(draw);
 	            shapeList.push(newShape);
-	            canvas.rawChildren.addChild(shapeList[shapeList.length-1]);
-	            segment = new Array();
-	            newShape = new Shape();
+    	        canvas.rawChildren.addChild(shapeList[shapeList.length-1]);
+        	    segment = new Array();
+            	newShape = new Shape();
+			}
 
+			public function doMove(array:Array):void
+			{
+				if(!pointer.visible) pointer.visible = true;
+
+				pointer.x = array[0];
+				pointer.y = array[1];
 			}
 			
 			/**
@@ -283,6 +307,8 @@
 		 fontSize="{sld.value*8}"
 	/>
 
+	<mx:Image width="20" height="20"  id="pointer"  source="{pointer_icon}" />
+
 	</mx:Canvas>
 
 	<!--
@@ -293,13 +319,14 @@
 	-->
 	
 	<mx:ApplicationControlBar width="100%" height="10%">
-		<mx:Button width="20" height="20"  id="btnPenc"  click="setShape(DrawObject.PENCIL)"  icon="{pencil_icon}" />
-		<mx:Button width="20" height="20"  id="btnRect"  click="setShape(DrawObject.RECTANGLE)" icon="{square_icon}"/>
-		<mx:Button width="20" height="20"  id="btnEllip" click="setShape(DrawObject.ELLIPSE)" icon="{circle_icon}"/>
-		<mx:Button width="20" height="20"  id="btnText"  click="setShape(DrawObject.TEXT)"  icon="{text_icon}" />
-		<mx:Button width="20" height="20"  id="btnClear" click="dispatchEvent(new Event(BoardMediator.CLEAR_BOARD))" icon="{delete_icon}" />
-		<mx:Button width="20" height="20"  id="btnUndo"  click="dispatchEvent(new Event(BoardMediator.UNDO_SHAPE))" icon="{undo_icon}" />
-		<mx:ColorPicker change="changeColor(event)" id="cpik"/>
-		<mx:HSlider width="50" id="sld" change="changeThickness(event)"/>
+		<mx:Button width="20" height="20"  id="btnPointer"  click="pointer.visible=true;  setShape(DrawObject.POINTER)"  icon="{pointer_icon}" toolTip="pointer" />
+		<mx:Button width="20" height="20"  id="btnPenc"     click="pointer.visible=false; setShape(DrawObject.PENCIL)"  icon="{pencil_icon}" toolTip="pencil" />
+		<mx:Button width="20" height="20"  id="btnRect"     click="pointer.visible=false; setShape(DrawObject.RECTANGLE)" icon="{square_icon}" toolTip="rectangle" />
+		<mx:Button width="20" height="20"  id="btnEllip"    click="pointer.visible=false; setShape(DrawObject.ELLIPSE)" icon="{circle_icon}" toolTip="ellipse" />
+		<mx:Button width="20" height="20"  id="btnText"     click="pointer.visible=false; setShape(DrawObject.TEXT)"  icon="{text_icon}" toolTip="text" />
+		<mx:Button width="20" height="20"  id="btnClear"    click="pointer.visible=false; dispatchEvent(new Event(BoardMediator.CLEAR_BOARD))" icon="{delete_icon}" toolTip="clear" />
+		<mx:Button width="20" height="20"  id="btnUndo"     click="pointer.visible=false; dispatchEvent(new Event(BoardMediator.UNDO_SHAPE))" icon="{undo_icon}" toolTip="undo" />
+		<mx:ColorPicker change="changeColor(event)" id="cpik" toolTip="color" />
+		<mx:HSlider width="50" id="sld" change="changeThickness(event)" toolTip="thickness/fontsize" />
 	</mx:ApplicationControlBar>
 </MDIWindow>
