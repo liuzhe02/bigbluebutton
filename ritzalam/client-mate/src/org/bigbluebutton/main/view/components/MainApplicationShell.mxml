@@ -83,7 +83,8 @@
 				}
 			}	
 			protected function initializeShell():void
-			{				
+			{			
+				trace('Initializing');	
 				logWindow = new LogWindow();
 				logWindow.logs = logs;
 				

@@ -13,7 +13,7 @@ package org.bigbluebutton.main.model
 	
 	public class BbbModuleManager
 	{
-		public static const FILE_PATH:String = "conf/modules.xml";
+		public static const FILE_PATH:String = "conf/config.xml";
 		private var _urlLoader:URLLoader;
 		private var _initializedListeners:ArrayCollection = new ArrayCollection();
 		private var _moduleLoadedListeners:ArrayCollection = new ArrayCollection();
@@ -73,7 +73,7 @@ package org.bigbluebutton.main.model
 		}
 				
 		public function parse(xml:XML):void{
-			var list:XMLList = xml.module;
+			var list:XMLList = xml.modules.module;
 			_version = xml.@version;
 			
 			trace("version " + _version);

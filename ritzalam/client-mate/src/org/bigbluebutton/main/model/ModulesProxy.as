@@ -30,7 +30,7 @@ package org.bigbluebutton.main.model
 			if (initialized)
 			facade.sendNotification(MainApplicationConstants.APP_MODEL_INITIALIZED);
 		}
-		
+			
 		public function initialize():void {
 			modulesManager.initialize();			
 		}
