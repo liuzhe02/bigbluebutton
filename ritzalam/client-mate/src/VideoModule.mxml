@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
+	implements="org.bigbluebutton.common.IBigBlueButtonModule"
+	creationComplete="onCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.modules.video.VideoModuleFacade;
+			import org.bigbluebutton.common.messaging.Router;
+			
+			private var _router:Router;			
+			private var _moduleId:String = "VideoModule";
+			private var _moduleName:String = "Video Module";			
+			private var _attributes:Object;
+			
+			private function onCreationComplete():void {
+				LogUtil.debug("VideoModule Initialized");			
+			}
+			
+			public function acceptRouter(router:Router):void{
+				_router = router;
+			}
+		
+			public function get router():Router{
+				return _router;
+			}
+				
+			public function get moduleId():String {
+				return _moduleId;
+			}
+			
+			public function get moduleName():String {
+				return _moduleName;
+			}
+		
+			public function get uri():String {
+				if (_attributes.mode == "PLAYBACK") {										
+					return _attributes.uri + "/" + _attributes.playbackRoom;
+				} 
+				
+				return _attributes.uri + "/" + _attributes.room;
+			}
+			
+			public function get username():String {
+				return _attributes.username;
+			}
+			
+			public function get userid():Number {
+				return _attributes.userid as Number;
+			}
+			
+			public function get role():String {
+				return _attributes.userrole as String;
+			}
+			
+			public function start(attributes:Object):void {	
+				_attributes = attributes;	
+				VideoModuleFacade.getInstance().startup(this);	
+			}
+		
+			public function stop():void {
+				VideoModuleFacade.getInstance().stop(this);
+			}
+		]]>
+	</mx:Script>
+</mx:Module>

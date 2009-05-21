@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MDIWindow xmlns="flexlib.mdi.containers.*" 
+	       xmlns:mx="http://www.adobe.com/2006/mxml" 
+	       width="300" height="300" showCloseButton="false"
+	       click="setFocusOn(this.txtMsg || this.txtChatBox)"
+	       focusEnd="setFocusOff()"
+	       creationComplete="init()"
+	       implements="org.bigbluebutton.common.IBbbModuleWindow">
+
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.modules.chat.view.SendMessageEvent;
+			import mx.core.Application;
+			import mx.events.MenuEvent;
+			import mx.controls.Menu;
+			import mx.utils.ColorUtil;
+			import mx.core.UIComponent;
+					
+			private var sizeM:Menu;					
+			public static const SEND_MESSAGE:String = 'sendMessageEvent';
+			
+			private var _xPosition:int;
+			private var _yPosition:int;
+						
+			private function init():void{
+
+			}
+									
+			public function showNewMessage(message:String):void
+			{
+				txtChatBox.htmlText += message;
+			}
+			
+			public function setFocusOn(component:UIComponent):void
+			{
+				if (component.id == "txtMsg") {
+				component.setFocus();
+                component.drawFocus(true);
+    			}
+    			else
+    			{
+    				this.txtMsg.setFocus();
+    				this.txtMsg.drawFocus(true);
+    			}
+				//this.txtMsg.focusManager.showFocusIndicator = true;
+			}
+			
+			public function setFocusOff():void
+			{
+				//this.txtMsg.setFocus();
+				//this.txtMsg.cursorManager.hideCursor();
+				this.txtMsg.drawFocus(false);
+				
+				//this.txtMsg.cursorManager.removeAllCursors();
+			}
+			
+		    public function sendMessages():void
+		    {
+			   	if (txtMsg.text.length > 1000)
+			   	{
+			   		txtChatBox.htmlText += "Your message is too long!" + 
+			   			" There is a limit of maximum 1000 character per message." + "\n";
+			   		return;
+			   	}  	else if (txtMsg.text != ""){
+			   		dispatchEvent(new SendMessageEvent(SEND_MESSAGE));
+			   	}
+			}
+		   
+            private function updateScroll():void
+            {
+            	txtChatBox.verticalScrollPosition = txtChatBox.maxVerticalScrollPosition;
+            }
+
+
+			public function get xPosition():int {
+				return _xPosition;
+			}
+			
+			public function get yPosition():int {
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void {
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void {
+				_yPosition = y;
+			}
+            
+		]]>
+	</mx:Script>
+	<mx:TextArea id="txtChatBox" editable="false" width="100%" height="100%" focusEnabled="false" updateComplete="updateScroll()"/>		
+	<mx:ApplicationControlBar id="chatCtrlBar" width="100%" height="10%">		
+		<mx:TextInput id="txtMsg" width="100%" enter="sendMessages()"/>
+		<mx:ColorPicker id="cmpColorPicker" showTextField="false" toolTip="Text Color" selectedColor="0x000000"/>
+		<mx:Button label="Send" id="sendBtn" toolTip="Send Message" click="sendMessages()"/>			    
+	</mx:ApplicationControlBar>
+</MDIWindow>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
+	implements="org.bigbluebutton.common.IBigBlueButtonModule"
+	creationComplete="onCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.modules.viewers.ViewersFacade;
+			import org.bigbluebutton.common.messaging.Router;
+			
+			private var _router:Router;
+			
+			private var _moduleId:String = "ViewersModule";
+			private var _moduleName:String = "Viewers Module";
+			
+			private var _attributes:Object;
+			private var _playbackRoom:String;
+			
+			private function onCreationComplete():void {
+				LogUtil.debug("ViewersModule Initialized");		
+			}
+			
+			public function acceptRouter(router:Router):void{
+				_router = router;
+			}
+		
+			public function get router():Router{
+				return _router;
+			}
+				
+			public function get moduleId():String {
+				return _moduleId;
+			}
+			
+			public function get moduleName():String {
+				return _moduleName;
+			}
+		
+			public function get baseUri():String {
+				return _attributes.uri;
+			}
+			
+			public function get playbackRoom():String {
+				return _playbackRoom as String;
+			}
+			
+			public function get uri():String {				
+				if (_attributes.mode == "PLAYBACK") {										
+					return _attributes.uri + "/" + _playbackRoom;
+				} 
+				
+				return _attributes.uri + "/" + _attributes.room;
+
+			}
+			
+			public function get role():String {
+				LogUtil.debug("ViewersModule userrole " + _attributes.userrole);
+				return _attributes.userrole;
+			}
+
+			public function get username():String {
+				return _attributes.username;
+			}
+			
+			public function get userid():Number {
+				return _attributes.userid as Number;
+			}
+			
+			public function get host():String {
+				return _attributes.host;
+			}
+			
+			public function set role(r:String):void {
+				_attributes.userrole = r;
+			}
+
+			public function set username(u:String):void {
+				_attributes.username = u;
+			}
+			
+			public function set userid(u:Number):void {
+				_attributes.userid = u;
+			}
+			
+			public function set authToken(a:String):void {
+				_attributes.authToken = a;
+			}
+			
+			public function get authToken():String {
+				return _attributes.authToken;
+			}
+			
+			public function set room(r:String):void {
+				_attributes.room = r;
+			}
+			
+			public function get room():String {
+				return _attributes.room;
+			}
+			
+			public function set mode(m:String):void {
+				_attributes.mode = m;
+			}
+
+			public function get mode():String {
+				return _attributes.mode;
+			}
+									
+			public function set voicebridge(v:String):void {
+				_attributes.voicebridge = v;
+			}
+
+			public function get voicebridge():String {
+				return _attributes.voicebridge;
+			}
+						
+			public function set conference(c:String):void {
+				_attributes.conference = c;
+			}
+			
+			public function get conference():String {
+				return _attributes.conference;
+			}
+			
+			public function set record(r:Boolean):void {
+				_attributes.record = r;
+			}
+			
+			public function get record():Boolean {
+				return _attributes.record;
+			}
+						
+			public function start(attributes:Object):void {		
+				_attributes = attributes;	
+				
+				var now:Date = new Date();	
+				_playbackRoom = now.getTime().toString();
+				
+				LogUtil.debug('Passed ViewersModule mode: ' + _attributes.mode);
+				ViewersFacade.getInstance().startup(this);	
+			}
+		
+			public function stop():void {
+				ViewersFacade.getInstance().stop(this);
+			}
+		]]>
+	</mx:Script>
+</mx:Module>
