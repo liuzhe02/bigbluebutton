@@ -93,9 +93,9 @@ package org.bigbluebutton.modules.viewers.model.services
 			
 			try {	
 				var uri:String = _module.uri;
-				if (tunnel) {
-					uri = uri.replace(/rtmp:/g, "rtmpt:");
-				}
+//				if (tunnel) {
+//					uri = uri.replace(/rtmp:/g, "rtmpt:");
+//				}
 								
 				LogUtil.debug(NAME + "::Connecting to " + uri + " [" + username + "," + role + "," + conference + 
 						"," + mode + "," + room + "]");		

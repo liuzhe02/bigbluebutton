@@ -44,6 +44,10 @@ package org.bigbluebutton.main.model
 			return _user.username;
 		}
 
+		public function useProtocol(protocol:String):void {
+			modulesManager.useProtocol(protocol);
+		}
+
 //		public function startModule(name:String, router:Router):void {
 //			LogUtil.debug('Request to start module ' + name);
 //			modulesManager.startModule(name, router);
@@ -99,6 +103,14 @@ package org.bigbluebutton.main.model
 		
 		public function getNumberOfModules():int {
 			return modulesManager.getNumberOfModules();
+		}
+		
+		public function getPortTestHost():String {
+			return modulesManager.portTestHost;
+		}
+		
+		public function getPortTestApplication():String {
+			return modulesManager.portTestApplication;
 		}
 	}
 }

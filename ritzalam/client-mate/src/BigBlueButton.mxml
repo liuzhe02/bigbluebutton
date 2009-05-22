@@ -25,9 +25,9 @@
 		}	
 		]]>
 	</mx:Script>		
-	<maps:ApplicationEventMap />	
+	<!--maps:ApplicationEventMap />	
 	
-	<mate:Listener type="{ConfigEvent.CONFIG_LOADED_EVENT}" method="handleConfigLoadedEvent" />
+	<mate:Listener type="{ConfigEvent.CONFIG_LOADED_EVENT}" method="handleConfigLoadedEvent" /-->
 	
 	<mainView:MainApplicationShell id="mainShell"/>	
 </mx:Application>
