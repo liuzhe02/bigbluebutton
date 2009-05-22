@@ -40,6 +40,21 @@
         <dependency org="spring" name="spring-jms" rev="2.5.6" />
         <dependency org="spring" name="spring-tx" rev="2.5.6" />
         <dependency org="spring" name="aopalliance" rev="" />
+
+        <!-- Spring Integration -->
+        <dependency org="org.springframework.integration" name="spring-integration-adapter" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-core" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-event" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-file" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-http" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-httpinvoker" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-jms" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-mail" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-rmi" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-security" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-stream" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-ws" rev="1.0.2.RELEASE" />
+        <dependency org="org.springframework.integration" name="spring-integration-xml" rev="1.0.2.RELEASE" />
         
         <dependency org="mina" name="mina-core" rev="1.1.6" />
     </dependencies>

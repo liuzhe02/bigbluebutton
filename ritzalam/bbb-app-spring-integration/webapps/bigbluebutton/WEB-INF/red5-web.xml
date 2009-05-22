@@ -41,5 +41,5 @@
 	</bean>
 	
 	<import resource="bbb-apps.xml" />
-	
+	<import resource="cafe-xml.xml" />
 </beans>

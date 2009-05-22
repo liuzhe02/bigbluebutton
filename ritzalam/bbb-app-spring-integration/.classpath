@@ -33,5 +33,18 @@
 	<classpathentry kind="lib" path="lib/spring-web-2.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/testng-5.8.jar"/>
 	<classpathentry kind="lib" path="lib/red5-0.8rc3.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-adapter-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-core-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-event-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-file-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-http-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-httpinvoker-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-jms-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-mail-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-rmi-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-security-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-stream-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-ws-1.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-integration-xml-1.0.2.RELEASE.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
