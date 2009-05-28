@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MDIWindow xmlns="flexlib.mdi.containers.*" 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="400" height="300" showCloseButton="false"
+	creationComplete="onCreationComplete()"
+	implements="org.bigbluebutton.common.IBbbModuleWindow">
+	
+	<mx:Script>
+		<![CDATA[
+			private var _xPosition:int;
+			private var _yPosition:int;
+			
+			private function onCreationComplete():void{
+				
+			}
+			
+			public function get xPosition():int{
+				return _xPosition;
+			}
+			
+			public function get yPosition():int{
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void{
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void{
+				_yPosition = y;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:SWFLoader id="player" height="100%" width="100%" />
+</MDIWindow>

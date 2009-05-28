@@ -17,20 +17,21 @@
 -->
 
 	<module name="VideoModule" url="VideoModule.swf" 
-			uri="rtmp://localhost/oflaDemo"
+			uri="rtmp://192.168.0.120/oflaDemo"
+			loadNextModule="DeskShareModule"
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"
 	/>
 	<module name="ChatModule" url="ChatModule.swf" 
-			uri="rtmp://localhost/bigbluebutton" 
+			uri="rtmp://192.168.0.120/bigbluebutton" 
 			loadNextModule="PresentationModule"	
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"		 
 	/>
 
 	<module name="ViewersModule" url="ViewersModule.swf" 
-			uri="rtmp://localhost/bigbluebutton" 
-			host="http://localhost:8080/bigbluebutton/conference-session/enter"
+			uri="rtmp://192.168.0.120/bigbluebutton" 
+			host="http://192.168.0.120:8080/bigbluebutton/conference-session/enter"
 			onAppInitEvent="LOAD" loadNextModule="ChatModule"
 			onAppStartEvent="START"
 			onUserLogoutEvent="STOP"
@@ -38,16 +39,21 @@
 	
 
 	<module name="ListenersModule" url="ListenersModule.swf" 
-			uri="rtmp://localhost/bigbluebutton" 
-			recordingHost="http://localhost"
+			uri="rtmp://192.168.0.120/bigbluebutton" 
+			recordingHost="http://192.168.0.120"
 			loadNextModule="VideoModule"
 			onUserJoinedEvent="START"
 			onUserLogoutEvent="STOP"
 	/>
 	<module name="PresentationModule" url="PresentationModule.swf" 
-			uri="rtmp://localhost/bigbluebutton" 
-			host="http://localhost:8080" 
+			uri="rtmp://192.168.0.120/bigbluebutton" 
+			host="http://192.168.0.120:8080" 
 			loadNextModule="ListenersModule"
+			onUserJoinedEvent="START" 
+			onUserLogoutEvent="STOP"
+	/>
+	<module name="DeskShareModule" url="DeskShareModule.swf" 
+			uri="rtmp://192.168.0.120/deskShare" 
 			onUserJoinedEvent="START" 
 			onUserLogoutEvent="STOP"
 	/>
