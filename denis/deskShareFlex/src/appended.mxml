@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="onCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import org.red5.as3.net.Connection;
+		
+			private var conn:Connection;
+			private var nc:NetConnection;
+			private var videoHolder:UIComponent = new UIComponent();
+			private var videoPlayer:Video;
+			
+			private function onCreationComplete():void{
+				conn = new Connection();
+				conn.setURI("rtmp://192.168.0.120/oflaDemo");
+				conn.connect();
+				nc = conn.getConnection();
+				videoPlayer = new Video(800, 600);
+				videoHolder.setActualSize(800, 600);
+				videoHolder.addChild(videoPlayer);
+				canvas.addChild(videoHolder); //This is just a canvas in the mainapp.mxml
+				videoHolder.x = 0;
+				videoHolder.y = 0;
+			}
+
+			private function startViewing():void{
+				var ns:NetStream = new NetStream(nc);
+				ns.client = this;
+				ns.bufferTime = 0;
+				ns.receiveVideo(true);
+				ns.receiveAudio(false);
+				videoPlayer.attachNetStream(ns);
+				ns.play("outstream");
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Canvas id="canvas" />
+	<mx:Button id="startVideo" click="startViewing()" label="start video" />
+</mx:Application>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="onCreationComplete()" backgroundColor="white">
+
+	<mx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+
+			private var screenWidth;
+			private var screenHeight;
+			
+			private var rectangle:UIComponent;
+			private var rectangleShape:Shape;
+			
+			private var startDragX:Number;
+			private var startDragY:Number;
+			private var startDragMouseX:Number;
+			private var startDragMouseY:Number;
+			
+			private function onCreationComplete(){
+				screenWidth = Capabilities.screenResolutionX;
+				screenHeight = Capabilities.screenResolutionY;
+				this.width = screenWidth / 10;
+				this.height = screenHeight / 10;
+				
+				rectangle = new UIComponent();
+				rectangle.width = 80;
+				rectangle.height = 60;
+				rectangleShape = new Shape();
+				rectangleShape.graphics.beginFill(0x000000);
+				rectangleShape.graphics.drawRect(0,0, 80, 60);
+				rectangleShape.graphics.endFill();
+				rectangle.addChild(rectangleShape);
+				this.rawChildren.addChild(rectangle);
+				rectangle.x = this.width/2 - rectangle.width/2;
+				rectangle.y = this.height/2 - rectangle.height/2;
+				
+				rectangle.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+				rectangle.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				this.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+			}
+			
+			private function onMouseDown(e:MouseEvent){
+				startDragX = rectangle.x;
+				startDragY = rectangle.y;
+				startDragMouseX = this.mouseX;
+				startDragMouseY = this.mouseY;
+				rectangle.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			}
+			
+			private function onMouseMove(e:MouseEvent){
+				var newX:Number = startDragX + (this.mouseX - startDragMouseX);
+				var newY:Number = startDragY + (this.mouseY - startDragMouseY);
+				
+				if (newX < 0) rectangle.x = 0;
+				else if (newX > this.width - 80) rectangle.x = this.width - rectangle.width;
+				else rectangle.x = newX;
+				
+				if (newY < 0) rectangle.y = 0;
+				else if (newY > this.height - 60) rectangle.y = this.height - rectangle.height;
+				else rectangle.y = newY;
+			}
+			
+			private function onMouseUp(e:MouseEvent){
+				rectangle.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				ExternalInterface.call("setScreenCoordinates", getXPosition(), getYPosition());
+			}
+			
+			private function onMouseOut(e:MouseEvent){
+				rectangle.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			}
+			
+			private function getXPosition():Number{
+				return rectangle.x * 10;
+			}
+			
+			private function getYPosition():Number{
+				return rectangle.y * 10;
+			}
+		]]>
+	</mx:Script>
+</mx:Canvas>
