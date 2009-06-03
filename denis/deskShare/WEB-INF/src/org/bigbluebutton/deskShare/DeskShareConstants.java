@@ -1,4 +1,4 @@
-package deskShare;
+package org.bigbluebutton.deskShare;
 
 public class DeskShareConstants {
 	public static final int PORT = 1026;

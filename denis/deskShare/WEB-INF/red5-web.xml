@@ -27,7 +27,7 @@
   </bean>
 
   <bean id="web.handler"
-    class="deskShare.Application"
+    class="org.bigbluebutton.deskShare.Application"
     init-method="init">
     <!-- Have the profiler spit out data every 15 seconds -->
     <!--property name="profilerFrequency" value="15"/-->

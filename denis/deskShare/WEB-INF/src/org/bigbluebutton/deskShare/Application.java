@@ -1,4 +1,4 @@
-package deskShare;
+package org.bigbluebutton.deskShare;
 
 import java.util.List;
 
