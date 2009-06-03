@@ -1,5 +1,10 @@
 package org.bigbluebutton.modules.deskShare
 {
+	/**
+	 * The constants for this module 
+	 * @author Snap
+	 * 
+	 */	
 	public class DeskShareModuleConstants
 	{
 		public static const START:String       = "start module";

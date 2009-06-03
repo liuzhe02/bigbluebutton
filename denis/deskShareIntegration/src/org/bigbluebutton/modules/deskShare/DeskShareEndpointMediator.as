@@ -9,6 +9,11 @@ package org.bigbluebutton.modules.deskShare
 	import org.puremvc.as3.multicore.patterns.mediator.Mediator;
 	import org.puremvc.as3.multicore.utilities.pipes.interfaces.IPipeMessage;
 	
+	/**
+	 * This is the EndpointMediator for the DeskShareModule 
+	 * @author Snap
+	 * 
+	 */	
 	public class DeskShareEndpointMediator extends Mediator implements IMediator
 	{
 		public static const NAME:String = "DeskShareEndpointMediator";
@@ -23,6 +28,11 @@ package org.bigbluebutton.modules.deskShare
 		private static const PLAYBACK_MESSAGE:String = "PLAYBACK_MESSAGE";
 		private static const PLAYBACK_MODE:String = "PLAYBACK_MODE";
 		
+		/**
+		 * The constructor 
+		 * @param module - The DeskShareModule which this class is serving as EndpointMediator for
+		 * 
+		 */		
 		public function DeskShareEndpointMediator(module:IBigBlueButtonModule)
 		{
 			super(NAME, module);
@@ -36,6 +46,11 @@ package org.bigbluebutton.modules.deskShare
 			return NAME;
 		}
 		
+		/**
+		 * Lists the notifications to which this class listens to 
+		 * @return 
+		 * 
+		 */		
 		override public function listNotificationInterests():Array{
 			return [
 					DeskShareModuleConstants.ADD_WINDOW,
@@ -45,6 +60,11 @@ package org.bigbluebutton.modules.deskShare
 					];
 		}
 		
+		/**
+		 * Handles relevant notifications as they are received 
+		 * @param notification
+		 * 
+		 */		
 		override public function handleNotification(notification:INotification):void{
 			LogUtil.debug("DeskShareEndpoint MSG. " + notification.getName());
 			switch(notification.getName()){
@@ -71,6 +91,11 @@ package org.bigbluebutton.modules.deskShare
 			}
 		}
 		
+		/**
+		 * Called when a message is received from somewhere outside the DeskShareModule 
+		 * @param message
+		 * 
+		 */		
 		private function messageReceiver(message:IPipeMessage):void{
 			var msg:String = message.getHeader().MSG as String;
 			switch(msg){
@@ -82,6 +107,12 @@ package org.bigbluebutton.modules.deskShare
 			}
 		}
 		
+		/**
+		 * A method for playing back messages in Playback Mode
+		 * @not implemented 
+		 * @param message
+		 * 
+		 */		
 		private function playMessage(message:XML):void{
 			
 		}

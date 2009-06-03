@@ -9,8 +9,19 @@ package org.bigbluebutton.modules.deskShare.controller
 	import org.puremvc.as3.multicore.interfaces.INotification;
 	import org.puremvc.as3.multicore.patterns.command.SimpleCommand;
 	
+	/**
+	 * The StartupCommand is called when the application is created and initialized
+	 * This class in turn initializes all objects this module needs in order to run 
+	 * @author Snap
+	 * 
+	 */	
 	public class StartupCommand extends SimpleCommand implements ICommand
 	{
+		/**
+		 * The method which does all the initialization work 
+		 * @param notification
+		 * 
+		 */		
 		override public function execute(notification:INotification):void{
 			var module:DeskShareModule = notification.getBody() as DeskShareModule;
 			
