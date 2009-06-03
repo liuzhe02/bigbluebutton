@@ -38,18 +38,15 @@
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-	<target name="dist">
-		<mkdir dir="WEB-INF/dist/classes"/>
-		<mkdir dir="WEB-INF/dist/lib"/>
-		<copy includeemptydirs="false" todir="WEB-INF/dist/classes">
-			<fileset dir="WEB-INF/classes"></fileset>
-		</copy>
-		<copy includeemptydirs="false" todir="WEB-INF/dist/lib">
+	<target name="dist" depends="build">
+		<mkdir dir="../red5/webapps/deskShare/WEB-INF/lib"/>
+		<copy includeemptydirs="false" todir="../red5/webapps/deskShare/WEB-INF/lib">
 			<fileset dir="WEB-INF/lib"></fileset>
 		</copy>
-		<copy file="WEB-INF/logback-deskShare.xml" todir="WEB-INF/dist/"/>
-		<copy file="WEB-INF/red5-web.properties" todir="WEB-INF/dist/"/>
-		<copy file="WEB-INF/red5-web.xml" todir="WEB-INF/dist/"/>
-		<copy file="WEB-INF/web.xml" todir="WEB-INF/dist/"/>
+		<copy file="WEB-INF/logback-deskShare.xml" todir="../red5/webapps/deskShare/WEB-INF/"/>
+		<copy file="WEB-INF/red5-web.properties" todir="../red5/webapps/deskShare/WEB-INF/"/>
+		<copy file="WEB-INF/red5-web.xml" todir="../red5/webapps/deskShare/WEB-INF/"/>
+		<copy file="WEB-INF/web.xml" todir="../red5/webapps/deskShare/WEB-INF/"/>
+		<jar destfile="../red5/webapps/deskShare/WEB-INF/lib/deskShare.jar" basedir="WEB-INF/classes"></jar>
 	</target>
 </project>
