@@ -1,5 +1,10 @@
 package org.bigbluebutton.deskShare;
 
+/**
+ * The constants for this application
+ * @author Snap
+ *
+ */
 public class DeskShareConstants {
 	public static final int PORT = 1026;
 	
