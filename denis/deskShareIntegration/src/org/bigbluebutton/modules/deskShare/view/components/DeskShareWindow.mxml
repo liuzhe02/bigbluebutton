@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MDIWindow xmlns="flexlib.mdi.containers.*" 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
-	width="400" height="300" showCloseButton="false"
-	creationComplete="onCreationComplete()"
-	implements="org.bigbluebutton.common.IBbbModuleWindow">
+	showCloseButton="false"
+	creationComplete="onCreationComplete()" width="236" height="70"
+	implements="org.bigbluebutton.common.IBbbModuleWindow" xmlns:components="org.bigbluebutton.modules.deskShare.view.components.*" 
+	layout="absolute" resizable="false" verticalScrollPolicy="off" horizontalScrollPolicy="off">
 	
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.modules.deskShare.view.DeskShareWindowMediator;
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+			import org.bigbluebutton.modules.deskShare.model.business.DeskShareProxy;
 			private var _xPosition:int;
 			private var _yPosition:int;
 			
-			private function onCreationComplete():void{
-				
-			}
+			public var proxy:DeskShareProxy;
+			public var videoHolder:UIComponent = new UIComponent();
+			public var videoPlayer:Video;
+			public var ns:NetStream;
+			public var capturing:Boolean = false;
 			
 			public function get xPosition():int{
 				return _xPosition;
@@ -29,8 +36,23 @@
 			public function set yPosition(y:int):void{
 				_yPosition = y;
 			}
+			
+			private function onCreationComplete():void{
+				videoPlayer = new Video(800, 600);
+				videoHolder.setActualSize(800, 600);
+				videoHolder.addChild(videoPlayer);
+				canvas.addChild(videoHolder);
+				videoHolder.x = 0;
+				videoHolder.y = 0;
+			}
+			
 		]]>
 	</mx:Script>
+	<mx:ApplicationControlBar id="bar" width="100%">
+		<mx:Button id="btnStartApplet" label="Start Sharing" click="dispatchEvent(new Event(DeskShareWindowMediator.START_SHARING))" x="10" y="10"/>
+		<mx:Button id="btnStartViewing" label="Start Viewing" click="dispatchEvent(new Event(DeskShareWindowMediator.START_VIEWING))" x="119" y="10"/>
+	</mx:ApplicationControlBar>
+	<mx:Canvas id="canvas" x="0" y="35" visible="false"/>
+	<components:DimensionsBox id="dimensionsBox" visible="false"/>
 	
-	<mx:SWFLoader id="player" height="100%" width="100%" />
 </MDIWindow>

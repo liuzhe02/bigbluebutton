@@ -11,6 +11,8 @@ package org.bigbluebutton.modules.deskShare
 		public static const CLOSE_WINDOW:String = 'CLOSE_WINDOW';	
 		public static const ADD_WINDOW:String = 'ADD_WINDOW';
 		public static const REMOVE_WINDOW:String = 'REMOVE_WINDOW';	
+		
+		public static const START_VIEWING:String = "START_VIEWING";
 
 	}
 }

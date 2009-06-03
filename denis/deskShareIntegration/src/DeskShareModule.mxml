@@ -5,6 +5,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.Alert;
 			import org.bigbluebutton.modules.deskShare.DeskShareFacade;
 			import org.bigbluebutton.modules.chat.ChatFacade;
 			import org.bigbluebutton.common.messaging.Router;
@@ -73,6 +74,21 @@
 			
 			public function stop():void{
 				DeskShareFacade.getInstance().stop(this);
+			}
+			
+			public function getRoom():String{
+				return _attributes.room;
+			}
+			
+			public function getRed5ServerUri():String{
+				return _attributes.uri;
+			}
+			
+			public function getCaptureServerUri():String{
+				var uri:String = _attributes.uri;
+				uri = uri.split("/")[2];
+				//Alert.show(uri);
+				return uri;
 			}
 		]]>
 	</mx:Script>
