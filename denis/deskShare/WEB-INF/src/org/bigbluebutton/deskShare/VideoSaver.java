@@ -2,7 +2,6 @@ package org.bigbluebutton.deskShare;
 
 import java.awt.image.BufferedImage;
 
-import com.xuggle.red5.io.Red5HandlerFactory;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IContainerFormat;
