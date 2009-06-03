@@ -1,10 +1,12 @@
 package deskShare;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -65,10 +67,10 @@ public class ClientProxy implements Runnable {
 	
 	private void acceptRoomConnection(Socket socket){
 		try{
-			DataInputStream inStream = new DataInputStream(socket.getInputStream());
-			int roomNum = inStream.readInt();
+			BufferedReader inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			String roomNum = inStream.readLine();
 			RoomThread room = new RoomThread(roomNum, socket);
-			Red5Streamer streamPublisher = new Red5Streamer(scope, Integer.toString(roomNum));
+			Red5Streamer streamPublisher = new Red5Streamer(scope, roomNum);
 			room.registerListener(streamPublisher);
 			roomList.add(room);
 			Thread thread = new Thread(room);

@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
  */
 public class RoomThread implements Runnable {
 	
-	private int roomNumber;
+	private String roomNumber;
 	private Socket socket;
 	private boolean keepCapturing;
 	private ArrayList<IImageListener> imageListeners;
@@ -25,7 +25,7 @@ public class RoomThread implements Runnable {
 	 * The default constructor
 	 * @param roomNumber - the room number of the room this object is accepting images for
 	 */
-	public RoomThread(int roomNumber, Socket socket){
+	public RoomThread(String roomNumber, Socket socket){
 		this.roomNumber = roomNumber;
 		this.socket = socket;
 		this.keepCapturing = true;
@@ -85,6 +85,8 @@ public class RoomThread implements Runnable {
 			inStream = new DataInputStream(socket.getInputStream());
 			long totalBytes = inStream.readLong();
 			System.out.println("Receiving " + totalBytes + " bytes");
+			if (totalBytes > 150000 || totalBytes < 0) return;
+			
 			int bytesRead = 0, index = 0, totalRead = 0;
 			while(totalRead < totalBytes){
 				//Read bytes sent from the socket
@@ -108,6 +110,7 @@ public class RoomThread implements Runnable {
 			BufferedImage image = ImageIO.read(imageData);
 
 			//Notify all the listening classes that a new image has been received
+			if (image == null) return;
 			notifyListeners(image);
 
 		} catch(Exception e){

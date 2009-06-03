@@ -87,7 +87,7 @@ public class Red5Streamer implements IImageListener {
 			System.out.println("could not create converter");
 		}
 		IVideoPicture outFrame = converter.toPicture(image, timestamp);
-		timestamp += 333000;
+		timestamp += DeskShareConstants.TIME_STAMP;
 		frameNumber ++;
 
 		outFrame.setQuality(0);
@@ -182,7 +182,7 @@ public class Red5Streamer implements IImageListener {
 		outStreamCoder.setFlag(IStreamCoder.Flags.FLAG_QSCALE, true);
 		outStreamCoder.setGlobalQuality(0);
 
-		IRational frameRate = IRational.make(3,1);
+		IRational frameRate = IRational.make(DeskShareConstants.FRAME_RATE,1);
 		outStreamCoder.setFrameRate(frameRate);
 		IRational timeBase = IRational.make(frameRate.getDenominator(), frameRate.getNumerator());
 		outStreamCoder.setTimeBase(timeBase);
