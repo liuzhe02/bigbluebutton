@@ -10,6 +10,7 @@ package converter;
  * 	- 2 most significant bits of the blue value are kept
  * 	- Floyd-Steinberg Dithering is applied to create a more proper image
  * @author Snap
+ * @unimplemented
  *
  */
 public class EightBitConverter {
