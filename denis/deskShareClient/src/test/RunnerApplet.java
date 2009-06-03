@@ -10,8 +10,9 @@ public class RunnerApplet extends JApplet {
 	
 	public void init(){
 		Capture capture = new Capture();
-		int roomNumber = Integer.parseInt(getParameter("ROOM"));
-		capThread = new CaptureThread(capture, roomNumber);
+		String roomNumber = getParameter("ROOM");
+		String IP = getParameter("IP");
+		capThread = new CaptureThread(capture, IP, roomNumber);
 	}
 	
 	public void stop(){

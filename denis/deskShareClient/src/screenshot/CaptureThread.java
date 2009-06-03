@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
@@ -11,24 +12,26 @@ import javax.imageio.ImageIO;
 public class CaptureThread implements Runnable {
 	
 	private static final int PORT = 1026;
-	private static final String IP = "192.168.0.120";
-	private static final int ROOM_NUMBER = 1234;
+	//private static final String IP = "192.168.0.120";
 	
 	private Socket socket = null;
 	public Capture capture;
-	private int roomNumber;
+	private String roomNumber;
+	private String IP;
 	
-	public CaptureThread(Capture capture, int room){
+	public CaptureThread(Capture capture, String IP, String room){
 		this.capture = capture;
 		this.roomNumber = room;
+		this.IP = IP;
 	}
 	
 	public void run(){
 		DataOutputStream outStream = null;
 		try{
 			socket = new Socket(IP, PORT);
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			out.println(roomNumber);
 			outStream = new DataOutputStream(socket.getOutputStream());
-			outStream.writeInt(roomNumber);
 		} catch(Exception e){
 			e.printStackTrace(System.out);
 			System.exit(0);
@@ -50,7 +53,7 @@ public class CaptureThread implements Runnable {
 			}
 			
 			try{
-				Thread.sleep(333);
+				Thread.sleep(500);
 			} catch (Exception e){
 				System.exit(0);
 			}
