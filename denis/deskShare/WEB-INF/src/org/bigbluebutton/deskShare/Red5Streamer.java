@@ -49,6 +49,7 @@ public class Red5Streamer implements IImageListener {
 	private String outStreamName;
 	/**
 	 * The default constructor
+	 * The stream which gets published by the streamer has the same name as the scope. One stream allowed per room
 	 */
 	public Red5Streamer(IScope scope, String streamName){
 		this.outStreamName = streamName;

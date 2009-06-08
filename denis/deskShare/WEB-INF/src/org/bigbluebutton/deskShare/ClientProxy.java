@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.red5.server.Scope;
 import org.red5.server.api.IScope;
 
 /**
@@ -64,11 +66,12 @@ public class ClientProxy implements Runnable {
 			BufferedReader inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String roomNum = inStream.readLine();
 			RoomThread room = new RoomThread(roomNum, socket);
-			Red5Streamer streamPublisher = new Red5Streamer(scope, roomNum);
+			Red5Streamer streamPublisher = new Red5Streamer(scope.getScope(roomNum), roomNum);
 			room.registerListener(streamPublisher);
 			roomList.add(room);
 			Thread thread = new Thread(room);
 			thread.start();
+
 		} catch(IOException e){
 			e.printStackTrace(System.out);
 		}

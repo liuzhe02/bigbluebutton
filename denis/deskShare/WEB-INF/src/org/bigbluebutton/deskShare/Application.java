@@ -55,8 +55,8 @@ public class Application extends MultiThreadedApplicationAdapter {
 	}
 	
 	public boolean appConnect(IConnection conn, Object[] params){
-		log.info("deskShare appConnect");
-		System.out.println("deskShare appConnect");
+		log.info("deskShare appConnect to scope " + conn.getScope().getContext().toString());
+		System.out.println("deskShare appConnect to scope " + conn.getScope().getContextPath());
 		measureBandwidth(conn);
 		
 		if (conn instanceof IStreamCapableConnection){
