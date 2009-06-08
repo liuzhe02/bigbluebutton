@@ -1,8 +1,11 @@
 package org.bigbluebutton.modules.deskShare.view
 {
+	import flash.events.AsyncErrorEvent;
 	import flash.events.Event;
 	import flash.external.ExternalInterface;
 	import flash.net.NetStream;
+	
+	import mx.controls.Alert;
 	
 	import org.bigbluebutton.modules.deskShare.DeskShareModuleConstants;
 	import org.bigbluebutton.modules.deskShare.model.business.DeskShareProxy;
@@ -79,7 +82,7 @@ package org.bigbluebutton.modules.deskShare.view
 					_deskShareWindowOpen = true;
 					break;
 				case DeskShareModuleConstants.START_VIEWING:
-					startViewing();
+					if (!sharing) startViewing();
 					break;
 			}
 		}
@@ -104,12 +107,21 @@ package org.bigbluebutton.modules.deskShare.view
 			_window.canvas.width = 800;
 			_window.canvas.height = 600;
 			_window.ns = new NetStream(proxy.getConnection());
+			_window.ns.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError);
 			_window.ns.client = this;
 			_window.ns.bufferTime = 0;
 			_window.ns.receiveVideo(true);
 			_window.ns.receiveAudio(false);
 			_window.videoPlayer.attachNetStream(_window.ns);
 			_window.ns.play(_module.getRoom());
+			
+			viewing = true;
+			_window.btnStartViewing.label = "Stop Viewing";
+			_window.btnStartApplet.visible = false;
+			
+		}
+		
+		private function onAsyncError(e:AsyncErrorEvent):void{
 			
 		}
 		
@@ -127,6 +139,12 @@ package org.bigbluebutton.modules.deskShare.view
 		 */		
 		private function stopViewing():void{
 			_window.ns.close();
+			viewing = false;
+			_window.btnStartViewing.label = "Start Viewing";
+			_window.btnStartApplet.visible = true;
+			_window.canvas.visible = false;
+			_window.width = 236;
+			_window.height = 74;
 		}
 		
 		/**
@@ -142,13 +160,16 @@ package org.bigbluebutton.modules.deskShare.view
 				_window.btnStartViewing.visible = false;
 			
 				_window.capturing = true;
-				//proxy.sendStartViewingNotification();
 				_window.height = _window.bar.height + _window.dimensionsBox.height + 33;
 				_window.width = _window.dimensionsBox.width + 7;
 				sharing = true;
 				_window.btnStartApplet.label = "Stop Sharing";
 				_window.dimensionsBox.x = 0;
 				_window.dimensionsBox.y = _window.bar.height + 5;
+				_window.dimensionsBox.startThumbnail(proxy.getConnection(), _module.getRoom());
+				
+				//Send a notification to all room participants to start viewing the stream
+				proxy.sendStartViewingNotification();
 			} else{
 				sharing = false;
 				_window.btnStartApplet.label = "Start Sharing";
@@ -167,21 +188,8 @@ package org.bigbluebutton.modules.deskShare.view
 		 * 
 		 */		
 		private function onStartViewingEvent(e:Event):void{
-			if (!viewing){
-				startViewing();
-				viewing = true;
-				_window.btnStartViewing.label = "Stop Viewing";
-				_window.btnStartApplet.visible = false;
-			}
-			else {
-				stopViewing();
-				viewing = false;
-				_window.btnStartViewing.label = "Start Viewing";
-				_window.btnStartApplet.visible = true;
-				_window.canvas.visible = false;
-				_window.width = 236;
-				_window.height = 74;
-			}
+			if (!viewing) startViewing();
+			else stopViewing();
 		}
 
 	}

@@ -43,7 +43,7 @@ package org.bigbluebutton.modules.deskShare.model.business
 			conn.addEventListener(Connection.SUCCESS, connectionSuccessHandler);
 			conn.addEventListener(Connection.FAILED, connectionFailedHandler);
 			conn.addEventListener(Connection.REJECTED, connectionRejectedHandler);
-			conn.setURI(module.getRed5ServerUri());
+			conn.setURI(module.uri);
 			conn.connect();
 		}
 		
@@ -72,7 +72,7 @@ package org.bigbluebutton.modules.deskShare.model.business
 		 */		
 		private function connectionSuccessHandler(e:ConnectionEvent):void{
 			nc = conn.getConnection();
-			deskSO = SharedObject.getRemote("drawSO", module.getRed5ServerUri(), false);
+			deskSO = SharedObject.getRemote("drawSO", module.uri, false);
             deskSO.addEventListener(SyncEvent.SYNC, sharedObjectSyncHandler);
             deskSO.client = this;
             deskSO.connect(nc);
