@@ -9,9 +9,6 @@
 			private var screenWidth:Number;
 			private var screenHeight:Number;
 			
-			//private var rectangle:UIComponent;
-			//private var rectangleShape:Shape;
-			
 			private var startDragX:Number;
 			private var startDragY:Number;
 			private var startDragMouseX:Number;
@@ -26,7 +23,9 @@
 				screenHeight = Capabilities.screenResolutionY;
 				this.width = screenWidth / 10;
 				this.height = screenHeight / 10;
-				
+			}
+			
+			public function startThumbnail(nc:NetConnection, streamName:String):void{
 				videoPlayer = new Video(80, 60);
 				videoHolder.setActualSize(80, 60);
 				videoHolder.addChild(videoPlayer);
@@ -34,24 +33,10 @@
 				videoHolder.x = 0;
 				videoHolder.y = 0;
 				
-				//rectangle = new UIComponent();
-				//rectangle.width = 80;
-				//rectangle.height = 60;
-				//rectangleShape = new Shape();
-				//rectangleShape.graphics.beginFill(0x000000);
-				//rectangleShape.graphics.drawRect(0,0, 80, 60);
-				//rectangleShape.graphics.endFill();
-				//rectangle.addChild(rectangleShape);
-				//this.rawChildren.addChild(rectangle);
-				//rectangle.x = this.width/2 - rectangle.width/2;
-				//rectangle.y = this.height/2 - rectangle.height/2;
-				
 				videoHolder.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 				videoHolder.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 				this.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-			}
-			
-			public function startThumbnail(nc:NetConnection, streamName:String):void{
+				
 				ns = new NetStream(nc);
 				ns.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError);
 				ns.client = this;
@@ -81,11 +66,12 @@
 				if (newY < 0) videoHolder.y = 0;
 				else if (newY > this.height - 65) videoHolder.y = this.height - 60;
 				else videoHolder.y = newY;
+				
+				ExternalInterface.call("setScreenCoordinates", getXPosition(), getYPosition());
 			}
 			
 			private function onMouseUp(e:MouseEvent):void{
 				videoHolder.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-				ExternalInterface.call("setScreenCoordinates", getXPosition(), getYPosition());
 			}
 			
 			private function onMouseOut(e:MouseEvent):void{

@@ -2,10 +2,10 @@ package org.bigbluebutton.modules.deskShare.model.business
 {
 	import flash.events.SyncEvent;
 	import flash.net.NetConnection;
+	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
 	import mx.controls.Alert;
-	import mx.controls.SWFLoader;
 	
 	import org.bigbluebutton.common.red5.Connection;
 	import org.bigbluebutton.common.red5.ConnectionEvent;
@@ -28,6 +28,7 @@ package org.bigbluebutton.modules.deskShare.model.business
 		private var conn:Connection;
 		private var nc:NetConnection;
 		private var deskSO:SharedObject;
+		private var responder:Responder;
 		
 		/**
 		 * The constructor. 
@@ -45,6 +46,15 @@ package org.bigbluebutton.modules.deskShare.model.business
 			conn.addEventListener(Connection.REJECTED, connectionRejectedHandler);
 			conn.setURI(module.uri);
 			conn.connect();
+			
+			responder = new Responder(
+							function(result:Object):void{
+								if (result != null && (result as Boolean)) startViewing();
+							},
+							function(status:Object):void{
+								LogUtil.error("Error while trying to call remote mathod on server");
+							}
+									);
 		}
 		
 		/**
@@ -76,6 +86,8 @@ package org.bigbluebutton.modules.deskShare.model.business
             deskSO.addEventListener(SyncEvent.SYNC, sharedObjectSyncHandler);
             deskSO.client = this;
             deskSO.connect(nc);
+            
+            checkIfStreamIsPublishing();
 		}
 		
 		/**
@@ -122,7 +134,7 @@ package org.bigbluebutton.modules.deskShare.model.business
 			try{
 				deskSO.send("startViewing");
 			} catch(e:Error){
-				Alert.show("error while trying to send start viewing notification");
+				LogUtil.error("error while trying to send start viewing notification");
 			}
 		}
 		
@@ -132,6 +144,34 @@ package org.bigbluebutton.modules.deskShare.model.business
 		 */		
 		public function startViewing():void{
 			sendNotification(DeskShareModuleConstants.START_VIEWING);
+		}
+		
+		/**
+		 * Sends a notification through the server to all the participants in the room to stop viewing the stream 
+		 * 
+		 */		
+		public function sendStopViewingNotification():void{
+			try{
+				deskSO.send("stopViewing");
+			} catch(e:Error){
+				LogUtil.error("could not send stop viewing notification");
+			}
+		}
+		
+		/**
+		 * Sends a notification to the module to stop viewing the stream 
+		 * 
+		 */		
+		public function stopViewing():void{
+			sendNotification(DeskShareModuleConstants.STOP_VIEWING);
+		}
+		
+		/**
+		 * Check if anybody is publishing the stream for this room 
+		 * 
+		 */		
+		private function checkIfStreamIsPublishing():void{
+			nc.call("checkIfStreamIsPublishing", responder);
 		}
 
 	}

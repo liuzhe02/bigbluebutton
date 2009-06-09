@@ -2,7 +2,7 @@
 <MDIWindow xmlns="flexlib.mdi.containers.*" 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	showCloseButton="false"
-	creationComplete="onCreationComplete()" width="236" height="70"
+	creationComplete="onCreationComplete()" width="236" height="66"
 	implements="org.bigbluebutton.common.IBbbModuleWindow" xmlns:components="org.bigbluebutton.modules.deskShare.view.components.*" 
 	layout="absolute" resizable="false" verticalScrollPolicy="off" horizontalScrollPolicy="off">
 	
@@ -38,19 +38,14 @@
 			}
 			
 			private function onCreationComplete():void{
-				videoPlayer = new Video(800, 600);
-				videoHolder.setActualSize(800, 600);
-				videoHolder.addChild(videoPlayer);
-				canvas.addChild(videoHolder);
-				videoHolder.x = 0;
-				videoHolder.y = 0;
+				
 			}
 			
 		]]>
 	</mx:Script>
 	<mx:ApplicationControlBar id="bar" width="100%">
-		<mx:Button id="btnStartApplet" label="Start Sharing" click="dispatchEvent(new Event(DeskShareWindowMediator.START_SHARING))" x="10" y="10"/>
-		<mx:Button id="btnStartViewing" label="Start Viewing" click="dispatchEvent(new Event(DeskShareWindowMediator.START_VIEWING))" x="119" y="10"/>
+		<mx:RadioButton id="btnStartApplet" label="Start Sharing" click="dispatchEvent(new Event(DeskShareWindowMediator.START_SHARING))" x="10" y="10"/>
+		<mx:Label id="lblStatus" />
 	</mx:ApplicationControlBar>
 	<mx:Canvas id="canvas" x="0" y="35" visible="false"/>
 	<components:DimensionsBox id="dimensionsBox" visible="false"/>
