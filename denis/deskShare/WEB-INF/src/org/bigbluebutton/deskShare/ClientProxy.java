@@ -1,14 +1,13 @@
 package org.bigbluebutton.deskShare;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.red5.server.Scope;
 import org.red5.server.api.IScope;
 
 /**
@@ -16,7 +15,7 @@ import org.red5.server.api.IScope;
  * @author Snap
  *
  */
-public class ClientProxy implements Runnable {
+public class ClientProxy implements Runnable, IImageListener {
 	
 	private ServerSocket serverSocket;
 	private boolean keepCapturing = true;
@@ -68,6 +67,7 @@ public class ClientProxy implements Runnable {
 			RoomThread room = new RoomThread(roomNum, socket);
 			Red5Streamer streamPublisher = new Red5Streamer(scope.getScope(roomNum), roomNum);
 			room.registerListener(streamPublisher);
+			room.registerListener(this);
 			roomList.add(room);
 			Thread thread = new Thread(room);
 			thread.start();
@@ -76,6 +76,26 @@ public class ClientProxy implements Runnable {
 			e.printStackTrace(System.out);
 		}
 		
+	}
+	
+	public boolean isStreaming(String room){
+		for (int i=0; i< roomList.size(); i++){
+			if (roomList.get(i).getStreamName().equalsIgnoreCase(room)) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void imageReceived(BufferedImage image) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void streamEnded(String streamName) {
+		for (int i = 0; i<roomList.size(); i++){
+			if (roomList.get(i).getStreamName().equalsIgnoreCase(streamName)) roomList.remove(i);
+		}
 	}
 	
 }

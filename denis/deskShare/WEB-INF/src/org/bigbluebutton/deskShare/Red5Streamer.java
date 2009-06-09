@@ -104,10 +104,11 @@ public class Red5Streamer implements IImageListener {
 	}
 
 	@Override
-	public void streamEnded() {
+	public void streamEnded(String streamName) {
 		int retval = outContainer.writeTrailer();
 	    if (retval < 0)
 	      throw new RuntimeException("Could not write trailer to output file");
+	    broadcastStream.close();
 	}
 	
 	/**

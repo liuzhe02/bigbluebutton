@@ -10,5 +10,5 @@ import java.awt.image.BufferedImage;
 public interface IImageListener {
 	public void imageReceived(BufferedImage image);
 	
-	public void streamEnded();
+	public void streamEnded(String streamName);
 }

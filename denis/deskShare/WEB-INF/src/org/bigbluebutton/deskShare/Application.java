@@ -85,4 +85,9 @@ public class Application extends MultiThreadedApplicationAdapter {
 		return getBroadcastStreamNames(conn.getScope());
 	}
 	
+	public boolean checkIfStreamIsPublishing(){
+		String roomName = Red5.getConnectionLocal().getScope().getName();
+		return clientProxy.isStreaming(roomName);
+	}
+	
 }

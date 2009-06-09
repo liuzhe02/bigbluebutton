@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
  */
 public class RoomThread implements Runnable {
 	
-	private String roomNumber;
+	private String roomName;
 	private Socket socket;
 	private boolean keepCapturing;
 	private ArrayList<IImageListener> imageListeners;
@@ -26,7 +26,7 @@ public class RoomThread implements Runnable {
 	 * @param roomNumber - the room number of the room this object is accepting images for
 	 */
 	public RoomThread(String roomNumber, Socket socket){
-		this.roomNumber = roomNumber;
+		this.roomName = roomNumber;
 		this.socket = socket;
 		this.keepCapturing = true;
 		imageListeners = new ArrayList<IImageListener>();
@@ -46,7 +46,7 @@ public class RoomThread implements Runnable {
 	 * Notify all the listeners
 	 */
 	private void notifyEndOfStream() {
-		for (IImageListener i : imageListeners) i.streamEnded();
+		for (IImageListener i : imageListeners) i.streamEnded(roomName);
 		
 	}
 	
@@ -118,5 +118,9 @@ public class RoomThread implements Runnable {
 			keepCapturing = false;
 			return;
 		}
+	}
+	
+	public String getStreamName(){
+		return this.roomName;
 	}
 }
