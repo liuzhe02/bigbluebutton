@@ -86,7 +86,7 @@ package org.bigbluebutton.modules.deskShare.model.business
 		 */		
 		private function connectionSuccessHandler(e:ConnectionEvent):void{
 			nc = conn.getConnection();
-			deskSO = SharedObject.getRemote("drawSO", module.uri, false);
+			deskSO = SharedObject.getRemote("deskSO", module.uri, false);
             deskSO.addEventListener(SyncEvent.SYNC, sharedObjectSyncHandler);
             deskSO.client = this;
             deskSO.connect(nc);
@@ -128,6 +128,14 @@ package org.bigbluebutton.modules.deskShare.model.business
 		 */		
 		public function sharedObjectSyncHandler(e:SyncEvent):void{
 			
+		}
+		
+		/**
+		 * Invoked on the server once the clients' applet has started sharing and the server has started a video stream 
+		 * 
+		 */		
+		public function appletStarted():void{
+			sendNotification(DeskShareModuleConstants.APPLET_STARTED);
 		}
 		
 		/**

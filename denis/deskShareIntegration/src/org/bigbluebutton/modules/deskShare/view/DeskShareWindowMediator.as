@@ -37,6 +37,9 @@ package org.bigbluebutton.modules.deskShare.view
 		private var videoWidth:Number = 800;
 		private var videoHeight:Number = 600;
 		
+		private var captureWidth;
+		private var captureHeight;
+		
 		/**
 		 * The default constructor 
 		 * @param module - the DeskShareModule to which the window belongs to
@@ -63,7 +66,8 @@ package org.bigbluebutton.modules.deskShare.view
 					DeskShareModuleConstants.START_VIEWING,
 					DeskShareModuleConstants.STOP_VIEWING,
 					DeskShareModuleConstants.GOT_HEIGHT,
-					DeskShareModuleConstants.GOT_WIDTH
+					DeskShareModuleConstants.GOT_WIDTH,
+					DeskShareModuleConstants.APPLET_STARTED
 					];
 		}
 		
@@ -105,6 +109,9 @@ package org.bigbluebutton.modules.deskShare.view
 					break;
 				case DeskShareModuleConstants.GOT_WIDTH:
 					this.videoWidth = notification.getBody() as Number;
+					break;
+				case DeskShareModuleConstants.APPLET_STARTED:
+					if(sharing) onAppletStart();
 					break;
 			}
 		}
@@ -199,23 +206,14 @@ package org.bigbluebutton.modules.deskShare.view
 				//Alert.show(_module.getRoom().toString());
 				var captureX:Number = _window.dimensionsBox.box.x * DeskShareModuleConstants.SCALE;
 				var captureY:Number = _window.dimensionsBox.box.y * DeskShareModuleConstants.SCALE;
-				var captureWidth:Number = _window.dimensionsBox.box.width * DeskShareModuleConstants.SCALE;
-				var captureHeight:Number = _window.dimensionsBox.box.height * DeskShareModuleConstants.SCALE;
+				captureWidth = _window.dimensionsBox.box.width * DeskShareModuleConstants.SCALE;
+				captureHeight = _window.dimensionsBox.box.height * DeskShareModuleConstants.SCALE;
+				sharing = true;
 				ExternalInterface.call("startApplet", _module.getCaptureServerUri(), _module.getRoom(), 
 														captureX, captureY, captureWidth, captureHeight);
-			
-				_window.capturing = true;
-				_window.height = _window.bar.height + _window.dimensionsBox.height + 33;
-				_window.width = _window.dimensionsBox.width + 7;
-				sharing = true;
-				_window.btnStartApplet.label = "Stop Sharing";
-				//_window.lblStatus.text = "You are sharing your desktop with room " + _module.getRoom();
-				_window.dimensionsBox.x = 0;
-				_window.dimensionsBox.y = _window.bar.height + 5;
-				_window.dimensionsBox.startThumbnail(proxy.getConnection(), _module.getRoom());
+														
+				//ExternalInterface.addCallback("appletStartNotification", onAppletStart);
 				
-				//Send a notification to all room participants to start viewing the stream
-				proxy.sendStartViewingNotification(captureWidth, captureHeight);
 			} else{
 				sharing = false;
 				_window.btnStartApplet.label = "Start Sharing";
@@ -225,8 +223,25 @@ package org.bigbluebutton.modules.deskShare.view
 				_window.dimensionsBox.stopThumbnail();
 				
 				stopApplet();
-			}
+			}	
+		}
+		
+		/**
+		 * Method called from the html template once the applet has started 
+		 * 
+		 */		
+		public function onAppletStart():void{
+			_window.capturing = true;
+			_window.height = _window.bar.height + _window.dimensionsBox.height + 33;
+			_window.width = _window.dimensionsBox.width + 7;
+			_window.btnStartApplet.label = "Stop Sharing";
+			//_window.lblStatus.text = "You are sharing your desktop with room " + _module.getRoom();
+			_window.dimensionsBox.x = 0;
+			_window.dimensionsBox.y = _window.bar.height + 5;
+			_window.dimensionsBox.startThumbnail(proxy.getConnection(), _module.getRoom());
 			
+			//Send a notification to all room participants to start viewing the stream
+			proxy.sendStartViewingNotification(captureWidth, captureHeight);
 		}
 		
 		/**

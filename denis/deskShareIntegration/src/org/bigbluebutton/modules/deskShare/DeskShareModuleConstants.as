@@ -24,6 +24,8 @@ package org.bigbluebutton.modules.deskShare
 		
 		public static const GOT_WIDTH:String = "GOT_WIDTH";
 		public static const GOT_HEIGHT:String = "GOT_HEIGHT";
+		
+		public static const APPLET_STARTED:String = "APPLET_STARTED";
 
 	}
 }
