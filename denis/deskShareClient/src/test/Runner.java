@@ -21,7 +21,7 @@ public class Runner {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("Starting");
-		Capture capture = new Capture();
+		Capture capture = new Capture(0, 0, 800, 600);
 		
 		while (true){
 			BufferedImage image = capture.takeSingleSnapshot();

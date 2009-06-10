@@ -30,16 +30,16 @@ public class Capture {
 	/**
 	 * The default constructor. Performs initialisation work
 	 */
-	public Capture(){
-		this.width = 800;
-		this.height = 600;
+	public Capture(int x, int y, int screenWidth, int screenHeight){
+		this.width = screenWidth;
+		this.height = screenHeight;
 		try{
 			robot = new Robot();
 		}catch (AWTException e){
 			System.out.println(e.getMessage());
 		}
 		this.toolkit = Toolkit.getDefaultToolkit();
-		this.screenBounds = new Rectangle(this.width, this.height);
+		this.screenBounds = new Rectangle(x, y, this.width, this.height);
 	}
 	
 	public BufferedImage takeSingleSnapshot(){
@@ -132,6 +132,14 @@ public class Capture {
 	   }
 	    
 	   return image;
+	 }
+	 
+	 public int getWidth(){
+		 return this.width;
+	 }
+	 
+	 public int getHeight(){
+		 return this.height;
 	 }
 
 }

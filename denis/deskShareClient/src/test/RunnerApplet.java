@@ -9,7 +9,11 @@ public class RunnerApplet extends JApplet {
 	CaptureThread capThread;
 	
 	public void init(){
-		Capture capture = new Capture();
+		int screenWidth = Integer.parseInt(getParameter("CAPTURE_WIDTH"));
+		int screenHeight = Integer.parseInt(getParameter("CAPTURE_HEIGHT"));
+		int x = Integer.parseInt(getParameter("X"));
+		int y = Integer.parseInt(getParameter("Y"));
+		Capture capture = new Capture(x, y, screenWidth, screenHeight);
 		String roomNumber = getParameter("ROOM");
 		String IP = getParameter("IP");
 		capThread = new CaptureThread(capture, IP, roomNumber);

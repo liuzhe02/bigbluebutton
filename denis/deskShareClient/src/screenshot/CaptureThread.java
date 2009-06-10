@@ -31,6 +31,7 @@ public class CaptureThread implements Runnable {
 			socket = new Socket(IP, PORT);
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			out.println(roomNumber);
+			out.println(Integer.toString(capture.getWidth()) + "x" + Integer.toString(capture.getHeight()));
 			outStream = new DataOutputStream(socket.getOutputStream());
 		} catch(Exception e){
 			e.printStackTrace(System.out);
