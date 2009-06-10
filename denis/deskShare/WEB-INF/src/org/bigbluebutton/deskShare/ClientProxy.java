@@ -7,8 +7,12 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.red5.server.Scope;
 import org.red5.server.api.IScope;
+import org.red5.server.api.so.ISharedObject;
+import org.red5.server.so.FlexSharedObjectMessage;
 
 /**
  * The ClientProxy receives images from the client which captures the screen
@@ -22,15 +26,16 @@ public class ClientProxy implements Runnable, IImageListener {
 	
 	private ArrayList<RoomThread> roomList;
 	
-	//Temporary scope assignment. Change later so that each room has own scope
 	private IScope scope;
+	private Application application;
 	
 	/**
 	 * The default constructor
 	 */
-	public ClientProxy(IScope scope){
+	public ClientProxy(Application app){
 		roomList = new ArrayList<RoomThread>();
-		this.scope = scope;
+		this.application = app;
+		this.scope = app.getAppScope();
 		try{
 			serverSocket = new ServerSocket(DeskShareConstants.PORT);
 		} catch(IOException e){
@@ -62,18 +67,30 @@ public class ClientProxy implements Runnable, IImageListener {
 	
 	private void acceptRoomConnection(Socket socket){
 		try{
+			//Get the name of the room the client is trying to publish a stream to
 			BufferedReader inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String roomNum = inStream.readLine();
+			
+			//Get the screen dimensions from the client, i.e. the resolution of the video we need to create
 			String[] screenDimensions = inStream.readLine().split("x");
 			int width = Integer.parseInt(screenDimensions[0]);
 			int height = Integer.parseInt(screenDimensions[1]);
+			
+			//Create a new room thread and a new streamer object to go with the thread
 			RoomThread room = new RoomThread(roomNum, socket, width, height);
-			Red5Streamer streamPublisher = new Red5Streamer(scope.getScope(roomNum), roomNum, width, height);
+			IScope roomSpecificScope = scope.getScope(roomNum);
+			Red5Streamer streamPublisher = new Red5Streamer(roomSpecificScope, roomNum, width, height);
 			room.registerListener(streamPublisher);
 			room.registerListener(this);
+			
+			//Add the room to our list of rooms and start the room thread
 			roomList.add(room);
 			Thread thread = new Thread(room);
 			thread.start();
+			
+			//notify the clients in the room that the stream has now started broadcasting.
+			ISharedObject deskSO = application.getSharedObject(roomSpecificScope, "deskSO");
+			deskSO.sendMessage("appletStarted" , new ArrayList<Object>());
 
 		} catch(IOException e){
 			e.printStackTrace(System.out);

@@ -72,7 +72,7 @@ public class VideoSaver implements IImageListener {
 	/**
 	 * Housekeeping needed to get everything working
 	 */
-	private void setupStreams(){
+	/*private void setupStreams(){
 		timestamp = 0;
 		
 		outContainer = IContainer.make();
@@ -107,7 +107,7 @@ public class VideoSaver implements IImageListener {
 		retval = outContainer.writeHeader();
 		if (retval <0)
 			throw new RuntimeException("could not write file header");
-	}
+	}*/
 	
 	private void setupStreams2(){
 		System.out.println("In setupStreams");

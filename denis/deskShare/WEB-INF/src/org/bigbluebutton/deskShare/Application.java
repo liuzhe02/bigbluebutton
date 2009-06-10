@@ -26,8 +26,6 @@ public class Application extends MultiThreadedApplicationAdapter {
 	private IServerStream serverStream;
 	
 	private ClientProxy clientProxy;
-	private Red5Streamer streamPublisher;
-	private VideoSaver streamRecorder;
 	
 	{
 		log.info("deskShare created");
@@ -45,9 +43,9 @@ public class Application extends MultiThreadedApplicationAdapter {
 	public boolean appStart(IScope app){
 		log.info("deskShare appStart");
 		System.out.println("deskShare appStart");
-		appScope = app;
+		this.appScope = app;
 		
-		clientProxy = new ClientProxy(app);
+		clientProxy = new ClientProxy(this);
 		Thread clientThread = new Thread(clientProxy);
 		clientThread.start();
 		
@@ -74,7 +72,7 @@ public class Application extends MultiThreadedApplicationAdapter {
 	
 	public void appDisconnect(IConnection conn){
 		log.info("deskShare appDisconnect");
-		if (appScope == conn.getScope() && serverStream != null){
+		if (getAppScope() == conn.getScope() && serverStream != null){
 			serverStream.close();
 		}
 		super.appDisconnect(conn);
@@ -98,6 +96,13 @@ public class Application extends MultiThreadedApplicationAdapter {
 	public int getVideoHeight(){
 		String roomName = Red5.getConnectionLocal().getScope().getName();
 		return clientProxy.getRoomVideoHeight(roomName);
+	}
+
+	/**
+	 * @return the appScope
+	 */
+	public IScope getAppScope() {
+		return appScope;
 	}
 	
 }
