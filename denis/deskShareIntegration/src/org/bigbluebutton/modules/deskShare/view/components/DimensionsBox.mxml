@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="onCreationComplete()" 
-	backgroundColor="gray" toolTip="Drag the black box to the area of the screen you wish to share">
-
+	backgroundColor="gray" toolTip="Drag the black box to the area of the screen you wish to share" 
+	xmlns:components="org.bigbluebutton.modules.deskShare.view.components.*">
+    
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.modules.deskShare.DeskShareModuleConstants;
 			import mx.core.UIComponent;
 
 			private var screenWidth:Number;
@@ -14,7 +16,7 @@
 			private var startDragMouseX:Number;
 			private var startDragMouseY:Number;
 			
-			private var videoHolder:UIComponent = new UIComponent();
+			public var videoHolder:UIComponent;
 			private var videoPlayer:Video;
 			private var ns:NetStream;
 			
@@ -26,12 +28,20 @@
 			}
 			
 			public function startThumbnail(nc:NetConnection, streamName:String):void{
-				videoPlayer = new Video(80, 60);
-				videoHolder.setActualSize(80, 60);
+				this.visible = true;
+				box.visible = false;
+				
+				videoHolder = new UIComponent();
+				videoPlayer = new Video(box.width, box.height);
+				videoPlayer.width = box.width;
+				videoPlayer.height = box.height;
+				videoHolder.width = box.width;
+				videoHolder.height = box.height;
+				videoHolder.setActualSize(box.width, box.height);
 				videoHolder.addChild(videoPlayer);
 				this.addChild(videoHolder);
-				videoHolder.x = 0;
-				videoHolder.y = 0;
+				videoHolder.x = box.x;
+				videoHolder.y = box.y;
 				
 				videoHolder.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 				videoHolder.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
@@ -47,6 +57,15 @@
 				ns.play(streamName);
 			}
 			
+			public function stopThumbnail():void{
+				this.removeChild(videoHolder);
+				videoPlayer.clear();
+				videoPlayer = null;
+				videoHolder = null;
+				this.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+				box.visible = true;
+			}
+			
 			private function onMouseDown(e:MouseEvent):void{
 				startDragX = videoHolder.x;
 				startDragY = videoHolder.y;
@@ -60,11 +79,11 @@
 				var newY:Number = startDragY + (this.mouseY - startDragMouseY);
 				
 				if (newX < 0) videoHolder.x = 0;
-				else if (newX > this.width - 85) videoHolder.x = this.width - 80;
+				else if (newX > this.width - (box.width+5)) videoHolder.x = this.width - box.width;
 				else videoHolder.x = newX;
 				
 				if (newY < 0) videoHolder.y = 0;
-				else if (newY > this.height - 65) videoHolder.y = this.height - 60;
+				else if (newY > this.height - (box.height+5)) videoHolder.y = this.height - box.height;
 				else videoHolder.y = newY;
 				
 				ExternalInterface.call("setScreenCoordinates", getXPosition(), getYPosition());
@@ -89,6 +108,16 @@
 			private function onAsyncError(e:AsyncErrorEvent):void{
 				
 			}
+
 		]]>
 	</mx:Script>
+
+	<components:ResizableBox id="box" x="10" y="10" width="80" height="60" minWidth="40" minHeight="40" 
+		maxWidth="120" maxHeight="90" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+        <mx:HBox horizontalGap="0">
+        <mx:Label text="{(box.width * 10).toString()}"/>
+        <mx:Label text="x"/>
+        <mx:Label text="{(box.height * 10).toString()}"/>
+        </mx:HBox>
+	</components:ResizableBox>
 </mx:Canvas>

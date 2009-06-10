@@ -10,6 +10,7 @@ package org.bigbluebutton.modules.deskShare.model.business
 	import org.bigbluebutton.common.red5.Connection;
 	import org.bigbluebutton.common.red5.ConnectionEvent;
 	import org.bigbluebutton.modules.deskShare.DeskShareModuleConstants;
+	import org.bigbluebutton.modules.deskShare.model.vo.CaptureResolutionVO;
 	import org.puremvc.as3.multicore.interfaces.IProxy;
 	import org.puremvc.as3.multicore.patterns.proxy.Proxy;
 	
@@ -49,7 +50,10 @@ package org.bigbluebutton.modules.deskShare.model.business
 			
 			responder = new Responder(
 							function(result:Object):void{
-								if (result != null && (result as Boolean)) startViewing();
+								if (result != null && (result as Boolean)){
+									checkVideoHeight();
+									checkVideoWidth();
+								}
 							},
 							function(status:Object):void{
 								LogUtil.error("Error while trying to call remote mathod on server");
@@ -130,9 +134,9 @@ package org.bigbluebutton.modules.deskShare.model.business
 		 * Call this method to send out a room-wide notification to start viewing the stream 
 		 * 
 		 */		
-		public function sendStartViewingNotification():void{
+		public function sendStartViewingNotification(captureWidth:Number, captureHeight:Number):void{
 			try{
-				deskSO.send("startViewing");
+				deskSO.send("startViewing", captureWidth, captureHeight);
 			} catch(e:Error){
 				LogUtil.error("error while trying to send start viewing notification");
 			}
@@ -140,10 +144,11 @@ package org.bigbluebutton.modules.deskShare.model.business
 		
 		/**
 		 * Called by the server when a notification is received to start viewing the broadcast stream .
+		 * This method is called on successful execution of sendStartViewingNotification()
 		 * 
 		 */		
-		public function startViewing():void{
-			sendNotification(DeskShareModuleConstants.START_VIEWING);
+		public function startViewing(captureWidth:Number, captureHeight:Number):void{
+			sendNotification(DeskShareModuleConstants.START_VIEWING, new CaptureResolutionVO(captureWidth, captureHeight));
 		}
 		
 		/**
@@ -160,6 +165,7 @@ package org.bigbluebutton.modules.deskShare.model.business
 		
 		/**
 		 * Sends a notification to the module to stop viewing the stream 
+		 * This method is called on successful execution of sendStopViewingNotification()
 		 * 
 		 */		
 		public function stopViewing():void{
@@ -168,10 +174,49 @@ package org.bigbluebutton.modules.deskShare.model.business
 		
 		/**
 		 * Check if anybody is publishing the stream for this room 
+		 * This method is useful for clients which have joined a room where somebody is already publishing
 		 * 
 		 */		
 		private function checkIfStreamIsPublishing():void{
 			nc.call("checkIfStreamIsPublishing", responder);
+		}
+		
+		/**
+		 * Check what the width of the published video is
+		 * This method is useful for clients which have joined a room where somebody is already publishing 
+		 * 
+		 */		
+		public function checkVideoWidth():void{
+			var widthResponder:Responder = new Responder(
+							function(result:Object):void{
+								if (result != null) sendNotification(DeskShareModuleConstants.GOT_WIDTH, result as Number);
+							},
+							function(status:Object):void{
+								LogUtil.error("Error while trying to call remote mathod on server");
+							}
+								);
+							
+			nc.call("getVideoWidth", widthResponder);
+		}
+		
+		/**
+		 * Check what the height of the published video is
+		 * This method is useful for clients which have joined a room where somebody is already publishing 
+		 * 
+		 */		
+		public function checkVideoHeight():void{
+			var heightResponder:Responder = new Responder(
+							function(result:Object):void{
+								//var resultString:String = "got result, it was " + (result as Number).toString();
+								//Alert.show(resultString);
+								if (result != null) sendNotification(DeskShareModuleConstants.GOT_HEIGHT, result as Number);
+							},
+							function(status:Object):void{
+								LogUtil.error("Error while trying to call remote mathod on server");
+							}
+									);
+									
+			nc.call("getVideoHeight", heightResponder);
 		}
 
 	}

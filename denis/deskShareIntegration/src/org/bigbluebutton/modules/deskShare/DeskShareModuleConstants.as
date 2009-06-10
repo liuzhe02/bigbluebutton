@@ -19,6 +19,11 @@ package org.bigbluebutton.modules.deskShare
 		
 		public static const START_VIEWING:String = "START_VIEWING";
 		public static const STOP_VIEWING:String = "STOP_VIEWING";
+		
+		public static const SCALE:Number = 10;
+		
+		public static const GOT_WIDTH:String = "GOT_WIDTH";
+		public static const GOT_HEIGHT:String = "GOT_HEIGHT";
 
 	}
 }

@@ -2,7 +2,7 @@
 <MDIWindow xmlns="flexlib.mdi.containers.*" 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	showCloseButton="false"
-	creationComplete="onCreationComplete()" width="236" height="66"
+	creationComplete="onCreationComplete()" width="236"
 	implements="org.bigbluebutton.common.IBbbModuleWindow" xmlns:components="org.bigbluebutton.modules.deskShare.view.components.*" 
 	layout="absolute" resizable="false" verticalScrollPolicy="off" horizontalScrollPolicy="off">
 	
@@ -16,7 +16,7 @@
 			private var _yPosition:int;
 			
 			public var proxy:DeskShareProxy;
-			public var videoHolder:UIComponent = new UIComponent();
+			public var videoHolder:UIComponent;
 			public var videoPlayer:Video;
 			public var ns:NetStream;
 			public var capturing:Boolean = false;
@@ -38,7 +38,9 @@
 			}
 			
 			private function onCreationComplete():void{
-				
+				height = bar.height + dimensionsBox.height + 33;
+				width = dimensionsBox.width + 7;
+				dimensionsBox.y = bar.height + 5;
 			}
 			
 		]]>
@@ -48,6 +50,6 @@
 		<mx:Label id="lblStatus" />
 	</mx:ApplicationControlBar>
 	<mx:Canvas id="canvas" x="0" y="35" visible="false"/>
-	<components:DimensionsBox id="dimensionsBox" visible="false"/>
+	<components:DimensionsBox id="dimensionsBox"/>
 	
 </MDIWindow>
