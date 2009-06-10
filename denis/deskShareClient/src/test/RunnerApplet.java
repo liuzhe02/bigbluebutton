@@ -6,6 +6,10 @@ import screenshot.CaptureThread;
 
 public class RunnerApplet extends JApplet {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	CaptureThread capThread;
 	
 	public void init(){

@@ -3,8 +3,6 @@ package test;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
