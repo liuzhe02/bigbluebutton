@@ -29,6 +29,7 @@ public class VideoSaver implements IImageListener {
 	private IStreamCoder outStreamCoder;
 	
 	private String fileName;
+	private int width, height;
 	
 	private long timestamp;
 	
@@ -36,8 +37,10 @@ public class VideoSaver implements IImageListener {
 	 * The default constructor.
 	 * @param fileName - The filename of the file to which you wish to save. should end with .flv
 	 */
-	public VideoSaver(String fileName){
+	public VideoSaver(String fileName, int width, int height){
 		this.fileName = fileName;
+		this.width = width;
+		this.height = height;
 		//setupStreams();
 		setupStreams2();
 	}
@@ -87,9 +90,6 @@ public class VideoSaver implements IImageListener {
 		outStreamCoder.setBitRate(DeskShareConstants.BIT_RATE);
 		outStreamCoder.setBitRateTolerance(DeskShareConstants.BIT_RATE_TOLERANCE);
 		
-		int width = DeskShareConstants.SCREENSHOT_WIDTH;
-		int height = DeskShareConstants.SCREENSHOT_HEIGHT;
-		
 		outStreamCoder.setPixelType(IPixelFormat.Type.YUV420P);
 		outStreamCoder.setHeight(height);
 		outStreamCoder.setWidth(width);
@@ -118,8 +118,8 @@ public class VideoSaver implements IImageListener {
 		outInfo.setURL(fileName);
 		outInfo.setHasVideo(true);
 		outInfo.setHasAudio(false);
-		outInfo.setVideoWidth(DeskShareConstants.SCREENSHOT_WIDTH);
-		outInfo.setVideoHeight(DeskShareConstants.SCREENSHOT_HEIGHT);
+		outInfo.setVideoWidth(width);
+		outInfo.setVideoHeight(height);
 		outInfo.setVideoBitRate(DeskShareConstants.BIT_RATE);
 		outInfo.setVideoPixelFormat(IPixelFormat.Type.YUV420P);
 		outInfo.setVideoNumPicturesInGroupOfPictures(DeskShareConstants.NUM_PICTURES_IN_GROUP);
@@ -144,8 +144,8 @@ public class VideoSaver implements IImageListener {
 		outStreamCoder.setBitRateTolerance(DeskShareConstants.BIT_RATE_TOLERANCE);
 
 		outStreamCoder.setPixelType(IPixelFormat.Type.YUV420P);
-		outStreamCoder.setHeight(DeskShareConstants.SCREENSHOT_HEIGHT);
-		outStreamCoder.setWidth(DeskShareConstants.SCREENSHOT_WIDTH);
+		outStreamCoder.setHeight(height);
+		outStreamCoder.setWidth(width);
 		outStreamCoder.setFlag(IStreamCoder.Flags.FLAG_QSCALE, true);
 		outStreamCoder.setGlobalQuality(0);
 

@@ -90,4 +90,14 @@ public class Application extends MultiThreadedApplicationAdapter {
 		return clientProxy.isStreaming(roomName);
 	}
 	
+	public int getVideoWidth(){
+		String roomName = Red5.getConnectionLocal().getScope().getName();
+		return clientProxy.getRoomVideoWidth(roomName);
+	}
+	
+	public int getVideoHeight(){
+		String roomName = Red5.getConnectionLocal().getScope().getName();
+		return clientProxy.getRoomVideoHeight(roomName);
+	}
+	
 }

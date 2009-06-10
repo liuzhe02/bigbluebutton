@@ -21,15 +21,19 @@ public class RoomThread implements Runnable {
 	private boolean keepCapturing;
 	private ArrayList<IImageListener> imageListeners;
 	
+	private int width, height;
+	
 	/**
 	 * The default constructor
 	 * @param roomNumber - the room number of the room this object is accepting images for
 	 */
-	public RoomThread(String roomNumber, Socket socket){
+	public RoomThread(String roomNumber, Socket socket, int width, int height){
 		this.roomName = roomNumber;
 		this.socket = socket;
 		this.keepCapturing = true;
 		imageListeners = new ArrayList<IImageListener>();
+		this.width = width;
+		this.height = height;
 	}
 	
 	/**
@@ -122,5 +126,13 @@ public class RoomThread implements Runnable {
 	
 	public String getStreamName(){
 		return this.roomName;
+	}
+	
+	public int getScreenWidth(){
+		return this.width;
+	}
+	
+	public int getScreenHeight(){
+		return this.height;
 	}
 }

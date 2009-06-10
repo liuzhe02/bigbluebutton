@@ -64,8 +64,11 @@ public class ClientProxy implements Runnable, IImageListener {
 		try{
 			BufferedReader inStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String roomNum = inStream.readLine();
-			RoomThread room = new RoomThread(roomNum, socket);
-			Red5Streamer streamPublisher = new Red5Streamer(scope.getScope(roomNum), roomNum);
+			String[] screenDimensions = inStream.readLine().split("x");
+			int width = Integer.parseInt(screenDimensions[0]);
+			int height = Integer.parseInt(screenDimensions[1]);
+			RoomThread room = new RoomThread(roomNum, socket, width, height);
+			Red5Streamer streamPublisher = new Red5Streamer(scope.getScope(roomNum), roomNum, width, height);
 			room.registerListener(streamPublisher);
 			room.registerListener(this);
 			roomList.add(room);
@@ -94,8 +97,27 @@ public class ClientProxy implements Runnable, IImageListener {
 	@Override
 	public void streamEnded(String streamName) {
 		for (int i = 0; i<roomList.size(); i++){
-			if (roomList.get(i).getStreamName().equalsIgnoreCase(streamName)) roomList.remove(i);
+			if (roomList.get(i).getStreamName().equalsIgnoreCase(streamName)){
+				System.out.println("Removing stream " + streamName);
+				roomList.remove(i);
+			}
 		}
+	}
+	
+	public int getRoomVideoWidth(String room){
+		for (int i=0; i < roomList.size(); i++){
+			RoomThread rm = roomList.get(i);
+			if (rm.getStreamName().equalsIgnoreCase(room)) return rm.getScreenWidth();
+		}
+		return 0;
+	}
+	
+	public int getRoomVideoHeight(String room){
+		for (int i=0; i < roomList.size(); i++){
+			RoomThread rm = roomList.get(i);
+			if (rm.getStreamName().equalsIgnoreCase(room)) return rm.getScreenHeight();
+		}
+		return 0;
 	}
 	
 }

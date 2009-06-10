@@ -46,13 +46,16 @@ public class Red5Streamer implements IImageListener {
 	final private Logger log = Red5LoggerFactory.getLogger(this.getClass());
 	
 	private long timestamp = 0, frameNumber = 0;
+	private int width, height;
 	private String outStreamName;
 	/**
 	 * The default constructor
 	 * The stream which gets published by the streamer has the same name as the scope. One stream allowed per room
 	 */
-	public Red5Streamer(IScope scope, String streamName){
+	public Red5Streamer(IScope scope, String streamName, int width, int height){
 		this.outStreamName = streamName;
+		this.width = width;
+		this.height = height;
 		
 		outputHandler = new IRTMPEventIOHandler(){
 			public Red5Message read() throws InterruptedException{
@@ -99,16 +102,17 @@ public class Red5Streamer implements IImageListener {
 			retval = outContainer.writePacket(packet, false);
 			if (retval < 0)
 				throw new RuntimeException("could not save packet to container");
-			//streamAdapter.writePacket(packet);
 		}
 	}
 
 	@Override
 	public void streamEnded(String streamName) {
+		broadcastStream.stop();
+	    broadcastStream.close();
 		int retval = outContainer.writeTrailer();
 	    if (retval < 0)
 	      throw new RuntimeException("Could not write trailer to output file");
-	    broadcastStream.close();
+	    System.out.println("stopping and closing stream" + outStreamName);
 	}
 	
 	/**
@@ -151,8 +155,8 @@ public class Red5Streamer implements IImageListener {
 		outInfo.setURL(outputURL);
 		outInfo.setHasVideo(true);
 		outInfo.setHasAudio(false);
-		outInfo.setVideoWidth(DeskShareConstants.SCREENSHOT_WIDTH);
-		outInfo.setVideoHeight(DeskShareConstants.SCREENSHOT_HEIGHT);
+		outInfo.setVideoWidth(width);
+		outInfo.setVideoHeight(height);
 		outInfo.setVideoBitRate(DeskShareConstants.BIT_RATE);
 		outInfo.setVideoPixelFormat(IPixelFormat.Type.YUV420P);
 		outInfo.setVideoNumPicturesInGroupOfPictures(DeskShareConstants.NUM_PICTURES_IN_GROUP);
@@ -179,8 +183,8 @@ public class Red5Streamer implements IImageListener {
 		outStreamCoder.setBitRateTolerance(DeskShareConstants.BIT_RATE_TOLERANCE);
 
 		outStreamCoder.setPixelType(IPixelFormat.Type.YUV420P);
-		outStreamCoder.setHeight(DeskShareConstants.SCREENSHOT_HEIGHT);
-		outStreamCoder.setWidth(DeskShareConstants.SCREENSHOT_WIDTH);
+		outStreamCoder.setHeight(height);
+		outStreamCoder.setWidth(width);
 		outStreamCoder.setFlag(IStreamCoder.Flags.FLAG_QSCALE, true);
 		outStreamCoder.setGlobalQuality(0);
 
