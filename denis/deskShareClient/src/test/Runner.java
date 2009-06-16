@@ -1,18 +1,15 @@
 package test;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.net.Socket;
+import java.io.File;
 
 import javax.imageio.ImageIO;
 
 import screenshot.Capture;
 
 public class Runner {
-
-	private static final int PORT = 1026;
-	private static final String IP = "192.168.0.120";
+	
+	private static int index = 0;
 	/**
 	 * @param args
 	 */
@@ -21,25 +18,22 @@ public class Runner {
 		System.out.println("Starting");
 		Capture capture = new Capture(0, 0, 800, 600);
 		
-		while (true){
+		while (index < 20){
 			BufferedImage image = capture.takeSingleSnapshot();
 			
 			try{
-				Socket socket = new Socket(IP, PORT);
-				DataOutputStream outStream = new DataOutputStream(socket.getOutputStream());
-				ByteArrayOutputStream byteConvert = new ByteArrayOutputStream();
-				ImageIO.write(image, "jpeg", byteConvert);
-				byte[] imageData = byteConvert.toByteArray();
-				outStream.write(imageData);
-				System.out.println("Sent: "+ imageData.length);
-				socket.close();
+				//ByteArrayOutputStream byteConvert = new ByteArrayOutputStream();
+				ImageIO.write(image, "jpeg", new File(Integer.toString(index) + ".jpeg"));
+				index++;
+				//byte[] imageData = byteConvert.toByteArray();
+				System.out.println(index);
 			} catch(Exception e){
 				e.printStackTrace(System.out);
 				System.exit(0);
 			}
 			
 			try{
-				Thread.sleep(333);
+				Thread.sleep(200);
 			} catch (Exception e){
 				System.exit(0);
 			}
