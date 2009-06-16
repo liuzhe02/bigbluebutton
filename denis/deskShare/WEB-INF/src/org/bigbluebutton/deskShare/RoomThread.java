@@ -3,6 +3,8 @@ package org.bigbluebutton.deskShare;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ public class RoomThread implements Runnable {
 	private ArrayList<IImageListener> imageListeners;
 	
 	private int width, height;
+	private int debugIndex = 0;
 	
 	/**
 	 * The default constructor
@@ -82,33 +85,18 @@ public class RoomThread implements Runnable {
 		
 		DataInputStream inStream = null;
 		//2^16 is the maximum number of bytes sent over the network in one go. Need several times that
-		byte[][] buffer = new byte[10][65536];
-		//This is the array to which we will append the partial buffers
-		byte[] appendedBuffer = new byte[10 * 65536];
+		
 		try{
 			inStream = new DataInputStream(socket.getInputStream());
-			long totalBytes = inStream.readLong();
+			int totalBytes = inStream.readInt();
 			System.out.println("Receiving " + totalBytes + " bytes");
 			if (totalBytes > 150000 || totalBytes < 0) return;
 			
-			int bytesRead = 0, index = 0, totalRead = 0;
-			while(totalRead < totalBytes){
-				//Read bytes sent from the socket
-				bytesRead = inStream.read(buffer[index]);
-				index++;
-				totalRead += bytesRead;
-				//System.out.println("Read bytes: " + bytesRead);
-			}
-
-			//Append the partial arrays to the big one
-			for (index = 0; index<4; index++){
-				for (int i = 0; i<buffer[index].length; i++){
-					appendedBuffer[index*65536 + i] = buffer[index][i];
-				}
-			}
-
-			System.out.println("Read bytes in total: " + totalRead);
-			//Create a convenience InputStream from the big buffer we now have
+			//This is the array to which we will append the partial buffers
+			byte[] appendedBuffer = new byte[totalBytes];
+			
+			inStream.readFully(appendedBuffer);
+			
 			InputStream imageData = new ByteArrayInputStream(appendedBuffer);
 			//re-Create a BufferedImage we received over the network 
 			BufferedImage image = ImageIO.read(imageData);
@@ -116,6 +104,7 @@ public class RoomThread implements Runnable {
 			//Notify all the listening classes that a new image has been received
 			if (image == null) return;
 			notifyListeners(image);
+			saveImage(image);
 
 		} catch(Exception e){
 			e.printStackTrace(System.out);
@@ -134,5 +123,18 @@ public class RoomThread implements Runnable {
 	
 	public int getScreenHeight(){
 		return this.height;
+	}
+	
+	/**
+	 * A debug method for seeing if the images were received correctly
+	 * @param image
+	 */
+	private void saveImage(BufferedImage image){
+		debugIndex++;
+		try{
+			ImageIO.write(image, "jpeg", new File(debugIndex + ".jpeg"));
+		} catch(IOException e){
+			
+		}
 	}
 }
