@@ -117,6 +117,10 @@ function stopApplet(){
 	frames[frames.length - 1].document.DeskShareApplet.destroy();
 }
 
+function checkForJava(){
+	if (navigator.javaEnabled()) return 1; 
+}
+
 </script>
 <noscript>
   	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"

@@ -51,8 +51,8 @@ package org.bigbluebutton.modules.deskShare.model.business
 			responder = new Responder(
 							function(result:Object):void{
 								if (result != null && (result as Boolean)){
-									checkVideoHeight();
 									checkVideoWidth();
+									checkVideoHeight();
 								}
 							},
 							function(status:Object):void{

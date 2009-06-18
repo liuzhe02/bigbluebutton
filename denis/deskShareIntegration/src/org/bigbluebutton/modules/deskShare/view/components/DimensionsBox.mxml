@@ -20,11 +20,17 @@
 			private var videoPlayer:Video;
 			private var ns:NetStream;
 			
+			[Bindable]
+			private var suggestedFrameRate:Number;
+			[Bindable]
+			private var suggestedQuality:String;
+			
 			private function onCreationComplete():void{
 				screenWidth = Capabilities.screenResolutionX;
 				screenHeight = Capabilities.screenResolutionY;
-				this.width = screenWidth / 10;
-				this.height = screenHeight / 10;
+				this.width = Math.round(screenWidth / DeskShareModuleConstants.SCALE);
+				this.height = Math.round(screenHeight / DeskShareModuleConstants.SCALE);
+				updateBoxInfo();
 			}
 			
 			public function startThumbnail(nc:NetConnection, streamName:String):void{
@@ -98,26 +104,64 @@
 			}
 			
 			private function getXPosition():Number{
-				return videoHolder.x * 10;
+				return videoHolder.x * DeskShareModuleConstants.SCALE;
 			}
 			
 			private function getYPosition():Number{
-				return videoHolder.y * 10;
+				return videoHolder.y * DeskShareModuleConstants.SCALE;
 			}
 			
 			private function onAsyncError(e:AsyncErrorEvent):void{
 				
 			}
+			
+			private function updateBoxInfo():void{
+				if (box.width *DeskShareModuleConstants.SCALE >= Capabilities.screenResolutionX) lblWidth.text 
+						= Capabilities.screenResolutionX.toString();
+				if (box.height*DeskShareModuleConstants.SCALE >= Capabilities.screenResolutionY) lblHeight.text
+						= Capabilities.screenResolutionY.toString();
+				var area:Number = (box.width*DeskShareModuleConstants.SCALE) * (box.height*DeskShareModuleConstants.SCALE);
+				if (area > 1000000){
+					 suggestedFrameRate = 1;
+					 suggestedQuality = "Poor";
+				} else if (area > 600000){
+					 suggestedFrameRate = 2;
+					 suggestedQuality = "Fair"
+				} else if (area > 300000){
+					 suggestedFrameRate = 4;
+					 suggestedQuality = "Good"
+				} else if (area > 150000){
+					 suggestedFrameRate = 8;
+					 suggestedQuality = "Excellent";
+				} else{
+		 			 suggestedFrameRate = 10;
+		 			 suggestedQuality = "Excellent";
+		 		}
+			}
 
 		]]>
 	</mx:Script>
 
-	<components:ResizableBox id="box" x="10" y="10" width="80" height="60" minWidth="40" minHeight="40" 
-		maxWidth="120" maxHeight="90" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+	<components:ResizableBox id="box" x="10" y="10" resize="updateBoxInfo()" 
+		width="{(Math.round((Capabilities.screenResolutionX/2)/DeskShareModuleConstants.SCALE))}" 
+		height="{(Math.round((Capabilities.screenResolutionY - 100)/DeskShareModuleConstants.SCALE))}" 
+		minWidth="{Math.round(300/DeskShareModuleConstants.SCALE)}" 
+		minHeight="{Math.round(300/DeskShareModuleConstants.SCALE)}" 
+		maxWidth="{Math.round((Capabilities.screenResolutionX)/DeskShareModuleConstants.SCALE)}" 
+		maxHeight="{Math.round((Capabilities.screenResolutionY)/DeskShareModuleConstants.SCALE)}" 
+		verticalScrollPolicy="off" horizontalScrollPolicy="off">
         <mx:HBox horizontalGap="0">
-        <mx:Label text="{(box.width * 10).toString()}"/>
-        <mx:Label text="x"/>
-        <mx:Label text="{(box.height * 10).toString()}"/>
+        	<mx:Label id="lblWidth" text="{(box.width * DeskShareModuleConstants.SCALE).toString()}"/>
+        	<mx:Label text="x"/>
+        	<mx:Label id="lblHeight" text="{(box.height * DeskShareModuleConstants.SCALE).toString()}"/>
+        </mx:HBox>
+        <mx:HBox>
+        	<mx:Label text="FrameRate: " />
+        	<mx:Label text="{suggestedFrameRate}" />
+        </mx:HBox>
+        <mx:HBox>
+        	<mx:Label text="Quality: " />
+        	<mx:Label text="{suggestedQuality}" />
         </mx:HBox>
 	</components:ResizableBox>
 </mx:Canvas>

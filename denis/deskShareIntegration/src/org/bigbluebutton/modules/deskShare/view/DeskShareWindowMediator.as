@@ -6,6 +6,7 @@ package org.bigbluebutton.modules.deskShare.view
 	import flash.media.Video;
 	import flash.net.NetStream;
 	
+	import mx.controls.Alert;
 	import mx.core.UIComponent;
 	
 	import org.bigbluebutton.modules.deskShare.DeskShareModuleConstants;
@@ -33,9 +34,6 @@ package org.bigbluebutton.modules.deskShare.view
 		
 		private var sharing:Boolean = false;
 		private var viewing:Boolean = false;
-		
-		private var videoWidth:Number = 800;
-		private var videoHeight:Number = 600;
 		
 		private var captureWidth;
 		private var captureHeight;
@@ -95,8 +93,8 @@ package org.bigbluebutton.modules.deskShare.view
 				case DeskShareModuleConstants.START_VIEWING:
 					if (!sharing){
 						var capResVO:CaptureResolutionVO = notification.getBody() as CaptureResolutionVO;
-						this.videoWidth = capResVO.width;
-						this.videoHeight = capResVO.height;
+						_window.videoWidth = capResVO.width;
+						_window.videoHeight = capResVO.height;
 						startViewing();
 					} 
 					break;
@@ -104,11 +102,11 @@ package org.bigbluebutton.modules.deskShare.view
 					if (viewing) stopViewing();
 					break;
 				case DeskShareModuleConstants.GOT_HEIGHT:
-					this.videoHeight = notification.getBody() as Number;
+					_window.videoHeight = notification.getBody() as Number;
 					startViewing();
 					break;
 				case DeskShareModuleConstants.GOT_WIDTH:
-					this.videoWidth = notification.getBody() as Number;
+					_window.videoWidth = notification.getBody() as Number;
 					break;
 				case DeskShareModuleConstants.APPLET_STARTED:
 					if(sharing) onAppletStart();
@@ -126,24 +124,24 @@ package org.bigbluebutton.modules.deskShare.view
 		}
 		
 		private function startViewing():void{
-			_window.videoPlayer = new Video(videoWidth, videoHeight);
-			_window.videoPlayer.width = videoWidth;
-			_window.videoPlayer.height = videoHeight;
+			_window.videoPlayer = new Video(_window.videoWidth, _window.videoHeight);
+			_window.videoPlayer.width = _window.videoWidth;
+			_window.videoPlayer.height = _window.videoHeight;
 			_window.videoHolder = new UIComponent();
-			_window.videoHolder.width = videoWidth;
-			_window.videoHolder.height = videoHeight;
-			_window.videoHolder.setActualSize(videoWidth, videoHeight);
+			_window.videoHolder.width = _window.videoWidth;
+			_window.videoHolder.height = _window.videoHeight;
+			_window.videoHolder.setActualSize(_window.videoWidth, _window.videoHeight);
 			_window.videoHolder.addChild(_window.videoPlayer);
-			_window.canvas.addChild(_window.videoHolder);
+			_window.canvas.addChildAt(_window.videoHolder,0);
 			_window.videoHolder.x = 0;
-			_window.videoHolder.y = 0;
+			_window.videoHolder.y = 20;
 			
 			_window.dimensionsBox.visible = false;
-			_window.height = videoHeight + 73;
-			_window.width = videoWidth + 12;
+			_window.height = 600;//_window.videoHeight + 73;
+			_window.width = 500;//_window.videoWidth + 12;
 			_window.canvas.visible = true;
-			_window.canvas.width = videoWidth;
-			_window.canvas.height = videoHeight;
+			//_window.canvas.width = videoWidth;
+			//_window.canvas.height = videoHeight;
 			_window.ns = new NetStream(proxy.getConnection());
 			_window.ns.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError);
 			_window.ns.client = this;
@@ -154,10 +152,13 @@ package org.bigbluebutton.modules.deskShare.view
 			
 			var room:String = _module.getRoom();
 			_window.ns.play(room);
-			_window.lblStatus.text = "You are viewing the desktop for presenter of room " + room;
+			//_window.lblStatus.text = "You are viewing the desktop for presenter of room " + room;
+			_window.resizable = true;
 			
 			viewing = true;
 			_window.btnStartApplet.visible = false;
+			_window.addZoomSlider();
+			_window.addDragSupport();
 		}
 		
 		private function onAsyncError(e:AsyncErrorEvent):void{
@@ -187,13 +188,17 @@ package org.bigbluebutton.modules.deskShare.view
 			_window.lblStatus.text = "";
 			_window.ns.close();
 			_window.canvas.removeChild(_window.videoHolder);
-			videoHeight = 0;
-			videoWidth = 0;
+			_window.videoHeight = 0;
+			_window.videoWidth = 0;
 			
 			_window.width = _window.dimensionsBox.width + 7;
 			_window.height = _window.bar.height + _window.dimensionsBox.height + 33;
 			_window.dimensionsBox.visible = true;
 			_window.dimensionsBox.box.visible = true;
+			_window.resizable = false;
+			
+			_window.removeZoomSlider();
+			_window.removeDragSupport();
 		}
 		
 		/**
@@ -206,8 +211,8 @@ package org.bigbluebutton.modules.deskShare.view
 				//Alert.show(_module.getRoom().toString());
 				var captureX:Number = _window.dimensionsBox.box.x * DeskShareModuleConstants.SCALE;
 				var captureY:Number = _window.dimensionsBox.box.y * DeskShareModuleConstants.SCALE;
-				captureWidth = _window.dimensionsBox.box.width * DeskShareModuleConstants.SCALE;
-				captureHeight = _window.dimensionsBox.box.height * DeskShareModuleConstants.SCALE;
+				captureWidth = Math.round(_window.dimensionsBox.box.width * DeskShareModuleConstants.SCALE - 5);
+				captureHeight = Math.round(_window.dimensionsBox.box.height * DeskShareModuleConstants.SCALE - 5);
 				sharing = true;
 				ExternalInterface.call("startApplet", _module.getCaptureServerUri(), _module.getRoom(), 
 														captureX, captureY, captureWidth, captureHeight);
