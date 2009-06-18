@@ -90,7 +90,7 @@ public class RoomThread implements Runnable {
 			inStream = new DataInputStream(socket.getInputStream());
 			int totalBytes = inStream.readInt();
 			System.out.println("Receiving " + totalBytes + " bytes");
-			if (totalBytes > 150000 || totalBytes < 0) return;
+			if (totalBytes > 1000000 || totalBytes <= 0) return;
 			
 			//This is the array to which we will append the partial buffers
 			byte[] appendedBuffer = new byte[totalBytes];
@@ -104,7 +104,7 @@ public class RoomThread implements Runnable {
 			//Notify all the listening classes that a new image has been received
 			if (image == null) return;
 			notifyListeners(image);
-			saveImage(image);
+			//saveImage(image);
 
 		} catch(Exception e){
 			e.printStackTrace(System.out);
@@ -129,6 +129,7 @@ public class RoomThread implements Runnable {
 	 * A debug method for seeing if the images were received correctly
 	 * @param image
 	 */
+	@SuppressWarnings("unused")
 	private void saveImage(BufferedImage image){
 		debugIndex++;
 		try{

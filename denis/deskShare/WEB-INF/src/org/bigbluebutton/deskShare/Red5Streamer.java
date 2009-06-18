@@ -46,16 +46,18 @@ public class Red5Streamer implements IImageListener {
 	final private Logger log = Red5LoggerFactory.getLogger(this.getClass());
 	
 	private long timestamp = 0, frameNumber = 0;
-	private int width, height;
+	private int width, height, frameRate, timestampBase;
 	private String outStreamName;
 	/**
 	 * The default constructor
 	 * The stream which gets published by the streamer has the same name as the scope. One stream allowed per room
 	 */
-	public Red5Streamer(IScope scope, String streamName, int width, int height){
+	public Red5Streamer(IScope scope, String streamName, int width, int height, int frameRate){
 		this.outStreamName = streamName;
 		this.width = width;
 		this.height = height;
+		this.frameRate = frameRate;
+		this.timestampBase = 1000000 / this.frameRate;
 		
 		outputHandler = new IRTMPEventIOHandler(){
 			public Red5Message read() throws InterruptedException{
@@ -91,7 +93,7 @@ public class Red5Streamer implements IImageListener {
 			System.out.println("could not create converter");
 		}
 		IVideoPicture outFrame = converter.toPicture(image, timestamp);
-		timestamp += DeskShareConstants.TIME_STAMP;
+		timestamp += timestampBase;
 		frameNumber ++;
 
 		outFrame.setQuality(0);
@@ -103,6 +105,9 @@ public class Red5Streamer implements IImageListener {
 			if (retval < 0)
 				throw new RuntimeException("could not save packet to container");
 		}
+		outFrame.delete();
+		outFrame = null;
+		converter = null;
 	}
 
 	@Override
@@ -188,7 +193,7 @@ public class Red5Streamer implements IImageListener {
 		outStreamCoder.setFlag(IStreamCoder.Flags.FLAG_QSCALE, true);
 		outStreamCoder.setGlobalQuality(0);
 
-		IRational frameRate = IRational.make(DeskShareConstants.FRAME_RATE,1);
+		IRational frameRate = IRational.make(this.frameRate,1);
 		outStreamCoder.setFrameRate(frameRate);
 		IRational timeBase = IRational.make(frameRate.getDenominator(), frameRate.getNumerator());
 		outStreamCoder.setTimeBase(timeBase);

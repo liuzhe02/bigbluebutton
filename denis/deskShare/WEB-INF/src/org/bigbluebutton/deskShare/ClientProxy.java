@@ -72,11 +72,12 @@ public class ClientProxy implements Runnable, IImageListener {
 			String[] screenDimensions = inStream.readLine().split("x");
 			int width = Integer.parseInt(screenDimensions[0]);
 			int height = Integer.parseInt(screenDimensions[1]);
+			int frameRate = Integer.parseInt(screenDimensions[2]);
 			
 			//Create a new room thread and a new streamer object to go with the thread
 			RoomThread room = new RoomThread(roomNum, socket, width, height);
 			IScope roomSpecificScope = scope.getScope(roomNum);
-			Red5Streamer streamPublisher = new Red5Streamer(roomSpecificScope, roomNum, width, height);
+			Red5Streamer streamPublisher = new Red5Streamer(roomSpecificScope, roomNum, width, height, frameRate);
 			room.registerListener(streamPublisher);
 			room.registerListener(this);
 			
