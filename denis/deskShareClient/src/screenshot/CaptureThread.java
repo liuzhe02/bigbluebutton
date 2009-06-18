@@ -18,11 +18,13 @@ public class CaptureThread implements Runnable {
 	public Capture capture;
 	private String roomNumber;
 	private String IP;
+	private int timeBase;
 	
 	public CaptureThread(Capture capture, String IP, String room){
 		this.capture = capture;
 		this.roomNumber = room;
 		this.IP = IP;
+		this.timeBase = 1000 / capture.getProperFrameRate();
 	}
 	
 	public void run(){
@@ -31,7 +33,9 @@ public class CaptureThread implements Runnable {
 			socket = new Socket(IP, PORT);
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			out.println(roomNumber);
-			out.println(Integer.toString(capture.getWidth()) + "x" + Integer.toString(capture.getHeight()));
+			out.println(Integer.toString(capture.getWidth())
+					+ "x" + Integer.toString(capture.getHeight())
+					+ "x" + Integer.toString(capture.getProperFrameRate()));
 			outStream = new DataOutputStream(socket.getOutputStream());
 		} catch(Exception e){
 			e.printStackTrace(System.out);
@@ -54,7 +58,7 @@ public class CaptureThread implements Runnable {
 			}
 			
 			try{
-				Thread.sleep(500);
+				Thread.sleep(timeBase);
 			} catch (Exception e){
 				System.exit(0);
 			}

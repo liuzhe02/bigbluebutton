@@ -137,5 +137,14 @@ public class Capture {
 	 public int getHeight(){
 		 return this.height;
 	 }
+	 
+	 public int getProperFrameRate(){
+		 long area = width*height;
+		 if (area > 1000000) return 1;
+		 else if (area > 600000) return 2;
+		 else if (area > 300000) return 4;
+		 else if (area > 150000) return 8;
+		 else return 10;
+	 }
 
 }
