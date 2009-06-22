@@ -29,12 +29,7 @@
             <url name="maven2-central" m2compatible="true">
   				<artifact pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact](-[revision]).[ext]" /> 
   				<artifact pattern="http://repo1.maven.org/maven2/[organisation]/[artifact]/[revision]/[artifact](-[revision]).[ext]" /> 
-  			</url>
-            <!--url name="ibiblio_maven2" m2compatible="true">
-  				<artifact pattern="http://www.ibiblio.org/maven2/[organisation]/[module]/[revision]/[artifact](-[revision]).[ext]" /> 
-  				<artifact pattern="http://www.ibiblio.org/maven2/[organisation]/[artifact]/[revision]/[artifact](-[revision]).[ext]" /> 
-  			</url>
-  			<ibiblio name="ibiblio" /-->     
+  			</url>  
         </chain>
         <chain name="testng" returnFirst="true">     
             <url name="testng_ibiblio_maven2" m2compatible="true">
@@ -42,16 +37,16 @@
   				<artifact pattern="http://repo1.maven.org/maven2/[organisation]/[artifact]/[revision]/[artifact](-[revision])-jdk15.[ext]" /> 
   			</url>      
         </chain>
+        <chain name="javax" returnFirst="true">     
+            <url name="java_maven2" m2compatible="true">
+  				<artifact pattern="http://download.java.net/maven/2/[organisation]/[module]/[revision]/[artifact](-[revision]).[ext]" /> 
+  			</url>      
+        </chain>
     </resolvers>
     <modules>
-    	<!--module organisation="org.red5" name="red5" resolver="local_lib"/-->
-    	<module organisation="org/red5" name="red5-sip" resolver="remote"/>
-    	<module organisation="org.springframework" name="*" resolver="googlecode"/>
+    	<module organisation="javax/media" name="*" resolver="javax"/>
     	<module organisation="spring" name="*" resolver="googlecode"/>
-        <module organisation="tomcat" name="*" resolver="googlecode"/>
-        <module organisation="jetty" name="*" resolver="googlecode"/>
         <module organisation="mina" name="*" resolver="googlecode"/>
-        <module organisation="jmx" name="*" resolver="googlecode"/> 
         <module organisation="org.testng" name="testng" resolver="testng_ibiblio_maven2"/> 
         <module organisation=".*" name="*" resolver="remote"/>		
     </modules>    

@@ -3,7 +3,7 @@ package org.red5.server.webapp.sip;
 
 import java.io.*;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.core.buffer.IoBuffer;
 import org.red5.io.ITagWriter;
 import org.red5.io.ITagReader;
 import org.red5.io.utils.ObjectMap;
@@ -65,7 +65,7 @@ public class RTMPUser extends RTMPClient implements INetStreamEventHandler, Clie
 
     private int kt2 = 0;
 
-    private ByteBuffer buffer;
+    private IoBuffer buffer;
 
 
     // ------------------------------------------------------------------------
@@ -221,7 +221,7 @@ public class RTMPUser extends RTMPClient implements INetStreamEventHandler, Clie
     public void pushAudio( int len, byte[] audio, long ts, int codec ) throws IOException {
 
         if ( buffer == null ) {
-            buffer = ByteBuffer.allocate( 1024 );
+            buffer = IoBuffer.allocate( 1024 );
             buffer.setAutoExpand( true );
         }
 
@@ -337,7 +337,7 @@ public class RTMPUser extends RTMPClient implements INetStreamEventHandler, Clie
             else if ( rtmpEvent instanceof AudioData ) {
                 audioTs += rtmpEvent.getTimestamp();
 
-                ByteBuffer audioData = ( (IStreamData) rtmpEvent ).getData().asReadOnlyBuffer();
+                IoBuffer audioData = ( (IStreamData) rtmpEvent ).getData().asReadOnlyBuffer();
                 byte[] data = SerializeUtils.ByteBufferToByteArray( audioData );
 
                 //System.out.println( "RTMPUser.dispatchEvent() - AudioData -> length = " + data.length + ".");
