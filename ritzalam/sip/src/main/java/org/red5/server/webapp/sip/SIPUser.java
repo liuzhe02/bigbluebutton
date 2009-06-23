@@ -12,12 +12,11 @@ import org.zoolu.sip.provider.*;
 import org.zoolu.net.SocketAddress;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.red5.logging.Red5LoggerFactory;
 
 public class SIPUser implements SIPUserAgentListener, SIPRegisterAgentListener {
 
-    protected static Logger log = LoggerFactory.getLogger( SIPUser.class );
+    protected static Logger log = Red5LoggerFactory.getLogger( SIPUser.class, "sip" );
 
     public boolean sipReady = false;
 
@@ -160,7 +159,7 @@ public class SIPUser implements SIPUserAgentListener, SIPRegisterAgentListener {
         this.proxy = proxy;
 		this.optOutboundProxy = proxy;
 
-        String fromURL = "\"" + phone + "\" <sip:" + phone + "@" + proxy + ">";
+        String fromURL = "\"" + username + "\" <sip:" + phone + "@" + proxy + ">";
 
         try {
             rtmpUser = new RTMPUser();

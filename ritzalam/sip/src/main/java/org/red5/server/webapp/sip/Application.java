@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 import org.red5.server.adapter.ApplicationAdapter;
 import org.red5.server.api.IClient;
@@ -23,7 +23,7 @@ import org.red5.server.api.stream.ISubscriberStream;
 
 public class Application extends ApplicationAdapter implements IStreamAwareScopeHandler {
 
-    protected static Logger log = LoggerFactory.getLogger( Application.class );
+    protected static Logger log = Red5LoggerFactory.getLogger( Application.class, "sip" );
 
     private SIPManager sipManager;
 
