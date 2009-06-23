@@ -22,10 +22,6 @@
 		<property name="virtualHosts" value="${webapp.virtualHosts}" />
 	</bean>
 
-	<bean id="web.handler" class="org.red5.server.webapp.sip.Application" />
-
-	<!--
-	<bean class="org.springframework.scripting.support.ScriptFactoryPostProcessor"/>
-	-->
+	<bean id="web.handler" class="org.bigbluebutton.conference.voice.VoiceApplication" />
 
 </beans>
