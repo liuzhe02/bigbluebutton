@@ -35,8 +35,8 @@ package org.bigbluebutton.modules.deskShare.view
 		private var sharing:Boolean = false;
 		private var viewing:Boolean = false;
 		
-		private var captureWidth;
-		private var captureHeight;
+		private var captureWidth:int;
+		private var captureHeight:int;
 		
 		/**
 		 * The default constructor 
