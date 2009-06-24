@@ -29,6 +29,7 @@ public class VoiceApplication extends ApplicationAdapter implements IStreamAware
 
     private SIPManager sipManager;
     private boolean available = false;
+    private String asteriskHost;
     private int startSIPPort = 5070;
     private int stopSIPPort = 5099;
     private int sipPort;
@@ -136,15 +137,14 @@ public class VoiceApplication extends ApplicationAdapter implements IStreamAware
     }
 
 
-	public void open(String uid, String phone,String username, String password, String realm, String proxy) {
+	public void open(String uid, String username) {
 		loginfo("Red5SIP open");
-
-		login(uid, phone, username, password, realm, proxy);
+		login(uid, username);
 		register(uid);
 	}
 
 
-	public void login(String uid, String phone, String username, String password, String realm, String proxy) {
+	public void login(String uid, String username) {
 		loginfo("Red5SIP login " + uid);
 
 		IConnection conn = Red5.getConnectionLocal();
@@ -168,6 +168,9 @@ public class VoiceApplication extends ApplicationAdapter implements IStreamAware
 		 * Let's tie this users account to the RTPPort. This allows us to dynamically
 		 * register a user when he/she joins the conference.
 		 */
+		String password = "secret";
+		String realm = asteriskHost;
+		String proxy = realm;
 		sipUser.login(new Integer(rtpPort).toString(),username, password, realm, proxy);
 		
 		userNames.put(conn.getClient().getId(), uid);
@@ -272,5 +275,9 @@ public class VoiceApplication extends ApplicationAdapter implements IStreamAware
     private void loginfo( String s ) {
 
         log.info( s );
+    }
+    
+    public void setAsteriskHost(String h) {
+    	asteriskHost = h;
     }
 }
