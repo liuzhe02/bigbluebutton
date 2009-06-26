@@ -8,12 +8,12 @@ import java.net.DatagramSocket;
 import org.red5.codecs.SIPCodec;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 
 public class SIPAudioLauncher implements MediaLauncher {
 
-    protected static Logger log = LoggerFactory.getLogger( SIPAudioLauncher.class );
+    protected static Logger log = Red5LoggerFactory.getLogger( SIPAudioLauncher.class, "sip" );
 
     DatagramSocket socket = null;
 

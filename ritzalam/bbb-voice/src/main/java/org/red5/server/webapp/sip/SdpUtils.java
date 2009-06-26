@@ -11,11 +11,11 @@ import org.zoolu.sdp.MediaField;
 import org.zoolu.sdp.SessionDescriptor;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 public class SdpUtils {
 
-    protected static Logger log = LoggerFactory.getLogger( SdpUtils.class );
+    protected static Logger log = Red5LoggerFactory.getLogger( SdpUtils.class, "sip" );
     
     
     /**

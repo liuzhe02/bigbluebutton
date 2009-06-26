@@ -7,7 +7,7 @@ import local.net.RtpSocket;
 import java.net.DatagramSocket;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 import org.red5.codecs.SIPCodec;
 import org.red5.codecs.asao.*;
@@ -15,7 +15,7 @@ import org.red5.codecs.asao.*;
 
 public class RTPStreamReceiver extends Thread {
 
-    protected static Logger log = LoggerFactory.getLogger( RTPStreamReceiver.class );
+    protected static Logger log = Red5LoggerFactory.getLogger( RTPStreamReceiver.class, "sip" );
 
     public static int RTP_HEADER_SIZE = 12;
 

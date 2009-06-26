@@ -13,7 +13,7 @@ import org.red5.codecs.SIPCodec;
 import org.red5.codecs.SIPCodecUtils;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 import org.zoolu.tools.Parser;
 
@@ -26,7 +26,7 @@ import local.ua.*;
 
 public class SIPUserAgent extends CallListenerAdapter {
 
-    protected static Logger log = LoggerFactory.getLogger( SIPUserAgent.class );
+    protected static Logger log = Red5LoggerFactory.getLogger( SIPUserAgent.class, "sip" );
     
     /** UserAgentProfile */
     protected SIPUserAgentProfile userProfile;

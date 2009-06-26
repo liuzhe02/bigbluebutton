@@ -2,7 +2,7 @@ package org.red5.server.webapp.sip;
 
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ public final class SIPManager {
 
     private static SIPManager singleton = new SIPManager();
 
-    private static final Logger log = LoggerFactory.getLogger( SIPManager.class );
+    private static final Logger log = Red5LoggerFactory.getLogger( SIPManager.class, "sip" );
 
 
     public static SIPManager getInstance() {

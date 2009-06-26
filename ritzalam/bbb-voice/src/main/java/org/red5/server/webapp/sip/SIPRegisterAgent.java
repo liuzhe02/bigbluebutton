@@ -12,7 +12,7 @@ import org.zoolu.sip.transaction.TransactionClientListener;
 import org.zoolu.sip.authentication.DigestAuthentication;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 import java.util.Vector;
 
@@ -77,7 +77,7 @@ public class SIPRegisterAgent implements Runnable, TransactionClientListener {
 	boolean isRunning;
 
 	/** Event logger. */
-	private static Logger log = LoggerFactory.getLogger(SIPRegisterAgent.class.getName());
+	private static Logger log = Red5LoggerFactory.getLogger(SIPRegisterAgent.class, "sip");
 
 	/** Number of registration attempts. */
 	int attempts;

@@ -30,12 +30,12 @@ import org.red5.server.stream.message.RTMPMessage;
 
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.red5.logging.Red5LoggerFactory;
 
 
 public class RTMPUser extends RTMPClient implements INetStreamEventHandler, ClientExceptionHandler, IPendingServiceCallback {
 
-    private static final Logger logger = LoggerFactory.getLogger( RTMPUser.class );
+    private static final Logger logger = Red5LoggerFactory.getLogger( RTMPUser.class, "sip" );
 
     public boolean createdPlayStream = false;
 
