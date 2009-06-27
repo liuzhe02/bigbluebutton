@@ -135,4 +135,15 @@ public class ClientProxy implements Runnable, IImageListener {
 		return 0;
 	}
 	
+	/**
+	 * Closes the server socket which listens to new connections
+	 */
+	public void closeSockets(){
+		try{
+			this.serverSocket.close();
+		} catch(IOException e){
+			e.printStackTrace(System.out);
+		}
+	}
+	
 }
