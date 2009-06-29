@@ -48,9 +48,6 @@ public class Decoder {
     }
 
 
-    // Recebe um array de byte de 20 ou 30 posições
-    // processa de 10 em 10 Bytes e retorna um array de float de 160 ou 240
-    // Bytes
     public void decode( byte[] bufferIn, float[] bufferOut ) {
 
         int inOffset = 0;
