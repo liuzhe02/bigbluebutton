@@ -120,7 +120,7 @@ public class RTMPUser extends RTMPClient implements INetStreamEventHandler, Clie
 
     public void startStream( String host, String app, int port, String publishName, String playName ) {
 
-        System.out.println( "RTMPUser startStream" );
+    	logger.debug( "RTMPUser startStream" );
 
         this.publishName = publishName;
         this.playName = playName;
@@ -149,7 +149,7 @@ public class RTMPUser extends RTMPClient implements INetStreamEventHandler, Clie
 
     public void stopStream() {
 
-        System.out.println( "RTMPUser stopStream" );
+    	logger.debug( "RTMPUser stopStream" );
 
         try {
             disconnect();

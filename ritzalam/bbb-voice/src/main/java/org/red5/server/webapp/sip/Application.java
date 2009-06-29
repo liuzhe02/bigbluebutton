@@ -242,6 +242,8 @@ public class Application extends ApplicationAdapter implements IStreamAwareScope
 		if(sipUser != null) {
 			loginfo("Red5SIP Call found user " + uid + " making call to " + destination);
 			sipUser.call(destination);
+		} else {
+			loginfo("Red5SIP Call found user " + uid + " making call to " + destination);
 		}
 
 	}
