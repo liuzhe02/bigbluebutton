@@ -1,0 +1,7 @@
+<participant 
+	conference="test-conference"
+	room="test-room"
+	name="Juan Tamad"
+	role="MODERATOR"
+	authToken="let-him-in-token"
+/>

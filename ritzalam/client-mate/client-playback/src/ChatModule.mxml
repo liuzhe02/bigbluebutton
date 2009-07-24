@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:maps="org.bigbluebutton.modules.chat.maps.*"
+	xmlns:mate="http://mate.asfusion.com/"
+	implements="org.bigbluebutton.common.IBigBlueButtonModule">
+	
+	<maps:ChatEventMap/>
+	
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.common.messaging.Router;
+			
+			private var _router:Router;
+			
+			public function acceptRouter(router:Router):void{
+				_router = router;
+			}
+		
+			public function get router():Router{
+				return _router;
+			}
+				
+			public function get moduleId():String {
+				return 'foo';
+			}
+			
+			public function get moduleName():String {
+				return 'bar';
+			}
+		
+			public function get uri():String {
+				return 'foo';
+			}
+			
+			public function get username():String {
+				return 'bar';
+			}
+			
+			public function get connection():NetConnection {
+				return null;
+			}
+			
+			public function get mode():String {
+				return 'foo';
+			}
+						
+			public function get userid():Number {
+				return 0;
+			}
+			
+			public function get role():String {
+				return 'bar'
+			}
+			
+			public function start(attributes:Object):void {		
+			}
+		
+			public function stop():void {
+			}
+		]]>
+	</mx:Script>
+</mx:Module>

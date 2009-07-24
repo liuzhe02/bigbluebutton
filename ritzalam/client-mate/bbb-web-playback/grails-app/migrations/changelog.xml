@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="alamr (generated)" id="1241058138397-1">
+        <createTable tableName="account">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="type" type="VARCHAR(9)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="updated_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-2">
+        <createTable tableName="account_conference">
+            <column name="account_conferences_id" type="BIGINT"/>
+            <column name="conference_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-3">
+        <createTable tableName="account_user">
+            <column name="account_users_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-4">
+        <createTable tableName="attendees">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="caller_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="caller_number" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="channel_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="conference_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_joined" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_left" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-5">
+        <createTable tableName="conference">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="updated_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-6">
+        <createTable tableName="permission">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="possible_actions" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-7">
+        <createTable tableName="role">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-8">
+        <createTable tableName="role_permission_rel">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="actions" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="target" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-9">
+        <createTable tableName="schedule">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="attendee_password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="conference_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="host_password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="length_of_conference" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number_of_attendees" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="record" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="schedule_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="schedule_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="scheduled_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-10">
+        <createTable tableName="scheduled_session">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="attendee_password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="conference_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="host_password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="moderator_password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number_of_attendees" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password_protect" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="record" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="session_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_limited" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="token_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="voice_conference_bridge" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-11">
+        <createTable tableName="user">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="full_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="password_hash" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-12">
+        <createTable tableName="user_permission_rel">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="actions" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-13">
+        <createTable tableName="user_role_rel">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-14">
+        <createTable tableName="voice_conference_bridge">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-15">
+        <createIndex indexName="FKB9D38A2D1CC2EEF6" tableName="account" unique="false">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-16">
+        <createIndex indexName="FK7DE9E26E96818A7E"
+            tableName="account_conference" unique="false">
+            <column name="account_conferences_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-17">
+        <createIndex indexName="FK7DE9E26E99EF9E3E"
+            tableName="account_conference" unique="false">
+            <column name="conference_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-18">
+        <createIndex indexName="FK410E6E9DB0DC3EDE"
+            tableName="account_user" unique="false">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-19">
+        <createIndex indexName="FK410E6E9DDF16672D"
+            tableName="account_user" unique="false">
+            <column name="account_users_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-20">
+        <createIndex indexName="FK2B5F451CB0DC3EDE"
+            tableName="conference" unique="false">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-21">
+        <createIndex indexName="type" tableName="permission" unique="true">
+            <column name="type"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-22">
+        <createIndex indexName="name" tableName="role" unique="true">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-23">
+        <createIndex indexName="FKDA106112B6B0FD5E"
+            tableName="role_permission_rel" unique="false">
+            <column name="permission_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-24">
+        <createIndex indexName="FKDA106112BB17AFE"
+            tableName="role_permission_rel" unique="false">
+            <column name="role_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-25">
+        <createIndex indexName="FKD6669297E5DDE85A" tableName="schedule" unique="false">
+            <column name="conference_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-26">
+        <createIndex indexName="FKE3CAED0499EF9E3E"
+            tableName="scheduled_session" unique="false">
+            <column name="conference_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-27">
+        <createIndex indexName="username" tableName="user" unique="true">
+            <column name="username"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-28">
+        <createIndex indexName="FK951A411DB0DC3EDE"
+            tableName="user_permission_rel" unique="false">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-29">
+        <createIndex indexName="FK951A411DB6B0FD5E"
+            tableName="user_permission_rel" unique="false">
+            <column name="permission_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-30">
+        <createIndex indexName="FKF3249744B0DC3EDE"
+            tableName="user_role_rel" unique="false">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="alamr (generated)" id="1241058138397-31">
+        <createIndex indexName="FKF3249744BB17AFE"
+            tableName="user_role_rel" unique="false">
+            <column name="role_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
