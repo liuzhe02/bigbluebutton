@@ -17,14 +17,25 @@
   You should have received a copy of the GNU Lesser General Public License along 
   with BigBlueButton; if not, If not, see <http://www.gnu.org/licenses/>.
  
+
+	
   $Id: $
 --> 
 
 <mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
+ 	xmlns:maps="org.bigbluebutton.modules.chat.maps.*"
+	xmlns:mate="http://mate.asfusion.com/"
 	implements="org.bigbluebutton.common.IBigBlueButtonModule"
 	creationComplete="onCreationComplete()">
+	
+	<maps:ChatEventMap id="ChatGlobalEventMap"/>
+	<maps:ChatLocalEventMap dispatcher="{this}" id="chatLocalEventMap"/>
+	<mate:Listener type="{ChatEvent.PRIVATE_CHAT_MESSAGE_EVENT}" method="handlePrivateChatMessageEvent" />
+		
 	<mx:Script>
 		<![CDATA[
+			import com.asfusion.mate.events.Dispatcher;
+			import org.bigbluebutton.modules.chat.events.ChatEvent;
 			import org.bigbluebutton.modules.chat.ChatFacade;
 			import org.bigbluebutton.common.messaging.Router;
 			
@@ -91,10 +102,16 @@
 				LogUtil.debug("chat attr: " + attributes.username);
 				_attributes = attributes;	
 				ChatFacade.getInstance().startup(this);	
+				LogUtil.debug("Dispatching NEW_CHAT_MESSAGE_EVENT");
+				this.dispatchEvent(new ChatEvent(ChatEvent.NEW_CHAT_MESSAGE_EVENT));
 			}
 		
 			public function stop():void {
 				ChatFacade.getInstance().stop(this);
+			}
+			
+			private function handlePrivateChatMessageEvent(event:Event):void {
+				trace("Received PRIVATE CHAT MESSAGE EVENT");
 			}
 		]]>
 	</mx:Script>

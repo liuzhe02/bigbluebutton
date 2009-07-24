@@ -19,10 +19,14 @@
 */
 package org.bigbluebutton.modules.chat
 {
+	import com.asfusion.mate.events.Dispatcher;
+	
+	import org.bigbluebutton.common.IBbbModuleWindow;
 	import org.bigbluebutton.common.IBigBlueButtonModule;
 	import org.bigbluebutton.common.messaging.Endpoint;
 	import org.bigbluebutton.common.messaging.EndpointMessageConstants;
 	import org.bigbluebutton.common.messaging.Router;
+	import org.bigbluebutton.main.view.events.OpenWindowEvent;
 	import org.bigbluebutton.modules.chat.model.business.UserVO;
 	import org.puremvc.as3.multicore.interfaces.IMediator;
 	import org.puremvc.as3.multicore.interfaces.INotification;
@@ -75,6 +79,7 @@ package org.bigbluebutton.modules.chat
 					_endpoint.sendMessage(EndpointMessageConstants.MODULE_STARTED, 
 							EndpointMessageConstants.TO_MAIN_APP, _module.moduleId);
 					facade.sendNotification(ChatModuleConstants.OPEN_WINDOW);
+									
 					break;
 				case ChatModuleConstants.DISCONNECTED:
 					LogUtil.debug('Sending Chat MODULE_STOPPED message to main');
@@ -87,8 +92,11 @@ package org.bigbluebutton.modules.chat
 					break;
 				case ChatModuleConstants.ADD_WINDOW:
 					LogUtil.debug('Sending Chat ADD_WINDOW message to main');
-					_endpoint.sendMessage(EndpointMessageConstants.ADD_WINDOW, 
-							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
+					trace('Sending Chat ADD_WINDOW message to main');
+//					_endpoint.sendMessage(EndpointMessageConstants.ADD_WINDOW, 
+//							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
+
+					dispatchOpenWindowEvent(notification.getBody() as IBbbModuleWindow);
 					break;
 				case ChatModuleConstants.REMOVE_WINDOW:
 					LogUtil.debug('Sending Chat REMOVE_WINDOW message to main');
@@ -96,6 +104,16 @@ package org.bigbluebutton.modules.chat
 							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
 					break;
 			}
+		}
+		
+		private function dispatchOpenWindowEvent(window:IBbbModuleWindow):void {
+			var dispatcher:Dispatcher = new Dispatcher();
+			//	dispatcher.bubbles = false;
+			var event:OpenWindowEvent = new OpenWindowEvent(OpenWindowEvent.OPEN_WINDOW_EVENT);
+			event.window = window;
+			trace("Dispatching ADD CHAT WINDOW EVENT");
+			dispatcher.dispatchEvent(event);
+
 		}
 	
 		private function messageReceiver(message : IPipeMessage) : void

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LocalEventMap xmlns="http://mate.asfusion.com/"
+	xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.modules.chat.events.ChatEvent;
+
+		]]>
+	</mx:Script>
+	<EventHandlers type="{ChatEvent.NEW_CHAT_MESSAGE_EVENT}">        
+ 		<MethodInvoker generator="{ChatManager}" method="receivedMessage" />
+		<EventAnnouncer dispatcherType="inherit"
+   				generator="{ChatEvent}" bubbles="true"
+   				type="{ChatEvent.PRIVATE_CHAT_MESSAGE_EVENT}" /> 
+   		<EventAnnouncer dispatcherType="global"
+   				generator="{ChatEvent}" bubbles="true"
+   				type="{ChatEvent.PRIVATE_CHAT_MESSAGE_EVENT}" /> 
+    </EventHandlers>	
+    
+    <EventHandlers type="{ChatEvent.PRIVATE_CHAT_MESSAGE_EVENT}" dispatcherType="inherit">        
+ 		<MethodInvoker generator="{ChatManager}" method="receivedPrivateMessage" /> 
+    </EventHandlers>
+    <mx:Script>
+    	<![CDATA[
+    		import org.bigbluebutton.modules.chat.managers.ChatManager;
+    	]]>
+    </mx:Script>
+</LocalEventMap>

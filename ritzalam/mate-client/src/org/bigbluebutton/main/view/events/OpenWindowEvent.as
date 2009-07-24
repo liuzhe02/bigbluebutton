@@ -19,24 +19,16 @@
 */
 package org.bigbluebutton.main.view.events
 {
-
 	import flash.events.Event;	
-	import flexlib.mdi.containers.MDIWindow;
-
-	public class AddWindowEvent extends Event
+	import org.bigbluebutton.common.IBbbModuleWindow;
+	public class OpenWindowEvent extends Event
 	{
-		// The View Component to be added
-		public var component:MDIWindow;
-//		public var component:String;
-		// The type of event
-		public static const NAME:String = 'ADD_WINDOW';
+		public var window:IBbbModuleWindow;
+		public static const OPEN_WINDOW_EVENT:String = 'OPEN_WINDOW_EVENT';
 			
-		// Constructor
-		public function AddWindowEvent( component:MDIWindow )
-//		public function AddWindowEvent( component:String )
+		public function OpenWindowEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false )
 		{
-			super( NAME, true );
-			this.component = component;	
+			super(type, bubbles, cancelable);	
 		}
 		
 	}
