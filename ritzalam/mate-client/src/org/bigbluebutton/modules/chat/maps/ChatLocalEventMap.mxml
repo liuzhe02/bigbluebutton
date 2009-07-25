@@ -3,10 +3,21 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.main.events.ModuleStartedEvent;
+			import org.bigbluebutton.modules.chat.events.StartChatModuleEvent;
 			import org.bigbluebutton.modules.chat.events.ChatEvent;
-
+			import org.bigbluebutton.modules.chat.managers.ChatManager;
 		]]>
 	</mx:Script>
+	
+	<EventHandlers type="{StartChatModuleEvent.START_CHAT_MODULE_EVENT}">        
+   		<EventAnnouncer dispatcherType="global"
+   				generator="{ModuleStartedEvent}" bubbles="true"
+   				type="{ModuleStartedEvent.MODULE_STARTED_EVENT}">
+   				<Properties started="true" moduleName="ChatModule"/>
+   		</EventAnnouncer> 
+    </EventHandlers>
+    
 	<EventHandlers type="{ChatEvent.NEW_CHAT_MESSAGE_EVENT}">        
  		<MethodInvoker generator="{ChatManager}" method="receivedMessage" />
 		<EventAnnouncer dispatcherType="inherit"
@@ -20,9 +31,4 @@
     <EventHandlers type="{ChatEvent.PRIVATE_CHAT_MESSAGE_EVENT}" dispatcherType="inherit">        
  		<MethodInvoker generator="{ChatManager}" method="receivedPrivateMessage" /> 
     </EventHandlers>
-    <mx:Script>
-    	<![CDATA[
-    		import org.bigbluebutton.modules.chat.managers.ChatManager;
-    	]]>
-    </mx:Script>
 </LocalEventMap>

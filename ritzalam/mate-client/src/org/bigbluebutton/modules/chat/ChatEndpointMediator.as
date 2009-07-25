@@ -26,6 +26,7 @@ package org.bigbluebutton.modules.chat
 	import org.bigbluebutton.common.messaging.Endpoint;
 	import org.bigbluebutton.common.messaging.EndpointMessageConstants;
 	import org.bigbluebutton.common.messaging.Router;
+	import org.bigbluebutton.main.events.CloseWindowEvent;
 	import org.bigbluebutton.main.view.events.OpenWindowEvent;
 	import org.bigbluebutton.modules.chat.model.business.UserVO;
 	import org.puremvc.as3.multicore.interfaces.IMediator;
@@ -93,15 +94,11 @@ package org.bigbluebutton.modules.chat
 				case ChatModuleConstants.ADD_WINDOW:
 					LogUtil.debug('Sending Chat ADD_WINDOW message to main');
 					trace('Sending Chat ADD_WINDOW message to main');
-//					_endpoint.sendMessage(EndpointMessageConstants.ADD_WINDOW, 
-//							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
-
 					dispatchOpenWindowEvent(notification.getBody() as IBbbModuleWindow);
 					break;
 				case ChatModuleConstants.REMOVE_WINDOW:
 					LogUtil.debug('Sending Chat REMOVE_WINDOW message to main');
-					_endpoint.sendMessage(EndpointMessageConstants.REMOVE_WINDOW, 
-							EndpointMessageConstants.TO_MAIN_APP, notification.getBody());
+					dispatchCloseWindowEvent(notification.getBody() as IBbbModuleWindow);
 					break;
 			}
 		}
@@ -116,6 +113,16 @@ package org.bigbluebutton.modules.chat
 
 		}
 	
+		private function dispatchCloseWindowEvent(window:IBbbModuleWindow):void {
+			var dispatcher:Dispatcher = new Dispatcher();
+			//	dispatcher.bubbles = false;
+			var event:CloseWindowEvent = new CloseWindowEvent(CloseWindowEvent.CLOSE_WINDOW_EVENT);
+			event.window = window;
+			trace("Dispatching CLOSE CHAT WINDOW EVENT");
+			dispatcher.dispatchEvent(event);
+
+		}
+		
 		private function messageReceiver(message : IPipeMessage) : void
 		{
 			var msg : String = message.getHeader().MSG as String;
