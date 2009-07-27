@@ -27,7 +27,7 @@ package org.bigbluebutton.modules.chat
 	import org.bigbluebutton.common.messaging.EndpointMessageConstants;
 	import org.bigbluebutton.common.messaging.Router;
 	import org.bigbluebutton.main.events.CloseWindowEvent;
-	import org.bigbluebutton.main.view.events.OpenWindowEvent;
+	import org.bigbluebutton.main.events.OpenWindowEvent;
 	import org.bigbluebutton.modules.chat.model.business.UserVO;
 	import org.puremvc.as3.multicore.interfaces.IMediator;
 	import org.puremvc.as3.multicore.interfaces.INotification;

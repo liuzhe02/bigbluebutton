@@ -33,9 +33,9 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.main.events.OpenWindowEvent;
 			import org.bigbluebutton.main.events.CloseWindowEvent;
 			import org.bigbluebutton.common.IBbbModuleWindow;
-			import org.bigbluebutton.main.view.events.OpenWindowEvent;
 			import flexlib.mdi.containers.MDIWindow;
 			import org.bigbluebutton.util.logging.Logger;
 			import org.bigbluebutton.main.view.events.StartModuleEvent;

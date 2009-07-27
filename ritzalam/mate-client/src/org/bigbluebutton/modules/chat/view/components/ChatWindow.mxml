@@ -47,10 +47,12 @@
 			
 			private var _xPosition:int;
 			private var _yPosition:int;
-			
+			private var _width:int;
+			private var _height:int;
+						
 			[Bindable]
 			private var participants:ArrayCollection = new ArrayCollection();
-						
+									
 			private function init():void{
 				addParticipant(new UserVO("All", "0"));
 				dispatchEvent(new Event(ChatModuleConstants.OPEN_CHAT_BOX));
@@ -85,7 +87,6 @@
 			   		dispatchEvent(new SendMessageEvent(SEND_MESSAGE));
 			   	}
 			}
-
 
 			public function get xPosition():int {
 				return _xPosition;

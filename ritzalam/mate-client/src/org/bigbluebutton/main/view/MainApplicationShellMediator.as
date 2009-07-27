@@ -30,12 +30,12 @@ package org.bigbluebutton.main.view
 	
 	import org.bigbluebutton.common.IBbbModuleWindow;
 	import org.bigbluebutton.main.MainApplicationConstants;
+	import org.bigbluebutton.main.events.OpenWindowEvent;
 	import org.bigbluebutton.main.model.ModulesProxy;
 	import org.bigbluebutton.main.model.PortTestProxy;
 	import org.bigbluebutton.main.view.components.LoggedOutWindow;
 	import org.bigbluebutton.main.view.components.MainApplicationShell;
 	import org.bigbluebutton.main.view.components.ModuleStoppedWindow;
-	import org.bigbluebutton.main.view.events.OpenWindowEvent;
 	import org.bigbluebutton.main.view.events.StartModuleEvent;
 	import org.bigbluebutton.modules.red5phone.view.components.Red5PhoneWindow;
 	import org.puremvc.as3.multicore.interfaces.INotification;

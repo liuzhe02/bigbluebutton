@@ -8,7 +8,7 @@ package org.bigbluebutton.main.events
 	{
 		public var window:IBbbModuleWindow;
 		
-		public static const OPEN_WINDOW_EVENT:String = 'openWindowEvent';
+		public static const OPEN_WINDOW_EVENT:String = 'OPEN_WINDOW_EVENT';
 		
 		public function OpenWindowEvent(type:String, bubbles:Boolean=true, cancelable:Boolean=false)
 		{

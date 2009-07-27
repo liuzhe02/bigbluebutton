@@ -1,13 +1,28 @@
 package org.bigbluebutton.modules.chat.managers
 {
+	import flash.events.IEventDispatcher;
+	
 	public class ChatManager
 	{
+		/** This property is injected by the application. */
+		public var dispatcher:IEventDispatcher;
+		
+		private var attributes:Object;
+		
 		public function ChatManager()
 		{
 		}
 
+		public function setModuleAttributes(attributes:Object):void {
+			this.attributes = attributes;
+		}
+		
+		public function getDispatcher():IEventDispatcher {
+			return dispatcher;
+		}
+		
 		public function receivedMessage():void {
-			trace("Got New Chat message");
+			trace("Got New Public Chat message");
 		}
 		
 		public function receivedPrivateMessage():void {
@@ -16,6 +31,10 @@ package org.bigbluebutton.modules.chat.managers
 		
 		public function receivedGlobalMessage():void {
 			trace("Got New Global Chat message");
+		}
+		
+		public function receivedSendPublicChatMessageEvent():void {
+			trace("Receive receivedSendPublicChatMessageEvent");
 		}
 	}
 }

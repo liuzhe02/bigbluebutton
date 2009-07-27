@@ -28,12 +28,13 @@
 	implements="org.bigbluebutton.common.IBigBlueButtonModule"
 	creationComplete="onCreationComplete()">
 	
-	<maps:ChatEventMap id="ChatGlobalEventMap"/>
 	<maps:ChatLocalEventMap dispatcher="{this}" id="chatLocalEventMap"/>
+	<maps:ChatEventMap id="ChatGlobalEventMap"/>
 	<mate:Listener type="{ChatEvent.PRIVATE_CHAT_MESSAGE_EVENT}" method="handlePrivateChatMessageEvent" />
 		
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.modules.chat.events.StartChatModuleEvent;
 			import com.asfusion.mate.events.Dispatcher;
 			import org.bigbluebutton.modules.chat.events.ChatEvent;
 			import org.bigbluebutton.modules.chat.ChatFacade;
@@ -101,9 +102,13 @@
 			public function start(attributes:Object):void {	
 				LogUtil.debug("chat attr: " + attributes.username);
 				_attributes = attributes;	
-				ChatFacade.getInstance().startup(this);	
+//				ChatFacade.getInstance().startup(this);	
 				LogUtil.debug("Dispatching NEW_CHAT_MESSAGE_EVENT");
-				this.dispatchEvent(new ChatEvent(ChatEvent.NEW_CHAT_MESSAGE_EVENT));
+				
+				var event:StartChatModuleEvent = new StartChatModuleEvent(StartChatModuleEvent.START_CHAT_MODULE_EVENT)
+				event.start = true;
+				event.attributes = _attributes;
+				this.dispatchEvent(event);
 			}
 		
 			public function stop():void {

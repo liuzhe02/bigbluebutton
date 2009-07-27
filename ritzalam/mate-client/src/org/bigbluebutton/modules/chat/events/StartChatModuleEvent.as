@@ -26,6 +26,7 @@ package org.bigbluebutton.modules.chat.events
 		public static const START_CHAT_MODULE_EVENT:String = 'START_CHAT_MODULE_EVENT';
 		
 		public var start:Boolean = true;
+		public var attributes:Object;
 		
 		public function StartChatModuleEvent(type:String, bubbles:Boolean=true, cancelable:Boolean=false)
 		{

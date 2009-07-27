@@ -6,7 +6,7 @@ package org.bigbluebutton.main.events
 
 	public class ParticipantJoinEvent extends Event
 	{
-		public static const PARTICIPANT_JOINED_EVENT:String = 'participantJoinedEvent';
+		public static const PARTICIPANT_JOINED_EVENT:String = 'PARTICIPANT_JOINED_EVENT';
 		
 		public var participant:Participant;
 		
