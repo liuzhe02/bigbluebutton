@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300" xmlns:mate="http://mate.asfusion.com/" 
+	creationComplete="startTimer()" label="Shared Notes Example" >
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import maps.NotesEventMap;
+			import events.NotesUpdateEvent;
+			import org.bigbluebutton.common.mate.SharedObjectEvent;
+			private var timer:Timer;
+			//A dirty bit for user input
+			private var dirty:Boolean = true;
+			
+			//Start a timer which will control how often updates get sent to the server
+			private function startTimer():void{
+				timer = new Timer(1000);
+				timer.addEventListener(TimerEvent.TIMER, timerHandler);
+				timer.start();
+			}
+			
+			//The timer will send updates to the server once every cycle, but only if the user has typed something
+			private function timerHandler(e:TimerEvent):void{
+				if (!dirty) return;
+				var messageEvent:NotesUpdateEvent = new NotesUpdateEvent(NotesUpdateEvent.NEW);
+				messageEvent.message = txtArea.text;
+				dispatchEvent(messageEvent);
+				dirty = false;
+			}
+			
+			//Sends out an update to all the other clients
+			public function sendNewMessage(message:String):void{
+				dirty = true;
+			}
+			
+			//Displays the updated message
+			private function displayNewMessage(event:SharedObjectEvent):void{
+				txtArea.text = event.message.toString();
+			}
+		]]>
+	</mx:Script>
+	<mate:Debugger level="{Debugger.ALL}"/>
+	<!-- The text area where the notes get displayed -->
+	<mx:TextArea id="txtArea" width="100%" height="100%" keyUp="sendNewMessage(txtArea.text)" />
+	
+	<!-- This listener calls the displayNewMessage method every time a NOTES_UPDATE_EVENT gets dispatched -->
+	<mate:Listener type="{NotesEventMap.NOTES_UPDATE_EVENT}" method="displayNewMessage" />
+</mx:Panel>

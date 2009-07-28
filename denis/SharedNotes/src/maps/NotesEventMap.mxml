@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The NotesEventMap is the main EventMap file of the SharedNotes application -->
+<EventMap xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="http://mate.asfusion.com/" xmlns:mate="org.bigbluebutton.common.mate.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import events.NotesUpdateEvent;
+			import views.NotesWindow;
+			import org.bigbluebutton.common.mate.SharedObjectService;
+			import org.bigbluebutton.common.mate.SharedObjectEvent;
+			
+			public static const NOTES_UPDATE_EVENT:String = "NotesUpdateEvent";
+			
+			[Bindable]
+			private var soService:SharedObjectService;
+			
+			//Start the SharedObjectService the application will be communicating with
+			public function startSOService(url:String, connection:NetConnection = null):void{
+				soService = new SharedObjectService(url, connection);
+			}
+			
+			//When something goes wrong with updating the shared object, it comes here
+			private function sharedObjectUpdateFailed(fault:Object):void{
+				var obj:SharedObjectEvent = fault as SharedObjectEvent;
+				Alert.show(obj.message as String);
+			}
+		]]>
+	</mx:Script>
+	
+	<Debugger level="{Debugger.ALL}"/>
+	<!-- The EventHandler that handles all dispathes of the MessageEvent.NEW event-->
+	<EventHandlers id="sender" type="{NotesUpdateEvent.NEW}" debug="true">
+		<mate:SharedObjectInvoker id="soInvoker" SOName="{NOTES_UPDATE_EVENT}" debug="true" sharedObjectService="{soService}">
+			<Properties message="{event.message}" />
+			<mate:faultHandlers>
+				<InlineInvoker method="sharedObjectUpdateFailed" arguments="{fault}" />
+			</mate:faultHandlers>
+		</mate:SharedObjectInvoker>
+	</EventHandlers>
+</EventMap>

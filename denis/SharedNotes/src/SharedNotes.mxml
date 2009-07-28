@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:views="views.*" creationComplete="init()" xmlns:maps="maps.*" viewSourceURL="srcview/index.html">
+	<mx:Script>
+		<![CDATA[
+			private function init():void{
+				eventMap.startSOService("rtmp://demo.bigbluebutton.org/bigbluebutton");
+			}
+		]]>
+	</mx:Script>
+	<views:NotesWindow />
+	<maps:NotesEventMap id="eventMap"/>
+</mx:Application>
