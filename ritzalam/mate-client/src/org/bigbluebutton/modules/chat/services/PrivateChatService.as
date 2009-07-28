@@ -25,6 +25,10 @@ package org.bigbluebutton.modules.chat.services
 			chatSOService.join(attributes.userid, attributes.uri + "/" + attributes.room);
 		}
 		
+		public function leave():void {
+			chatSOService.leave();
+		}
+		
 		public function sendChatMessageEvent(event:SendPrivateChatMessageEvent):void {
 			trace("Receive receivedSendPrivateChatMessageEvent");
 			var newMessage:String;			

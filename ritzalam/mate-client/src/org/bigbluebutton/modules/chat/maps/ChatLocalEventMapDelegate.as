@@ -4,8 +4,8 @@ package org.bigbluebutton.modules.chat.maps
 	
 	import flash.events.IEventDispatcher;
 	
+	import org.bigbluebutton.main.events.CloseWindowEvent;
 	import org.bigbluebutton.main.events.OpenWindowEvent;
-	import org.bigbluebutton.modules.chat.events.SendPublicChatMessageEvent;
 	import org.bigbluebutton.modules.chat.views.components.ChatWindow;
 	
 	public class ChatLocalEventMapDelegate
@@ -14,11 +14,13 @@ package org.bigbluebutton.modules.chat.maps
 
 		private var _chatWindow:ChatWindow;
 		private var _chatWindowOpen:Boolean = false;
+		private var globalDispatcher:Dispatcher;
 				
 		public function ChatLocalEventMapDelegate(dispatcher:IEventDispatcher)
 		{
 			this.dispatcher = dispatcher;
 			_chatWindow = new ChatWindow();
+			globalDispatcher = new Dispatcher();
 		}
 
 		public function openChatWindow():void {
@@ -32,8 +34,7 @@ package org.bigbluebutton.modules.chat.maps
 		   	_chatWindow.setLocalDispatcher(dispatcher);
 		   	
 		   	// Use the GLobal Dispatcher so that this message will be heard by the
-		   	// main application.
-		   	var globalDispatcher:Dispatcher = new Dispatcher();
+		   	// main application.		   	
 			var event:OpenWindowEvent = new OpenWindowEvent(OpenWindowEvent.OPEN_WINDOW_EVENT);
 			event.window = _chatWindow;
 			trace("Dispatching OPEN CHAT WINDOW EVENT");
@@ -43,8 +44,13 @@ package org.bigbluebutton.modules.chat.maps
 
 		}
 		
-		public function receivedOpenWindowEvent():void {
-			trace("Receive open window event");
+		public function closeChatWindow():void {
+			var event:CloseWindowEvent = new CloseWindowEvent(CloseWindowEvent.CLOSE_WINDOW_EVENT);
+			event.window = _chatWindow;
+			trace("Dispatching CLOSE CHAT WINDOW EVENT");
+			globalDispatcher.dispatchEvent(event);
+		   	
+		   	_chatWindowOpen = false;
 		}
 	}
 }
