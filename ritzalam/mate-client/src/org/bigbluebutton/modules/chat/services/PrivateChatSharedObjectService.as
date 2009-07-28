@@ -27,6 +27,8 @@ package org.bigbluebutton.modules.chat.services
 	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
+	import org.bigbluebutton.main.events.ParticipantJoinEvent;
+	import org.bigbluebutton.main.model.Participant;
 	import org.bigbluebutton.modules.chat.events.PrivateChatMessageEvent;
 	import org.bigbluebutton.modules.chat.model.MessageVO;
 
@@ -39,6 +41,7 @@ package org.bigbluebutton.modules.chat.services
 		private var dispatcher:IEventDispatcher;
 		
 		private var privateResponder:Responder;
+		private var participantsResponder:Responder;
 		
 		// This participant's userid
 		private var userid:String;
@@ -56,6 +59,27 @@ package org.bigbluebutton.modules.chat.services
 					LogUtil.error("Error while trying to call privateMessage on server");
 				}
 			);
+
+			participantsResponder = new Responder(
+	        		// participants - On successful result
+					function(result:Object):void { 
+						trace("Successfully queried participants: " + result.count); 
+						if (result.count > 0) {
+							for(var p:Object in result.participants) 
+							{
+								participantJoined(result.participants[p]);
+							}							
+						}	
+					},	
+					// status - On error occurred
+					function(status:Object):void { 
+						trace("Error occurred:"); 
+						for (var x:Object in status) { 
+							LogUtil.error(x + " : " + status[x]); 
+							} 
+						trace("Error in participantsResponder call");
+					}
+				);				
 		}
 						
 	    public function join(userid:String, uri:String):void
@@ -64,7 +88,8 @@ package org.bigbluebutton.modules.chat.services
 			chatSO = SharedObject.getRemote(userid, uri, false);
 			chatSO.addEventListener(SyncEvent.SYNC, sharedObjectSyncHandler);
 			chatSO.client = this;
-			chatSO.connect(connection);				
+			chatSO.connect(connection);	
+						
 		}
 		
 	    public function leave():void
@@ -89,6 +114,25 @@ package org.bigbluebutton.modules.chat.services
 		private function sharedObjectSyncHandler(event:SyncEvent) : void
 		{	
 			trace("Connection to private shared object successful.");
+		}
+
+		public function participantJoined(joinedUser:Object):void { 
+			var participant:Participant = new Participant();
+			participant.userid = joinedUser.userid;
+			participant.name = joinedUser.name;
+			trace("ParticipantJoined " + joinedUser.name + "[" + joinedUser.userid + "]");
+			
+			if (joinedUser.userid == userid) return;
+			
+			var globalDispatcher:Dispatcher = new Dispatcher();
+			var joinEvent:ParticipantJoinEvent = new ParticipantJoinEvent(ParticipantJoinEvent.PARTICIPANT_JOINED_EVENT);
+			joinEvent.participant = participant;
+			globalDispatcher.dispatchEvent(joinEvent);
+		}
+		
+		public function queryForParticipants():void {
+			trace("Querying for participants.");
+			connection.call("participants.getParticipants",participantsResponder);
 		}
 	}
 }

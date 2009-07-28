@@ -3,6 +3,7 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.modules.chat.events.QueryParticipantsEvent;
 			import org.bigbluebutton.modules.chat.events.SendPrivateChatMessageEvent;
 			import org.bigbluebutton.modules.chat.views.components.ChatView;
 			import org.bigbluebutton.modules.chat.events.SendPublicChatMessageEvent;
@@ -47,7 +48,8 @@
     </EventHandlers>
     
     <EventHandlers type="{ConnectionEvent.CONNECT_EVENT}">        
- 		<MethodInvoker generator="{ChatLocalEventMapDelegate}" method="openChatWindow" />		
+ 		<MethodInvoker generator="{ChatLocalEventMapDelegate}" method="openChatWindow" />
+ 		<MethodInvoker generator="{PrivateChatService}" method="queryForParticipants"/>		
     </EventHandlers>
     
     <EventHandlers type="{SendPublicChatMessageEvent.SEND_PUBLIC_CHAT_MESSAGE_EVENT}">        
@@ -58,6 +60,9 @@
  		<MethodInvoker generator="{PrivateChatService}" method="sendChatMessageEvent" arguments="{event}"/>		
     </EventHandlers>
     
+    <EventHandlers type="{QueryParticipantsEvent.QUERY_PARTICIPANTS_EVENT}">        
+ 		<MethodInvoker generator="{PrivateChatService}" method="queryForParticipants"/>		
+    </EventHandlers>
     
 	<!--EventHandlers type="{ConnectionEvent.CONNECT_EVENT}">        
  		<MethodInvoker generator="{ChatManager}" method="receivedMessage" />

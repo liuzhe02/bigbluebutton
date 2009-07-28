@@ -33,5 +33,9 @@ package org.bigbluebutton.modules.chat.services
 			var messageVO:MessageVO = new MessageVO(newMessage, attributes.userid, event.toUser);
 			chatSOService.sendMessage(messageVO);
 		}
+		
+		public function queryForParticipants():void {
+			chatSOService.queryForParticipants();
+		}
 	}
 }

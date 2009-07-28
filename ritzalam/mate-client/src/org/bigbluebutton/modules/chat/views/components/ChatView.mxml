@@ -10,6 +10,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import org.bigbluebutton.modules.chat.events.QueryParticipantsEvent;
 			import org.bigbluebutton.main.events.ParticipantJoinEvent;
 			import org.bigbluebutton.modules.chat.events.SendPrivateChatMessageEvent;
 			import com.asfusion.mate.events.Dispatcher;
@@ -35,6 +36,7 @@
 			private function onCreationComplete():void{
 				addParticipant(new UserVO("All", PUBLIC_CHAT_USERID));
 				onOpenChatBox();
+//				queryForParticipants();
 			}
 			
 			public function setFocusOn(component:UIComponent):void
@@ -90,6 +92,12 @@
 			private function sendPublicChatMessage(publicEvent:SendPublicChatMessageEvent):void {
 				trace("Sending public chat message");
 				localDispatcher.dispatchEvent(publicEvent);
+			}
+			
+			private function queryForParticipants():void {
+				trace("Sending query for participants message");
+				var event:QueryParticipantsEvent = new QueryParticipantsEvent(QueryParticipantsEvent.QUERY_PARTICIPANTS_EVENT);
+				localDispatcher.dispatchEvent(event);
 			}
 			
 			private function sendPrivateChatMessage(privateEvent:SendPrivateChatMessageEvent):void {
