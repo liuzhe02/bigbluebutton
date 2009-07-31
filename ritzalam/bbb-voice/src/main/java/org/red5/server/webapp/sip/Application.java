@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.red5.logging.Red5LoggerFactory;
 
-import org.red5.server.adapter.ApplicationAdapter;
+import org.red5.server.adapter.MultiThreadedApplicationAdapter;
 import org.red5.server.api.IClient;
 import org.red5.server.api.IConnection;
 import org.red5.server.api.IScope;
@@ -21,7 +21,7 @@ import org.red5.server.api.stream.IStreamAwareScopeHandler;
 import org.red5.server.api.stream.ISubscriberStream;
 
 
-public class Application extends ApplicationAdapter implements IStreamAwareScopeHandler {
+public class Application extends MultiThreadedApplicationAdapter implements IStreamAwareScopeHandler {
 
     protected static Logger log = Red5LoggerFactory.getLogger( Application.class, "sip" );
 

@@ -136,7 +136,49 @@ public class VoiceApplication extends ApplicationAdapter implements IStreamAware
         loginfo( "Red5SIP Ping" );
     }
 
+/*****************************************************/	
+    
+	public void open(String uid, String phone,String username, String password, String realm, String proxy) {
+		loginfo("Red5SIP open");
 
+		login(uid, phone, username, password, realm, proxy);
+		register(uid);
+	}
+
+
+	public void login(String uid, String phone, String username, String password, String realm, String proxy) {
+		loginfo("Red5SIP login " + uid);
+
+		IConnection conn = Red5.getConnectionLocal();
+		IServiceCapableConnection service = (IServiceCapableConnection) conn;
+
+		SIPUser sipUser = sipManager.getSIPUser(uid);
+
+		if(sipUser == null) {
+			loginfo("Red5SIP open creating sipUser for " + username + " on sip port " + sipPort + " audio port " + rtpPort + " uid " + uid );
+
+			try {
+				sipUser = new SIPUser(conn.getClient().getId(), service, sipPort, rtpPort);
+				sipManager.addSIPUser(uid, sipUser);
+
+			} catch (Exception e) {
+				loginfo("open error " + e);
+			}
+		}
+
+		sipUser.login(phone,username, password, realm, proxy);
+		userNames.put(conn.getClient().getId(), uid);
+
+		sipPort++;
+		if (sipPort > stopSIPPort) sipPort = startSIPPort;
+
+		rtpPort++;
+		if (rtpPort > stopRTPPort) rtpPort = startRTPPort;
+
+	}
+
+/*****************************************************/	
+	
 	public void open(String uid, String username) {
 		loginfo("Red5SIP open");
 		login(uid, username);

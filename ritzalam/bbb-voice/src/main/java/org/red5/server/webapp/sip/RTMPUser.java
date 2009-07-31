@@ -136,9 +136,9 @@ public class RTMPUser extends RTMPClient implements INetStreamEventHandler, Clie
         try {
             connect( host, port, app, this );
 
-            while ( !startPublish ) {
-                Thread.yield();
-            }
+//            while ( !startPublish ) {
+ //               Thread.yield();
+ //           }
         }
         catch ( Exception e ) {
             logger.error( "RTMPUser startStream exception " + e );
