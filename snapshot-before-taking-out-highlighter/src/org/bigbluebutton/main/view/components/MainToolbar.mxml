@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  BigBlueButton - http://www.bigbluebutton.org
+  
+  Copyright (c) 2008-2009 by respective authors (see below). All rights reserved.
+  
+  BigBlueButton is free software; you can redistribute it and/or modify it under the 
+  terms of the GNU Lesser General Public License as published by the Free Software 
+  Foundation; either version 3 of the License, or (at your option) any later 
+  version. 
+  
+  BigBlueButton is distributed in the hope that it will be useful, but WITHOUT ANY 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License along 
+  with BigBlueButton; if not, If not, see <http://www.gnu.org/licenses/>.
+ 
+  $Id: $
+--> 
+
+<mx:ApplicationControlBar xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:mate="http://mate.asfusion.com/"
+	enabled="true" >   
+	
+	<mate:Listener type="{AddToolbarButtonEvent.ADD_TOOLBAR_BUTTON_EVENT}" method="handleAddToolbarButtonEvent" />	
+	<mate:Listener type="{RemoveToolbarButtonEvent.REMOVE_TOOLBAR_BUTTON_EVENT}" method="handleRemoveToolbarButtonEvent"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.main.events.AddToolbarButtonEvent;
+			import org.bigbluebutton.main.events.RemoveToolbarButtonEvent;
+			import org.bigbluebutton.main.events.CloseWindowEvent;
+			import org.bigbluebutton.main.MainApplicationConstants;
+			import org.bigbluebutton.main.view.MainApplicationShellMediator;
+
+			public function loggedIn(name:String, room:String, role:String):void{
+				loggedInUserLbl.text = "You are logged in as " + name + " to " + room + " as role " + role + ".";
+				this.visible = true;
+			}
+			
+			public function addButton(name:String):Button{
+				var btn:Button = new Button();
+				btn.id = name;
+				btn.label = name;
+				btn.height = 20;
+				btn.visible = true;
+				this.addChild(btn);
+				
+				return btn;
+			}
+			
+			private function doLogout():void {
+				dispatchEvent(new Event(MainApplicationConstants.LOGOUT_EVENT));
+			}
+			
+			private function handleAddToolbarButtonEvent(event:AddToolbarButtonEvent):void {
+				addedBtns.addChild(event.button);
+			}
+			
+			private function handleRemoveToolbarButtonEvent(event:RemoveToolbarButtonEvent):void {
+				addedBtns.removeChild(event.button);
+			}
+			
+		]]>
+	</mx:Script>	
+	<mx:Label id="loggedInUserLbl" text="" visible="true"/>	
+	<mx:HBox id="addedBtns">
+	</mx:HBox>		
+	<mx:Spacer width="100%"/>
+	<mx:LinkButton label="Help" click="navigateToURL(new URLRequest('http://www.bigbluebutton.org/content/videos'))"/>
+	<mx:Button label="Logout" id="btnLogout" toolTip="Log out" right="10" click="doLogout()"/>		
+	
+</mx:ApplicationControlBar>
