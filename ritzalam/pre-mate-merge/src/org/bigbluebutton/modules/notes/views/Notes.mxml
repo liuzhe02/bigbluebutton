@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MDIWindow xmlns="flexlib.mdi.containers.*" xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="400" height="300" xmlns:mate="http://mate.asfusion.com/" 
+	implements="org.bigbluebutton.common.IBbbModuleWindow">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.asfusion.mate.utils.debug.Debugger;
+			import org.bigbluebutton.common.mate.SharedObjectEvent;
+			import mx.controls.Alert;
+			import org.bigbluebutton.modules.notes.events.MessageEvent;
+			
+			private var _xPosition:int;
+			private var _yPosition:int;
+			
+			public function sendNewMessage(message:String):void{
+				var messageEvent:MessageEvent = new MessageEvent(MessageEvent.NEW);
+				messageEvent.message = txtArea.text;
+				txtArea.text = "";
+				dispatchEvent(messageEvent);
+			}
+			
+			private function displayNewMessage(event:SharedObjectEvent):void{
+				txtArea.text = event.message.toString();
+			}
+			
+			public function get xPosition():int {
+				return _xPosition;
+			}
+			
+			public function get yPosition():int {
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void {
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void {
+				_yPosition = y;
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:TextArea id="txtArea" width="100%" height="100%" keyUp="sendNewMessage(txtArea.text)" />
+	
+	<mate:Debugger level="{Debugger.ALL}" />
+	<mate:Listener type="{SharedObjectEvent.SHARED_OBJECT_UPDATE_SUCCESS}" method="displayNewMessage" />
+</MDIWindow>
