@@ -268,8 +268,8 @@ public class RTPStreamReceiver extends Thread {
                         headerOffset = offset;
                         payloadLength = length;
                         
-                        float[] decodingBuffer = new float[  sipCodec.getIncomingEncodedFrameSize() ];
-                        byte[] codedBuffer = new byte[  sipCodec.getIncomingEncodedFrameSize() ];
+                        float[] decodingBuffer = new float[  length ];
+                        byte[] codedBuffer = new byte[  length ];
                         
                    //     println( "run",
                    //             "pkt.length = " + packetBuffer.length
