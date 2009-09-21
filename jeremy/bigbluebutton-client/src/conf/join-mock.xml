@@ -1,0 +1,10 @@
+<join>
+	<returncode>SUCCESS</returncode>
+	<fullname>Guilermo</fullname>
+	<role>MODERATOR</role>
+	<conference>358620a8-9880-478e-a4c3-640b87d6202d</conference>
+	<room>5ff13b16-54ea-49b8-a63b-7e2c119d0ce3</room>
+	<voicebridge>85115</voicebridge>
+	<mode>LIVE</mode>
+	<record>true</record>
+</join>
