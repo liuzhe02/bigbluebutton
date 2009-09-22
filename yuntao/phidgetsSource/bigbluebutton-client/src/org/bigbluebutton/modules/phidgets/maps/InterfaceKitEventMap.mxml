@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns="http://mate.asfusion.com/">
+	<mx:Script>
+		<![CDATA[
+			import com.asfusion.mate.events.Dispatcher;
+			import org.bigbluebutton.modules.presentation.events.presentEvent;
+			
+		import mx.controls.Alert;
+		import org.bigbluebutton.modules.phidgets.views.Phidgets;
+		import org.bigbluebutton.modules.phidgets.events.InterfaceKitEvent;
+
+		import com.phidgets.*;
+		import com.phidgets.events.*;			
+
+		public var phid1:com.phidgets.PhidgetInterfaceKit;
+
+		public function phidConnect1(evt:InterfaceKitEvent):void{ 
+			phid1 = new PhidgetInterfaceKit();
+			
+			phid1.addEventListener(PhidgetEvent.CONNECT,	onConnect1);
+			phid1.addEventListener(PhidgetEvent.DETACH,	onDetach1);
+			phid1.addEventListener(PhidgetEvent.ATTACH,	onAttach1);
+			phid1.addEventListener(PhidgetEvent.DISCONNECT, onDisconnect1);
+			phid1.addEventListener(PhidgetDataEvent.SENSOR_CHANGE, onSensorChange);
+			
+			phid1.open("localhost", 5001, "pass");
+		}
+		
+		private function onAttach1(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+		private function onDetach1(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+		private function onDisconnect1(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+		private function onConnect1(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+
+		private function onSensorChange(evt:PhidgetDataEvent):void{
+			switch(evt.Index){
+				case 2: 
+				if (evt.Data == 0) {
+					// gotoNextSlide();
+					var nextEvent:presentEvent = new presentEvent(presentEvent.NEXT_SLIDE);
+					var goNext:Dispatcher = new Dispatcher();
+					goNext.dispatchEvent(nextEvent);
+				}
+				break;
+				case 5:  
+				if (evt.Data == 0) {
+					// gotoPreviousSlide();
+					var prevEvent:presentEvent = new presentEvent(presentEvent.PREVIOUS_SLIDE);
+					var goLast:Dispatcher = new Dispatcher();
+					goLast.dispatchEvent(prevEvent);
+				}
+				break;
+			}
+		}			
+		
+		]]>
+	</mx:Script>
+	
+	<Listener type="{InterfaceKitEvent.OPEN}" method="phidConnect1" />
+		
+</EventMap>

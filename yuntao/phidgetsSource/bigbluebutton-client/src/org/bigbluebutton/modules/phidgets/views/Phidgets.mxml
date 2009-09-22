@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Notes.mxml is the main view of the SharedNotes application
+-->
+<MDIWindow xmlns="flexlib.mdi.containers.*" xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="400" height="300" xmlns:mate="http://mate.asfusion.com/" 
+	implements="org.bigbluebutton.common.IBbbModuleWindow" creationComplete="startTimer()" xmlns:maps="org.bigbluebutton.modules.phidgets.maps.*">
+	
+	<mx:Script>
+		<![CDATA[
+
+			import com.asfusion.mate.utils.debug.Debugger;
+			import org.bigbluebutton.common.mate.SharedObjectEvent;
+			import mx.controls.Alert;
+			import org.bigbluebutton.modules.phidgets.events.ServoEvent;
+			
+			
+			private var _xPosition:int;
+			private var _yPosition:int;
+			
+			private var timer:Timer;
+			private var dirty:Boolean = true;
+			
+			//The following code block is to deal with a bug in FLexLib with MDI windows not responding well to being maximized
+			private var savedWindowWidth:Number;
+			private var savedWindowHeight:Number;
+			private var savedX:Number;
+			private var savedY:Number;
+			private var isMaximized:Boolean = false;
+			override public function maximize():void{
+				if (!isMaximized){
+					savedWindowHeight = this.height;
+					savedWindowWidth = this.width;
+					savedX = this.x;
+					savedY = this.y;
+                	// dispatchEvent(new MDIWindowEvent(MDIWindowEvent.MAXIMIZE, this));
+                	isMaximized = true;
+				} else{
+					this.width = savedWindowWidth;
+					this.height = savedWindowHeight;
+					this.x = savedX;
+					this.y = savedY;
+					isMaximized = false;
+					//dispatchEvent(new MDIWindowEvent(MDIWindowEvent.RESTORE, this));
+				}	
+			}
+			
+			private function startTimer():void{
+			}
+			
+			private function timerHandler(e:TimerEvent):void{
+				if (!dirty) return;
+				dirty = false;
+			}
+			
+			//Sends out an update to all the other clients
+			public function sendNewMessage(message:String):void{
+				dirty = true;
+			}
+			
+			//Displays the updated message
+			private function displayNewMessage(event:SharedObjectEvent):void{
+			}
+			
+			public function get xPosition():int {
+				return _xPosition;
+			} 
+			
+			public function get yPosition():int {
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void {
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void {
+				_yPosition = y;
+			}
+			
+			private var _defaultWidth:int = 400;
+			private var _defaultHeight:int = 300;
+			
+			public function get defaultWidth():int{
+				return _defaultWidth;
+			}
+			
+			public function get defaultHeight():int{
+				return _defaultHeight;
+			}
+			
+			public function set defaultHeight(height:int):void{
+				this._defaultHeight = height;
+			}
+			
+			public function set defaultWidth(width:int):void{
+				this._defaultWidth = width;
+			}
+			
+			public function resetWidthAndHeight():void{
+				this.width = _defaultWidth;
+				this.height = _defaultHeight;
+			}
+			
+		]]>
+	</mx:Script>
+	
+</MDIWindow>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns="http://mate.asfusion.com/">
+	<mx:Script>
+		<![CDATA[
+		
+		import org.bigbluebutton.modules.viewers.model.services.ViewersSOService;
+		import mx.controls.Alert;
+		import org.bigbluebutton.modules.phidgets.views.Phidgets;
+		import org.bigbluebutton.modules.phidgets.events.ServoEvent;
+		
+		import com.phidgets.*;
+		import com.phidgets.events.*;			
+
+		public var phid:com.phidgets.PhidgetServo;
+		public var servoID:String = "";
+
+		public function phidConnect(evt:ServoEvent):void{ 
+		
+			phid = new PhidgetServo();
+			
+			phid.addEventListener(PhidgetEvent.CONNECT,	onConnect);
+			phid.addEventListener(PhidgetEvent.DETACH,	onDetach);
+			phid.addEventListener(PhidgetEvent.ATTACH,	onAttach);
+			phid.addEventListener(PhidgetEvent.DISCONNECT, onDisconnect);
+			phid.addEventListener(PhidgetDataEvent.POSITION_CHANGE, onPositionChange);
+			
+			//phid.open(addressText.text, int(portText.text), passwordText.text);
+			phid.open("localhost", 5001, "pass");
+		}
+		
+		public function setServo(id:String):void {
+			switch(id)
+			{
+			}
+		}
+		
+		public function phidRaiseHand(e:ServoEvent):void {
+			phid.setPosition(0, 202);
+		}
+		
+		public function phidDownHand(e:ServoEvent):void {
+			phid.setPosition(0, 120);
+		}
+		
+		private function onAttach(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+		private function onDetach(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+		private function onDisconnect(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+		private function onConnect(evt:PhidgetEvent):void{
+			trace(evt);
+		}
+		private function onPositionChange(evt:PhidgetDataEvent):void{
+			switch(evt.Index){
+			}
+		}
+		
+		public function getServo(evt:ServoEvent):void {
+			servoID = phid.Name;
+		}
+
+		]]>
+	</mx:Script>
+	
+	<Listener type="{ServoEvent.OPEN}" method="phidConnect" />
+	<Listener type="{ServoEvent.HANDS_UP}" method="phidRaiseHand" /> 
+	<Listener type="{ServoEvent.HANDS_DOWN}" method="phidDownHand" />	
+		
+</EventMap>

@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<config>
+    <version>0.4</version>
+    <porttest host="demo.bigbluebutton.org" application="video"/>    
+	<modules>
+
+		<module name="ChatModule" url="ChatModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/bigbluebutton" 
+			loadNextModule="PresentationModule"	
+			onUserJoinedEvent="START"
+			onUserLogoutEvent="STOP"		 
+		/>
+		<module name="ViewersModule" url="ViewersModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/bigbluebutton" 
+			host="conf/join-mock.xml"
+			onAppInitEvent="LOAD" loadNextModule="ChatModule"
+			onAppStartEvent="START"
+			onUserLogoutEvent="STOP"
+		/>	
+		<module name="ListenersModule" url="ListenersModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/bigbluebutton" 
+			recordingHost="http://demo.bigbluebutton.org"
+			loadNextModule="DeskShareModule"
+			onUserJoinedEvent="START"
+			onUserLogoutEvent="STOP"
+		/>
+		<module name="PresentationModule" url="PresentationModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/bigbluebutton" 
+			host="http://demo.bigbluebutton.org" 
+			loadNextModule="ListenersModule"
+			onUserJoinedEvent="START" 
+			onUserLogoutEvent="STOP"
+		/>
+		
+		<module name="DeskShareModule" url="DeskShareModule.swf" uri="rtmp://demo.bigbluebutton.org/deskShare" onUserJoinedEvent="START" onUserLogoutEvent="STOP" loadNextModule="PhoneModule" />
+		
+		<module name="PhoneModule" url="PhoneModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/sip" 
+			onUserJoinedEvent="START" 
+			onUserLogoutEvent="STOP"
+			loadNextModule="VideoconfModule"
+		/>
+		
+		<module name="VideoconfModule" url="VideoconfModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/video"
+			onUserJoinedEvent="START"
+			onUserLogoutEvent="STOP"	
+			loadNextModule="AutotestModule"
+		/>
+		
+		<module name="AutotestModule" url="AutotestModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/bigbluebutton" 
+			onUserJoinedEvent="START" 
+			onUserLogoutEvent="STOP"
+			loadNextModule="PhidgetsModule"
+		/>
+		
+		<module name="PhidgetsModule" url="PhidgetsModule.swf" 
+			uri="rtmp://demo.bigbluebutton.org/bigbluebutton" 
+			onUserJoinedEvent="START" 
+			onUserLogoutEvent="STOP"
+		/>
+		
+	</modules>
+</config>
+
