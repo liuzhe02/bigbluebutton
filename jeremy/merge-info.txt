@@ -7,4 +7,4 @@
 # -r 2570:HEAD - Sep 21 23:46
 
 # Command used
-svn merge -r 2570:HEAD https://bigbluebutton.googlecode.com/svn/trunk/bigbluebutton-web/
+svn merge -r 2570:HEAD https://bigbluebutton.googlecode.com/svn/trunk/
