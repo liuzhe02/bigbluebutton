@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="http://mate.asfusion.com/">
+	
+	<mx:Script>
+		<![CDATA[
+			import events.WaveEvent;
+			import events.InboxEvent;
+			import mx.controls.Alert;
+			import events.LoginEvent;
+			import business.Red5Proxy;
+			import mx.events.FlexEvent;
+			
+			private var proxy:Red5Proxy;
+			
+			private function generateObjects():void{
+				proxy = new Red5Proxy();
+			}
+			
+			private function login(e:LoginEvent):void{
+				proxy.startWaveClient(e.username);
+			}
+			
+			private function loginSuccessHandler():void{
+				proxy.getWaves();
+			}
+			
+			private function openWave(e:InboxEvent):void{
+				var index:Number = e.data as Number;
+				proxy.openWave(index);
+			}
+			
+			private function appendLineToDocument(e:WaveEvent):void{
+				//proxy.appendLine
+			}
+		]]>
+	</mx:Script>
+	
+	<EventHandlers type="{FlexEvent.PREINITIALIZE}" >
+		<InlineInvoker method="generateObjects" />
+	</EventHandlers>
+	
+	<EventHandlers type="{LoginEvent.LOGIN}">
+		<InlineInvoker method="login" arguments="{event}" />
+	</EventHandlers>
+	
+	<EventHandlers type="{LoginEvent.LOGIN_SUCCESS}" >
+		<InlineInvoker method="loginSuccessHandler" />
+	</EventHandlers>
+	
+	<EventHandlers type="{InboxEvent.OPEN_WAVE}" >
+		<InlineInvoker method="openWave" arguments="{event}" />
+	</EventHandlers>
+	
+	<EventHandlers type="{WaveEvent.APPEND_LINE_TO_DOCUMENT}" >
+		<InlineInvoker method="appendLineToDocument" arguments="{event}"/>
+	</EventHandlers>
+</EventMap>

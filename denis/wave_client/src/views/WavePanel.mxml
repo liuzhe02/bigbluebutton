@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300" creationComplete="onCreationComplete()" xmlns:mate="http://mate.asfusion.com/">
+	
+	<mx:Script>
+		<![CDATA[
+			import events.WaveEvent;
+			import managers.WaveManager;
+			
+			[Bindable] private var waveManager:WaveManager;
+			
+			private function onCreationComplete():void{
+
+			}
+			
+			private function showWave(e:WaveEvent):void{
+				waveManager = new WaveManager();
+				waveManager.parseWaveletData(e.data);
+				this.visible = true;
+			}
+			
+			private function appendLine():void{
+				if (txtInput.text == "") return;
+				var e:WaveEvent = new WaveEvent(WaveEvent.APPEND_LINE_TO_DOCUMENT);
+				e.data = txtInput.text;
+				dispatcher.dispatchEvent(e);
+			}
+		]]>
+	</mx:Script>
+	
+	<mate:Listener type="{WaveEvent.WAVE_OPENED}" method="showWave" />
+	<mate:Dispatcher id="dispatcher" />
+	
+	<mx:DataGrid id="waveletsGrid" dataProvider="{waveManager.wavelets}" width="100%" height="214" >
+		<mx:columns>
+			<mx:DataGridColumn dataField="content" headerText="Wave Contents" />
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:TextInput id="txtInput" x="10" y="228" width="286"/>
+	<mx:Button x="304" y="228" label="Submit" click="appendLine()"/>
+</mx:Panel>

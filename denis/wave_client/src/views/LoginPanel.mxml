@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="270" height="114" label="Flash Wave Client" xmlns:mate="http://mate.asfusion.com/">
+	<mx:Script>
+		<![CDATA[
+			import events.LoginEvent;
+			
+			private function creationComplete():void{
+				
+			}
+			
+			private function doLogin():void{
+				var event:LoginEvent = new LoginEvent(LoginEvent.LOGIN);
+				event.username = txtUserName.text;
+				dispatcher.dispatchEvent(event);
+			}
+			
+			private function hideLoginPanel(e:LoginEvent):void{
+				this.visible = false;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Label text="User Name"  x="10" y="12"/>
+	<mx:TextInput id="txtUserName"  x="84" y="10"/>
+	<mx:Button id="btnLogin" click="doLogin()"  x="97" y="42" label="Login"/>
+	
+	<mate:Dispatcher id="dispatcher" />
+	<mate:Listener type="{LoginEvent.LOGIN_SUCCESS}" method="hideLoginPanel" />
+</mx:Panel>

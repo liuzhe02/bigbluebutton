@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="onCreationComplete()" xmlns:maps="maps.*" xmlns:views="views.*" xmlns:mate="http://mate.asfusion.com/">
+	<mx:Script>
+		<![CDATA[
+			import events.LoginEvent;
+			
+			private function onCreationComplete():void{
+				
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	<maps:WaveEventMap id="eventMap" />
+	
+	<views:LoginPanel id="loginPanel"  x="317" y="159"/>
+	<views:InboxPanel id="inboxPanel" visible="false"  x="10" y="107"/>
+	<views:WavePanel id="wavePanel" visible="false"  x="468" y="107"/>
+</mx:Application>

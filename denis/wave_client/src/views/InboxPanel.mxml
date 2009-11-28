@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300" xmlns:mate="http://mate.asfusion.com/"
+	creationComplete="onCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import managers.InboxManager;
+			import mx.controls.Alert;
+			import events.InboxEvent;
+			import events.LoginEvent;
+			
+			[Bindable] private var inboxManager:InboxManager;
+			
+			private function onCreationComplete():void{
+				inboxManager = new InboxManager();
+			}
+			
+			private function showInbox(e:LoginEvent):void{
+				this.visible = true;
+				this.title = e.username;
+			}
+			
+			private function gotWaves(e:InboxEvent):void{
+				inboxManager.parseWaveData(e.data);
+			}
+			
+			private function openWave():void{
+				var index:Number = waveGrid.selectedIndex;
+				var e:InboxEvent = new InboxEvent(InboxEvent.OPEN_WAVE);
+				e.data = index;
+				dispatcher.dispatchEvent(e);
+			}
+		]]>
+	</mx:Script>
+	
+	<mate:Listener type="{LoginEvent.LOGIN_SUCCESS}" method="showInbox" />
+	<mate:Listener type="{InboxEvent.GOT_WAVES}" method="gotWaves" />
+	<mate:Dispatcher id="dispatcher" />
+	
+	<mx:DataGrid id="waveGrid" dataProvider="{inboxManager.waves}" width="100%" height="100%" click="openWave()">
+		<mx:columns>
+			<mx:DataGridColumn dataField="digest" headerText="Wave Digest" />
+		</mx:columns>
+	</mx:DataGrid>
+</mx:Panel>
