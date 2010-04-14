@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<co:IBSDockablePanel xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:co="org.bigbluebutton.main.view.components.com.containers.*" 
+	width="100%" height="100%" 
+	title="Slides">
+	
+    <mx:Panel id="dialogPanel"
+        width="100%" height="100%"
+        layout="horizontal" verticalAlign="middle"
+     >
+ </mx:Panel>
+</co:IBSDockablePanel>

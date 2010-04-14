@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  BigBlueButton - http://www.bigbluebutton.org
+  
+  Copyright (c) 2008-2009 by respective authors (see below). All rights reserved.
+  
+  BigBlueButton is free software; you can redistribute it and/or modify it under the 
+  terms of the GNU Lesser General Public License as published by the Free Software 
+  Foundation; either version 3 of the License, or (at your option) any later 
+  version. 
+  
+  BigBlueButton is distributed in the hope that it will be useful, but WITHOUT ANY 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License along 
+  with BigBlueButton; if not, If not, see <http://www.gnu.org/licenses/>.
+ 
+  $Id: $
+--> 
+
+<MDIWindow xmlns="flexlib.mdi.containers.*" 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="init()" 
+	implements="org.bigbluebutton.common.IBbbModuleWindow"
+	resizable="false" xmlns:mate="http://mate.asfusion.com/">
+	
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.modules.videoconf.events.CloseAllWindowsEvent;
+			import flexlib.mdi.events.MDIWindowEvent;
+			import mx.core.UIComponent;
+		
+			private var video:Video;
+			private var ns:NetStream;
+			private var videoHolder:UIComponent;
+			private var stream:String;
+			private var videoHeight:Number;
+			private var videoWidth:Number;
+			
+			private var _xPosition:int;
+			private var _yPosition:int;
+			
+			//The following code block is to deal with a bug in FLexLib with MDI windows not responding well to being maximized
+			private var savedWindowWidth:Number;
+			private var savedWindowHeight:Number;
+			private var savedX:Number;
+			private var savedY:Number;
+			private var isMaximized:Boolean = false;
+			override public function maximize():void{
+				if (!isMaximized){
+					savedWindowHeight = this.height;
+					savedWindowWidth = this.width;
+					savedX = this.x;
+					savedY = this.y;
+                	dispatchEvent(new MDIWindowEvent(MDIWindowEvent.MAXIMIZE, this));
+                	isMaximized = true;
+				} else{
+					this.width = savedWindowWidth;
+					this.height = savedWindowHeight;
+					this.x = savedX;
+					this.y = savedY;
+					isMaximized = false;
+					//dispatchEvent(new MDIWindowEvent(MDIWindowEvent.RESTORE, this));
+				}	
+			}
+			
+			private function init():void{
+				_xPosition = 400;
+				_yPosition = 400;
+				videoHolder = new UIComponent();
+				videoHolder.addChild(video);
+				this.addChild(videoHolder);
+			}
+			
+			public function startVideo(connection:NetConnection, stream:String):void{
+				ns = new NetStream(connection);
+				ns.addEventListener( NetStatusEvent.NET_STATUS, onNetStatus );
+				ns.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError);
+				ns.client = this;
+				ns.bufferTime = 0;
+				ns.receiveVideo(true);
+				ns.receiveAudio(false);
+				
+				setVideoResolution(stream);
+				video = new Video(this.width, this.height);
+				video.width = this.width;
+				video.height = this.height;
+				video.attachNetStream(ns);
+				ns.play(stream);	
+				
+				this.width = video.width + 6;
+				this.height = video.height + 29;
+				this.stream = stream;
+			}
+			
+			private function setVideoResolution(stream:String):void{
+				var resString:String = stream.substr(0, 7);
+				switch(resString){
+					case "320x240":
+						this.width = 320;
+						this.height = 240;
+						break;
+					case "640x480":
+						this.width = 640;
+						this.height = 480;
+						break;
+				}
+			}
+			
+			private function onAsyncError(e:AsyncErrorEvent):void{
+				LogUtil.debug("VIdeoWindow::asyncerror " + e.toString());
+			}
+			
+			public function onMetaData(info:Object):void{
+				LogUtil.debug("metadata: width=" + info.width + " height=" + info.height);
+				videoHolder.width = info.width;
+				videoHolder.height = info.height;
+			}
+			
+			public function get xPosition():int {
+				return _xPosition;
+			}
+			
+			public function get yPosition():int {
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void {
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void {
+				_yPosition = y;
+			}
+			
+			public function get defaultWidth():int{
+				return this.width;
+			}
+			
+			public function get defaultHeight():int{
+				return this.height;
+			}
+			
+			public function set defaultHeight(height:int):void{
+				this.height = height;
+			}
+			
+			public function set defaultWidth(width:int):void{
+				this.width = width;
+			}
+			
+			public function resetWidthAndHeight():void{}
+			
+			private function onNetStatus(e:NetStatusEvent):void{
+				switch(e.info.code){
+				case "NetStream.Publish.Start":
+					LogUtil.debug("NetStream.Publish.Start for broadcast stream " + stream);
+					break;
+				case "NetStream.Play.UnpublishNotify":
+					ns.close();
+					this.close();
+					break;
+				}
+			}
+			
+			override public function close(event:MouseEvent=null):void{
+				ns.close();
+				super.close(event);
+			}		
+			
+			private function closeWindow(e:CloseAllWindowsEvent):void{
+				this.close();
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mate:Listener type="{CloseAllWindowsEvent.CLOSE_ALL_WINDOWS}" method="closeWindow" />
+</MDIWindow>

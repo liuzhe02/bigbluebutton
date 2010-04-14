@@ -1,0 +1,83 @@
+.Application
+{
+	backgroundGradientColors: #E3EFFF, #E3EFFF;
+	backgroundGradientAlphas: 1.0, 1.0;
+	fontSize: 12;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
+	paddingBottom: 0;
+	horizontalGap: 0;
+	verticalGap: 0;
+}
+
+.Accordion
+{
+	backgroundAlpha: 1;
+	backgroundColor: #FFFFFF;
+	borderColor: #6593CF;
+	borderStyle: solid;
+	borderThickness: 1;
+	headerHeight: 32;
+	headerStyleName: accordionHeader;
+	paddingLeft: -1;
+	paddingRight: -1;
+	paddingTop: -1;
+	paddingBottom: -1;
+	horizontalGap: 0;
+	verticalGap: -1;
+}
+
+.accordionHeader
+{
+	color: #204D89;
+	fontSize: 12;
+	fontWeight: normal;
+	textAlign: left;
+	textRollOverColor: #204D89;
+	textSelectedColor: #204D89;
+	fillColors: #E3EFFF, #B7CFE9;
+}
+
+.IBSDockBar
+{
+	horizontalGap: 0;
+	verticalGap: 0;	
+}
+
+.IBSDockTab
+{
+	color: #154A93;
+	textRollOverColor: #154A93;
+	textSelectedColor: #154A93;
+	disabledColor: #AAB3B3;
+	left: 6;
+	right: 6;
+	top: 1;
+	bottom: 0;
+	skin: ClassReference("org.bigbluebutton.main.view.components.com.skins.common.IBSDockTabSkin");
+}
+
+.dockablePanel
+{
+	borderSkin: ClassReference("org.bigbluebutton.main.view.components.com.skins.common.IBSDockablePanelSkin");
+	borderThicknessLeft: 6;
+	borderThicknessRight: 6;
+	borderThicknessTop: 4;
+	borderThicknessBottom: 6;
+	cornerRadius: 0;
+	headerHeight: 23;
+	titleStyleName: dockablePanelTitle;
+	dockButtonPositionX: 5;
+	dockButtonPositionY: 4;
+	dockButtonStyleName: linkButton;
+	resizerAlpha: 0.7;
+	resizerColor: #FF0000;
+	resizerThickness: 4;
+}
+
+.dockablePanelTitle
+{
+	color: #154A93;
+	fontWeight: normal;
+}
