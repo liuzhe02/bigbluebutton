@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns="flexlib.containers.*" xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:mate="http://mate.asfusion.com/" visible="false" backgroundColor="0xCCCCCC" cornerRadius="5" borderStyle="solid" 
+	paddingBottom="3" paddingTop="3" paddingLeft="3" paddingRight="3" >
+	
+	<mate:Listener type="{MadePresenterEvent.SWITCH_TO_PRESENTER_MODE}" method="presenterMode" />
+	<mate:Listener type="{MadePresenterEvent.SWITCH_TO_VIEWER_MODE}" method="viewerMode" />
+	<!--<mate:Listener type="{PresentationEvent.PRESENTATION_LOADED}" method="showToolbar" />-->
+	<mate:Listener type="{WhiteboardButtonEvent.DISABLE_WHITEBOARD}" method="disableWhiteboard" />
+	<mate:Listener type="{WhiteboardButtonEvent.ENABLE_WHITEBOARD}" method="enableWhiteboard" />
+	
+	<mx:Style>
+		.colorPickerStyle {
+	      backgroundColor:#E5E6E7;
+	      columnCount:12;
+	      horizontalGap:0;
+	      previewHeight:22;
+	      previewWidth:45;
+	      swatchGridBackgroundColor:#000000;
+	      swatchGridBorderSize:0;
+	      swatchHeight:60;
+	      swatchHighlightColor:#FFFFFF;
+	      swatchHighlightSize:1;
+	      swatchWidth:12;
+	      textFieldWidth:72;
+	      verticalGap:0;
+	   }
+
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ResizeEvent;
+			import mx.events.MoveEvent;
+			import org.bigbluebutton.modules.present.views.PresentationWindow;
+			import org.bigbluebutton.modules.highlighter.events.WhiteboardButtonEvent;
+			import org.bigbluebutton.modules.present.events.PresentationEvent;
+			import org.bigbluebutton.modules.highlighter.events.HighlighterPresenterEvent;
+			import mx.controls.Alert;
+			import org.bigbluebutton.main.events.MadePresenterEvent;
+			import org.bigbluebutton.modules.highlighter.business.shapes.DrawObject;
+			import org.bigbluebutton.modules.highlighter.events.HighlighterDrawEvent;
+			import org.bigbluebutton.common.Images;
+			
+			private var images:Images = new Images();
+			[Bindable] private var pencil_icon:Class = images.pencil_icon;
+			[Bindable] private var undo_icon:Class = images.undo_icon;
+			[Bindable] private var delete_icon:Class = images.delete_icon;
+			[Bindable] private var rectangle_icon:Class = images.square_icon;
+			[Bindable] private var ellipse_icon:Class = images.circle_icon;
+			
+			public var canvas:HighlighterCanvas;
+			private var presentationWindow:PresentationWindow;
+			
+			[Bindable] private var colorPickerColours:Array = ['0xCCFF00', '0xFF0000', '0xFF8800',
+                '0xFFFF00', '0x000000', '0x00FF00', '0x00FF88', '0x00FFFF', 
+                '0x0088FF', '0x0000FF', '0x8800FF', '0xFF00FF'];
+			
+			/**
+			 * Sets the type of shape we're drawing (pencil, rectangle, etc...) 
+			 * @param s The type
+			 * 
+			 */		
+			protected function setShape(s:String):void{
+				canvas.setShape(s);
+			}
+			
+			/**
+			 * Sets the color 
+			 * @param e event containing the color (e.target.selectedColor)
+			 * 
+			 */		
+			protected function changeColor(e:Event):void{
+				canvas.changeColor(e);
+			}
+			
+			/**
+			 * Sets the thickness 
+			 * @param e event containing the thickness (e.target.value)
+			 * 
+			 */		
+			protected function changeThickness(e:Event):void{
+				canvas.changeThickness(e);
+			}
+			
+			private function presenterMode(e:MadePresenterEvent):void{
+				this.visible = true;
+			}
+			
+			private function viewerMode(e:MadePresenterEvent):void{
+				this.visible = false;
+			}
+			
+			private function showToolbar(e:PresentationEvent):void{
+				this.visible = true;
+			}
+			
+			private function sendUndoCommand():void{
+				if (!canvas.isPageEmpty()) dispatchEvent(new HighlighterDrawEvent(HighlighterDrawEvent.UNDO_SHAPE));
+			}
+			
+			private function enableWhiteboard(event:WhiteboardButtonEvent):void{
+				this.visible = true;
+				var e:HighlighterPresenterEvent = new HighlighterPresenterEvent(HighlighterPresenterEvent.MODIFY_ENABLED);
+				e.enabled = true;
+				dispatchEvent(e);
+			}
+			
+			private function disableWhiteboard(event:WhiteboardButtonEvent):void{
+				this.visible = false;
+				var e:HighlighterPresenterEvent = new HighlighterPresenterEvent(HighlighterPresenterEvent.MODIFY_ENABLED);
+				e.enabled = false;
+				dispatchEvent(e);
+			}
+			
+			public function positionToolbar(window:PresentationWindow):void{
+				presentationWindow = window;
+				presentationWindow.addEventListener(MoveEvent.MOVE, onMove);
+				presentationWindow.addEventListener(ResizeEvent.RESIZE, onResize);
+				this.x = presentationWindow.x + presentationWindow.width + 3;
+				this.y = presentationWindow.y + 30;
+				parent.setChildIndex(this, parent.numChildren-1);
+			}
+			
+			private function onMove(e:MoveEvent):void{
+				this.x = presentationWindow.x + presentationWindow.width + 3;
+				this.y = presentationWindow.y + 30;
+				parent.setChildIndex(this, parent.numChildren-1);
+			}
+			
+			private function onResize(e:ResizeEvent):void{
+				this.x = presentationWindow.x + presentationWindow.width + 3;
+				this.y = presentationWindow.y + 30;
+				parent.setChildIndex(this, parent.numChildren-1);
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Button width="20" height="20" id="btnPenc" click="setShape(DrawObject.PENCIL)"  icon="{pencil_icon}" toolTip="Highlighter" />
+	<mx:Button width="20" height="20" id="btnRectangle" click="setShape(DrawObject.RECTANGLE)" icon="{rectangle_icon}" toolTip="Rectangle" />
+	<mx:Button width="20" height="20" id="btnEllipse" click="setShape(DrawObject.ELLIPSE)" icon="{ellipse_icon}" toolTip="Circle" />
+	<mx:Button width="20" height="20" id="btnClear" click="dispatchEvent(new HighlighterDrawEvent(HighlighterDrawEvent.CLEAR_BOARD))" icon="{delete_icon}" toolTip="Clear Page" />
+	<mx:Button width="20" height="20" id="btnUndo"  click="sendUndoCommand()" icon="{undo_icon}" toolTip="Undo Shape" />
+	<mx:ColorPicker change="changeColor(event)" id="cpik" swatchPanelStyleName="colorPickerStyle" dataProvider="{colorPickerColours}" selectedColor="0xCCFF00" toolTip="Select Color"/>
+	<mx:VSlider height="50" id="sld" change="changeThickness(event)" toolTip="Change Thickness" minimum="4" maximum="20" useHandCursor="true" value="10" />
+	
+</mx:VBox>

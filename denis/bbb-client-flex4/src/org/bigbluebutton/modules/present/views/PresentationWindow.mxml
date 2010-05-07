@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  BigBlueButton - http://www.bigbluebutton.org
+  
+  Copyright (c) 2008-2009 by respective authors (see below). All rights reserved.
+  
+  BigBlueButton is free software; you can redistribute it and/or modify it under the 
+  terms of the GNU Lesser General Public License as published by the Free Software 
+  Foundation; either version 3 of the License, or (at your option) any later 
+  version. 
+  
+  BigBlueButton is distributed in the hope that it will be useful, but WITHOUT ANY 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License along 
+  with BigBlueButton; if not, If not, see <http://www.gnu.org/licenses/>.
+ 
+  $Id: $
+--> 
+
+
+<pres:MDIWindow xmlns:mx="http://www.adobe.com/2006/mxml"  
+	xmlns:thumb="org.bigbluebutton.modules.present.views.*"
+	xmlns:pres="flexlib.mdi.containers.*"
+	xmlns:code="http://code.google.com/p/flexlib/" 
+	xmlns:containers="flexlib.containers.*"
+	xmlns:mate="http://mate.asfusion.com/"
+	paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0" 
+	showCloseButton="false" verticalScrollPolicy="off" horizontalScrollPolicy="off"
+	implements="org.bigbluebutton.common.IBbbModuleWindow"
+	creationComplete="onCreationComplete()" 
+	width="{DEFAULT_WINDOW_WIDTH}" height="{DEFAULT_WINDOW_HEIGHT}" 
+	x="{DEFAULT_X_POSITION}" y="{DEFAULT_Y_POSITION}"
+	title="{currentPresentation}" keyUp="onKeyUp(event)">
+	
+	<mate:Dispatcher id="globalDispatcher" />
+	<mate:Listener type="{MadePresenterEvent.SWITCH_TO_PRESENTER_MODE}" method="becomePresenter" />
+	<mate:Listener type="{MadePresenterEvent.SWITCH_TO_VIEWER_MODE}" method="becomeViewer" />
+	<mate:Listener type="{PresentationEvent.PRESENTATION_LOADED}" method="handlePresentationLoadedEvent" />
+	<mate:Listener type="{NavigationEvent.GOTO_PAGE}" method="gotoPage" />
+	<mate:Listener type="{UploadEvent.CLEAR_PRESENTATION}" method="clearPresentation" />
+	<mate:Listener type="{SlideResizedEvent.SLIDE_RESIZED_EVENT}" method="handleSlideResizedEvent" />
+	<mate:Listener type="{DisplaySlideEvent.DISPLAY_SLIDE_EVENT}" method="handleDisplaySlideEvent" />
+	<mate:Listener type="{AddOverlayCanvasEvent.ADD_OVERLAY_CANVAS}" method="addOverlayCanvas" />
+	<!--<mate:Listener type="{AddPresentationToolbarEvent.ADD_TOOLBAR}" method="addToolbar" /> -->
+	<mate:Listener type="{AddButtonToPresentationEvent.ADD_BUTTON}" method="addButton" />
+	
+	<mx:Script>
+		<![CDATA[
+			import org.bigbluebutton.modules.present.api.IPresentationButton;
+			import org.bigbluebutton.modules.present.events.AddButtonToPresentationEvent;
+			import mx.events.ListEvent;
+			import org.bigbluebutton.common.IBbbCanvas;
+			import mx.events.ResizeEvent;
+			import flexlib.containers.DockableToolBar;
+			import org.bigbluebutton.modules.present.events.AddPresentationToolbarEvent;
+			import mx.controls.Alert;
+			import org.bigbluebutton.modules.present.events.AddOverlayCanvasEvent;
+			import org.bigbluebutton.modules.present.events.SlideResizedEvent;
+			import org.bigbluebutton.modules.present.events.WindowResizedEvent;
+			import org.bigbluebutton.modules.present.events.DisplaySlideEvent;
+			import org.bigbluebutton.main.events.MadePresenterEvent;
+			import org.bigbluebutton.modules.present.events.SlideEvent;
+			import org.bigbluebutton.modules.present.managers.Slide;
+			import org.bigbluebutton.util.i18n.ResourceUtil;
+			import mx.effects.Move;
+			import org.bigbluebutton.modules.present.events.MoveEvent;
+			import org.bigbluebutton.modules.present.events.ZoomEvent;
+			import org.bigbluebutton.modules.present.managers.SlideManager;
+			import org.bigbluebutton.modules.present.events.PresentationEvent;
+			import org.bigbluebutton.modules.present.events.PresenterCommands;
+			import org.bigbluebutton.modules.present.events.UploadEvent;
+			import org.bigbluebutton.modules.present.events.NavigationEvent;
+			import org.bigbluebutton.common.Images;
+			import flexlib.mdi.events.MDIWindowEvent;		
+			import mx.core.Application;
+			import mx.binding.utils.BindingUtils;
+
+			import mx.collections.ArrayCollection;
+			import mx.rpc.events.*;
+            import mx.managers.PopUpManager;
+            import mx.containers.TitleWindow;
+            import flash.geom.Point;
+             			
+            public static const TITLE:String = "Presentation";
+			private var images:Images = new Images();
+
+			[Bindable] private var uploadIcon:Class = images.upload;
+			[Bindable] private var forwardIcon:Class = images.forward;
+			[Bindable] private var backwardIcon:Class = images.backward;
+			[Bindable] private var thumbnailIcon:Class = images.thumbnails;
+			[Bindable] private var magnifierIcon:Class = images.magnifier;
+			[Bindable] public var fitToWidthIcon:Class = images.magnifier;
+			[Bindable] public var fitToActualSizeIcon:Class = images.mag_reset;
+						
+			[Bindable] private var thumbY:Number;
+			public var uploadWindow:FileUploadWindow = null;
+			private var slideManager:SlideManager = new SlideManager();
+			
+			[Bindable] private var DEFAULT_X_POSITION:int = 237;
+			[Bindable] private var DEFAULT_Y_POSITION:int = 0;
+			private var _xPosition:int = DEFAULT_X_POSITION;
+			private var _yPosition:int = 0;
+			
+			[Bindable] private var CONTROL_BAR_HEIGHT:int = 45;
+			private static const TOP_WINDOW_BORDER:int = 30;
+			private static const WIDTH_PADDING:int = 5;
+
+			[Bindable] private var DEFAULT_WINDOW_WIDTH:int = 510;
+			[Bindable] private var DEFAULT_WINDOW_HEIGHT:int = 451;
+						
+			// Init to the size of the window.
+			private var currentSlideWidth:int = DEFAULT_WINDOW_WIDTH;
+			private var currentSlideHeight:int = DEFAULT_WINDOW_HEIGHT;
+									
+			private var mouseDown:Boolean = false;
+			[Bindable] private var isPresenter:Boolean = false;
+			[Bindable] private var presentationLoaded:Boolean = false;
+			[Bindable] private var currentPresentation:String = ResourceUtil.getInstance().getString('bbb.presentation.title');
+			
+			private var presenterName:String = "";
+			
+			private var externalButtons:ArrayCollection = new ArrayCollection();
+
+			// The following code block is to deal with FLexLib MDI windows not being able to be moved when maximized
+			private var savedWindowWidth:Number;
+			private var savedWindowHeight:Number;
+			private var savedX:Number;
+			private var savedY:Number;
+			private var isMaximized:Boolean = false;
+			
+			private var fitToWindowTimer:Timer;
+			
+			override public function maximize():void{
+				if (!isMaximized){
+					savedWindowHeight = this.height;
+					savedWindowWidth = this.width;
+					savedX = this.x;
+					savedY = this.y;    
+					dispatchEvent(new MDIWindowEvent(MDIWindowEvent.MAXIMIZE, this));            	
+                	isMaximized = true;
+                	windowControls.maximizeRestoreBtn.toolTip = ResourceUtil.getInstance().getString('bbb.presentation.maximizeRestoreBtn.toolTip2');	                
+				
+				} else{
+					this.width = savedWindowWidth;
+					this.height = savedWindowHeight;
+					this.x = savedX;
+					this.y = savedY;
+					isMaximized = false;
+					windowControls.maximizeRestoreBtn.toolTip = ResourceUtil.getInstance().getString('bbb.presentation.maximizeRestoreBtn.toolTip');
+				}					
+				
+				/*
+				 * Need to have a timer to trigger resizing slide to window after the 
+				 * window has been maximized/restored. The MAXIMIZE/RESTORE events are
+				 * generated when the button is clicked so the width and height are not
+				 * the ones we want.
+				 */
+				fitToWindowTimer = new Timer(1000);
+				fitToWindowTimer.addEventListener(TimerEvent.TIMER, maximizeTimerHandler);
+				fitToWindowTimer.start();
+			}
+			
+			private function maximizeTimerHandler(event:TimerEvent):void {
+				// When the window is maximized, we want to resize the slide maintaining the aspect ratio.			
+				fitSlideToWindowMaintainingAspectRatio();
+				
+				if ((DEFAULT_X_POSITION + this.width) > this.parent.width) {
+					// Adjust presentation window so that it doesn't go over the side of the browser window
+					this.x = this.parent.width - this.width;
+				} else {
+					// Move window so that it won't overlap with Participant's window.
+					this.x = DEFAULT_X_POSITION;
+				}
+				
+				this.y = 0;
+				
+				fitToWindowTimer.stop();
+			}
+		
+			private function onCreationComplete():void{
+				thumbY = this.height - 160;
+				addEventListener(MDIWindowEvent.RESIZE_END, onResizeEndEvent);
+				slideView.addEventListener(ListEvent.ITEM_ROLL_OVER, onItemRollOver);
+			}
+			
+			private function onItemRollOver(e:ListEvent):void{
+				this.displaySlideNumber(e.columnIndex + 1);
+			}
+			
+			private function onResizeEndEvent(event:MDIWindowEvent):void {
+				if (event.window == this) {
+					fitSlideToWindowMaintainingAspectRatio();
+				}
+			}
+			
+			private function fitSlideToWindowMaintainingAspectRatio():void {
+				// Initialize to snap to take the width of the window as the size of the slide.
+				var slideWidth:int = this.width;
+				var slideHeight:int = this.height;
+				
+				// If the height is smaller than the width, we use the height as the 
+				// base to determine the size of the slide.
+				if (this.height < this.width) {					
+					slideHeight = this.height - CONTROL_BAR_HEIGHT - TOP_WINDOW_BORDER;
+					slideWidth = ((currentSlideWidth * slideHeight)/currentSlideHeight);
+				} else {
+					slideWidth = this.width - WIDTH_PADDING;
+					slideHeight = ((currentSlideHeight * slideWidth)/currentSlideWidth);
+				}
+				
+				this.width = slideWidth + WIDTH_PADDING;
+				this.height = slideHeight + CONTROL_BAR_HEIGHT + TOP_WINDOW_BORDER;
+
+				// Test if the height and width are bigger than it's parent. If so, resize
+				// to make it fit inside so that the controls will still be visible.
+				if (this.height > this.parent.height) {
+					this.height = this.parent.height;
+					slideHeight = this.height - CONTROL_BAR_HEIGHT - TOP_WINDOW_BORDER;
+					slideWidth = ((currentSlideWidth * slideHeight)/currentSlideHeight);
+				}				
+				
+				if (this.width > this.parent.width) {
+					this.width = this.parent.width;
+					slideWidth = this.width - WIDTH_PADDING;
+					slideHeight = ((currentSlideHeight * slideWidth)/currentSlideWidth);
+				}
+				sendWindowResizedEvent(slideWidth, slideHeight);
+			}
+			
+			/*
+			 * Notify the slide container telling it the available dimensions to display the slide.
+			 */
+			private function sendWindowResizedEvent(slideWidth:int, slideHeight:int):void {
+				var dispatcher:Dispatcher = new Dispatcher();
+				var dispEvent:WindowResizedEvent = new WindowResizedEvent(WindowResizedEvent.PRESENTATION_WINDOW_RESIZED_EVENT);
+				dispEvent.width = slideWidth;
+				dispEvent.height = slideHeight;
+				dispEvent.old_width = this.slideView.width;
+				dispEvent.old_height = this.slideView.height;
+				dispatcher.dispatchEvent(dispEvent);
+			}
+			
+			private function handleDisplaySlideEvent(event:DisplaySlideEvent):void {				
+				currentSlideWidth = event.slideWidth;
+				currentSlideHeight = event.slideHeight;
+				fitSlideToWindowMaintainingAspectRatio();			
+			}
+			
+			private function onKeyUp(event:KeyboardEvent):void{
+				switch (event.keyCode) {
+				case Keyboard.LEFT:
+				case Keyboard.UP:
+				case Keyboard.PAGE_UP:				
+					gotoPreviousSlide();		
+				break;
+				case Keyboard.DOWN:
+				case Keyboard.RIGHT: 
+				case Keyboard.SPACE:
+				case Keyboard.PAGE_DOWN:
+				case Keyboard.ENTER:
+					gotoNextSlide();
+				break; 
+				}
+			}
+			
+			public function get xPosition():int {
+				return _xPosition;
+			}
+			
+			public function get yPosition():int {
+				return _yPosition;
+			}
+			
+			public function set xPosition(x:int):void {
+				_xPosition = x;
+			}
+			
+			public function set yPosition(y:int):void {
+				_yPosition = y;
+			}	
+					
+			public function get defaultWidth():int{
+				return DEFAULT_WINDOW_WIDTH;
+			}
+			
+			public function get defaultHeight():int{
+				return DEFAULT_WINDOW_HEIGHT;
+			}
+			
+			public function set defaultHeight(height:int):void{
+				this.DEFAULT_WINDOW_HEIGHT = height;
+			}
+			
+			public function set defaultWidth(width:int):void{
+				this.DEFAULT_WINDOW_WIDTH = width;
+			}
+			
+			public function resetWidthAndHeight():void{
+				this.width = DEFAULT_WINDOW_WIDTH;
+				this.height = DEFAULT_WINDOW_HEIGHT;
+				fitSlideToWindowMaintainingAspectRatio();
+			}
+			
+			/**
+			 * Hide the thumbnails in case the user moves the mouse outside this window
+			 */
+			private function hideThumbs():void{
+				if (slideView.slides != null)
+					displaySlideNumber(slideView.selectedSlide + 1);
+			}
+			
+			private function showThumbsXXX():void {
+				 if (isPresenter){
+					//readjust the position of the thumbnails in case the window was resized
+					//Note: this is necessary because the MDIWindow does not let you listen to the resize() event!
+					thumbY = this.height - 150;
+				}				
+			}
+			
+			private function onSliderZoom():void {
+				dispatchResizeEvent(zoomSlider.value);
+			}
+			
+			private function dispatchResizeEvent(newSize:int):void {
+				var presentEvent:PresenterCommands = new PresenterCommands(PresenterCommands.RESIZE);
+				presentEvent.newSizeInPercent = newSize;
+				dispatchEvent(presentEvent);
+			}
+			
+			private function onResetZoom():void {
+				zoomSlider.value = 100;
+				dispatchResizeEvent(zoomSlider.value);
+			}
+			
+			private function handleSlideResizedEvent(e:SlideResizedEvent):void{
+				zoomSlider.value = e.percent;
+			}
+						
+			private function becomePresenter(e:MadePresenterEvent):void{
+				setupPresenter(true, e.presenterName);
+			}
+			
+			private function becomeViewer(e:MadePresenterEvent):void{
+				setupPresenter(false, e.presenterName);
+				dispatchEvent(new UploadEvent(UploadEvent.CLOSE_UPLOAD_WINDOW));
+			}
+						
+			private function setupPresenter(isPresenter:Boolean, presentersName:String):void {
+				this.isPresenter = isPresenter;
+				uploadPres.visible = isPresenter;
+				
+				if (presentationLoaded) {
+	            	displaySlideNumber(slideView.selectedSlide + 1);	
+					displaySlideNavigationControls(isPresenter);
+					showUploadPresentationLabel(false);
+				} else {
+					if (isPresenter)
+						showUploadPresentationLabel(true);
+					else
+						showUploadPresentationLabel(false);
+				}
+				
+				setPresentersName(presentersName);				
+			}
+			
+			private function setPresentersName(name:String):void {
+				if (name != null) presenterName = name;
+			}
+			
+			private function handlePresentationLoadedEvent(e:PresentationEvent):void {	
+				if (e.presentationName == currentPresentation) return;			
+				currentPresentation = e.presentationName;
+				presentationLoaded = true;
+				slideView.setSlides(e.slides.slides);    		            		
+				slideView.visible = true;		
+	
+				if (slideManager != null) slideManager.clear();	
+				
+				showUploadPresentationLabel(false);
+				displaySlideNumber(slideView.selectedSlide + 1);	
+				if (isPresenter) {
+					displaySlideNavigationControls(true);					
+					notifyOthersOfSharingPresentation(e.presentationName);
+				} else {
+					dispatchEvent(new SlideEvent(SlideEvent.LOAD_CURRENT_SLIDE));
+				}
+				onResetZoom();
+				reinitWindowToDefaultSize();
+			}
+			
+			private function displaySlideNavigationControls(show:Boolean):void {
+				backButton.visible = show;
+				forwardButton.visible = show;
+				zoomSlider.visible = show;
+				btnResetZoom.visible = show;
+				slideNumLbl.visible = show;
+				setButtonsVisibility(show);
+			}
+			
+			private function notifyOthersOfSharingPresentation(presentationName:String):void {
+				var shareEvent:PresenterCommands = new PresenterCommands(PresenterCommands.SHARE_PRESENTATION_COMMAND);
+					shareEvent.presentationName = presentationName;
+					shareEvent.share = true;
+					dispatchEvent(shareEvent);
+			}
+			
+			private function gotoPage(e:NavigationEvent):void{
+				slideView.selectedSlide = e.pageNumber;
+								
+				if (validPageNumber(e.pageNumber)) {
+					loadSlide(e.pageNumber);
+					disableSlideNavigationButtons(e.pageNumber);
+					displaySlideNumber(e.pageNumber + 1);
+				}				
+			}
+			
+			private function loadSlide(page:int):void {
+				slideManager.load(slideView.slides.getItemAt(page) as Slide);
+			}
+			
+			private function validPageNumber(pageNumber:int):Boolean {
+				return (pageNumber <= slideView.slides.length-1 && pageNumber >= 0)
+			}
+			
+			private function disableSlideNavigationButtons(pageNumber:int):void {
+				if (pageNumber == 0) {
+					backButton.enabled = false;
+				} else {
+					backButton.enabled = true;
+				}
+				
+				if (pageNumber < slideView.slides.length - 1) {
+					forwardButton.enabled = true;
+				} else {
+					forwardButton.enabled = false;
+				}
+			}
+			
+			private function displaySlideNumber(currentSlide:int):void {
+				slideNumLbl.label = ResourceUtil.getInstance().getString('bbb.presentation.pages', [currentSlide, slideView.slides.length]);
+			}
+			
+			private function clearPresentation(e:UploadEvent):void{
+				slideView.visible = false;		
+				slideView.swfSlideLoader.source = null; 
+				slideView.selectedSlide = 0;
+				slideNumLbl.label = "";
+				displaySlideNavigationControls(false);
+				showUploadPresentationLabel(false);
+				
+				// Change the title of the window.
+				currentPresentation = ResourceUtil.getInstance().getString('bbb.presentation.title');				
+				reinitWindowToDefaultSize();
+			}
+			
+			private function reinitWindowToDefaultSize():void {
+				if ((this.width < DEFAULT_WINDOW_WIDTH) || (this.height < DEFAULT_WINDOW_HEIGHT)) {
+					currentSlideWidth = DEFAULT_WINDOW_WIDTH;
+					currentSlideHeight = DEFAULT_WINDOW_HEIGHT;
+					this.width = DEFAULT_WINDOW_WIDTH;
+					this.height = DEFAULT_WINDOW_HEIGHT;
+				}				
+			}
+			
+			private function showUploadPresentationLabel(show:Boolean):void {
+				if (!show) {		
+					currentState = "";		
+				} else {
+					currentState = "dispUploadPresLabel";
+				}				
+			}
+
+			private function gotoPreviousSlide():void {
+				if ((slideView.selectedSlide - 1) >= 0)
+					dispatchEvent(new PresenterCommands(PresenterCommands.GOTO_SLIDE, slideView.selectedSlide - 1));
+			}
+			
+			private function gotoNextSlide():void {
+				if ((slideView.selectedSlide + 1) < slideView.slides.length)
+					dispatchEvent(new PresenterCommands(PresenterCommands.GOTO_SLIDE, slideView.selectedSlide + 1));
+			}
+			
+			private function removeDecimalFromDataTip(val:String):String {			
+                return val; 
+            }
+            
+            private function showThumbnails():void{
+            	slideView.thumbnailView.visible = !slideView.thumbnailView.visible;
+            	setComponentsEnabled(!slideView.thumbnailView.visible);
+            }
+            
+            private function addOverlayCanvas(e:AddOverlayCanvasEvent):void{
+            	slideView.acceptOverlayCanvas(e.canvas);
+            	e.canvas.acceptOverlayCanvas(slideView);
+            }
+            
+            /**
+            * Adds a button to the toolbar. The button is added by external modules through the API.
+            */
+            private function addButton(e:AddButtonToPresentationEvent):void{
+            	var button:IPresentationButton = e.button;
+            	externalButtons.addItem(button);
+ 				this.presCtrlBar.addChild(button as Button);
+ 				button.buttonAdded(this);
+            }
+            
+            /**
+            * Sets the visibility of buttons added throught the Presentation API
+            */
+            private function setButtonsVisibility(visible:Boolean):void{
+            	for (var i:int = 0; i<externalButtons.length; i++){
+            		(externalButtons.getItemAt(i) as IPresentationButton).setButtonVisibility(visible);
+            	}
+            }
+            
+            /**
+            * Sets the enabled of buttons added throught the Presentation API
+            */
+            private function setComponentsEnabled(enabled:Boolean):void{
+            	for (var i:int = 0; i<externalButtons.length; i++){
+            		(externalButtons.getItemAt(i) as IPresentationButton).setComponentEnabled(enabled);
+            	}
+            }
+            
+		]]>
+	</mx:Script>
+
+	<pres:states>
+	    <!--http://stackoverflow.com/questions/369120/why-does-mxstates-have-trouble-being-resolved-to-a-component-implementation-->
+        <mx:State name="dispUploadPresLabel">      
+            <mx:AddChild relativeTo="{spacer1}" position="before">
+                <mx:Label id="uploadPresentationLabel" visible="true" width="100%"
+    	  			text="{ResourceUtil.getInstance().getString('bbb.presentation.clickToUpload')}"/>
+            </mx:AddChild>
+        </mx:State>		
+	</pres:states>
+    	 
+	<mx:Fade id="thumbFadeIn" alphaFrom="1" alphaTo="0" duration="100" />
+	<mx:Fade id="thumbFadeOut" alphaFrom="0" alphaTo="1" duration="100" />
+
+		<thumb:SlideView id="slideView" width="100%" height="100%" visible="false" mouseDown="mouseDown = true" 
+			mouseUp="mouseDown = false" verticalScrollPolicy="off" horizontalScrollPolicy="off" />
+		    
+    <mx:ApplicationControlBar id="presCtrlBar" width="100%" height="{CONTROL_BAR_HEIGHT}">
+    	  <mx:Button id="uploadPres" icon="{uploadIcon}" visible="false" width="20" height="20"
+    	   		toolTip="{ResourceUtil.getInstance().getString('bbb.presentation.uploadPresBtn')}" 
+    	   		click="dispatchEvent(new UploadEvent(UploadEvent.OPEN_UPLOAD_WINDOW))"/>        	  
+    	  <mx:Spacer width="50%" id="spacer1"/>
+    	  <mx:Button id="backButton" icon="{backwardIcon}" visible="false" width="30" height="20"
+    	   		toolTip="Previous slide." click="gotoPreviousSlide()"/>
+    	  <mx:Button id="slideNumLbl" visible="false" label="" click="showThumbnails()"/>    
+    	  <mx:Button id="forwardButton" icon="{forwardIcon}" visible="false" width="30" height="20"
+    	   		toolTip="Next slide" click="gotoNextSlide()"/>    				
+		<mx:Spacer width="10%" id="spacer2"/>
+    	<mx:HSlider id="zoomSlider" visible="false"
+    		minimum="100" maximum="400" value="100" dataTipPlacement="top" labels="['100%','400%']" 
+    		useHandCursor="true" snapInterval="5" allowTrackClick="true" liveDragging="true" 
+    		dataTipFormatFunction="removeDecimalFromDataTip" change="onSliderZoom()" width="100"/>
+    	<mx:Spacer width="50%" id="spacer3"/>
+    	<!--containers:Docker id="toolbarDocker" height="100%" width="250" visible="{isPresenter}" /-->
+    	<mx:Button id="btnResetZoom" icon="{magnifierIcon}" visible="false" width="20" height="20" 
+    		toolTip="Reset Zoom" click="onResetZoom()"/>
+    	<mx:Spacer width="5" id="spacer4"/>
+    	<!--<mx:Button id="btnSelection" click="enableTextSelection()" />-->
+    </mx:ApplicationControlBar>
+</pres:MDIWindow>

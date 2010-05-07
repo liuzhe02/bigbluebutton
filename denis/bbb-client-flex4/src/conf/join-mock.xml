@@ -1,0 +1,10 @@
+<join>
+	<returncode>SUCCESS</returncode>
+	<fullname>Guilermo</fullname>
+	<role>MODERATOR</role>
+	<conference>conference-mock-default</conference>
+	<room>room-mock-default</room>
+	<voicebridge>85115</voicebridge>
+	<mode>LIVE</mode>
+	<record>true</record>
+</join>
