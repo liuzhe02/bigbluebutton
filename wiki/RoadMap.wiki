@@ -1,25 +1,3 @@
-#summary Development Road Map for BigBlueButton
+Google Code has been great but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].  
 
-
-= Current Release =
-
-The current release is !BigBlueButton 0.81.  See [ReleaseNotes release notes].
-
-= Next Release =
-
-The next release will be !BigBlueButton 0.9.0 (we're switching to [http://semver.org/ semantic versioning]).  Here's a recent post to bigbluebutton-dev on an [https://groups.google.com/d/msg/bigbluebutton-dev/jb-H3uZO3cI/vmKJYdll0EIJ update] of our progress.
-
-The planned features included:
-
-  * Start/Stop button (see [https://code.google.com/p/bigbluebutton/issues/detail?id=1037 1037])
-  * Improved audio setup (see [https://code.google.com/p/bigbluebutton/issues/detail?id=1699 1699])
-  * WebRTC Audio (see [https://code.google.com/p/bigbluebutton/issues/detail?id=1544 1544])
-  * Listen Only Audio (see [https://code.google.com/p/bigbluebutton/issues/detail?id=353 353])
-  * Ability to disable features for viewers (see [https://code.google.com/p/bigbluebutton/issues/detail?id=1702 1702])
-  * Installation on Ubuntu 14.04 64-bit (see [https://code.google.com/p/bigbluebutton/issues/detail?id=1275 1275])
-
-See the [https://code.google.com/p/bigbluebutton/issues/list?can=1&q=milestone=Release0.9.0 0.9.0 issues list] of items completed for 0.9.0 as well as [https://code.google.com/p/bigbluebutton/wiki/090Overview detailed overview] of what you can expect in the release.
-
-= Roadmap to !BigBlueButton 1.0 =
-
-To get a look at the plans beyond the current release, see [RoadMap1dot0 Roadmap to BigBlueButton 1.0].  
+We've moved the documentation for the !BigBlueButton project to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
