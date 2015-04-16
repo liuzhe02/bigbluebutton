@@ -1,1 +1,1 @@
-The documentation for the !BigBlueButton project is now at [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+Google Code is shutting down soon.  The documentation for the !BigBlueButton project is now at [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
