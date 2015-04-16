@@ -1,9 +1,1 @@
-#summary Overview of BigBlueButton
-
-The following documents will give you an overview of !BigBlueButton.
-
-  * [ArchitectureOverview Architecture Overview]
-  * [ClientConfiguration Client-side configuration]
-  * [ConfigurationFiles Configuration Files]
-  * [Recording Record and Playback]
-  * [http://www.bigbluebutton.org/components/ Open Source Components]
+The documentation has moved to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].rce Components]
