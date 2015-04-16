@@ -1,10 +1,10 @@
 #summary How to install BigBlueButton 0.81
 
-For updated documentation and instructions to install the newest version of BigBlueButton, see [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+For updated documentation and instructions to install the newest version of !BigBlueButton, see [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
 
 <wiki:toc max_depth="3" />
 
-For updated documentation and instructions to install the newest version of BigBlueButton, see [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+For updated documentation and instructions to install the newest version of !BigBlueButton, see [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
 
 = Welcome =
 
@@ -12,7 +12,7 @@ Welcome to the installation guide for !BigBlueButton 0.81, our eleventh release 
 
 = Before You Install =
 
-For updated documentation and instructions to install the newest version of BigBlueButton, see [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+For updated documentation and instructions to install the newest version of !BigBlueButton, see [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
 
 
 *Note:* The packaging is for *Ubuntu 10.04 64-bit only*.  We no longer support 32-bit packaging for 0.81. 
