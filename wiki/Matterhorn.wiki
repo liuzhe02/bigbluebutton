@@ -2,6 +2,8 @@
 
 <wiki:toc max_depth="3" />
 
+The documentation for the !BigBlueButton project is now at [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+
 = Prerequisites =
 
 You need [InstallationUbuntu BigBlueButton 0.81].  On a separate server (not the same server as !BigBlueButton) install [https://opencast.jira.com/wiki/display/mh14/Installation+and+Configuration Matterhorn 1.4] 
