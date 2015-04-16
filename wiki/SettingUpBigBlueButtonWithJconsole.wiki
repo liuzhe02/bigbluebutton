@@ -1,5 +1,12 @@
 #summary Monitoring BigBlueButton with JConsole and/or VisualVM
 
+
+* **Note:** These documents are out-of-date.  The documentation has moved to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+
+* **Note:** These documents are out-of-date.  The documentation has moved to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+
+* **Note:** These documents are out-of-date.  The documentation has moved to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+
 = Introduction =
 
 In this page, we are going to describe how to monitor !BigBlueButton's performance (memory consumption, CPU usage, threads, etc) using  [http://download.oracle.com/javase/6/docs/technotes/tools/share/jconsole.html  Jconsole] and/or [http://download.oracle.com/javase/6/docs/technotes/guides/visualvm/index.html JVisualVM]. 
