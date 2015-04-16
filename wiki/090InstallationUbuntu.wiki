@@ -1,1 +1,1 @@
-* **Note:** These documents are out-of-date.  The documentation has moved to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+The documentation has moved to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
