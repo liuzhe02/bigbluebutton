@@ -1,9 +1,10 @@
 #summary Setup a development environment for BigBlueButton 0.81
 
+The documentation for the !BigBlueButton project is now at [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+
 <wiki:toc max_depth="2" />
 
-Recommend shift development to BigBlueButton 0.9.0.  The for the BigBlueButton project is now at [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
-
+The documentation for the !BigBlueButton project is now at [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
 
 = Welcome =
 
