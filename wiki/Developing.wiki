@@ -2,6 +2,9 @@
 
 <wiki:toc max_depth="2" />
 
+Recommend shift development to BigBlueButton 0.9.0.  The for the BigBlueButton project is now at [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
+
+
 = Welcome =
 
 Welcome to the !BigBlueButton Developer's Guide.  This document will help you get started quickly with modifying and extending BigBlueButton.
