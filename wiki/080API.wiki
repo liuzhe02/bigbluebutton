@@ -1,6 +1,6 @@
 #summary BigBlueButton Third-Party Integration API.
 
-This document is depreciated.  See [API API] for the latest version of the API docs.
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
 
 <wiki:toc max_depth="3" />
 
