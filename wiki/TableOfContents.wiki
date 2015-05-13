@@ -1,5 +1,3 @@
   * Google Code is Shutting Down.  The [http://docs.bigbluebutton.org/ Documentation has moved to http://docs.bigbluebutton.org/]
-  * Older Docs
-    * [Installation Install BigBlueButton 0.81] (Nov 7, 2013 - [ReleaseNotes Release Notes])
-    * [IssuesInstructions Issues/Bug Tracker]
+
  
