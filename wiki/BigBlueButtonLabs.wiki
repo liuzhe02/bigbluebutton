@@ -1,22 +1,3 @@
-#summary BigBlueButton Labs
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
 
-= Introduction =
-
-The purpose of !BigBlueButton Labs is to rapidly experiment and prototype new ideas to improve !BigBlueButton.
-
-Unless a labs project states otherwise, these projects are exploratory in nature with no implied timeline to merge them into !BigBlueButton core.  In this way, developers working on labs project are free to experiment, collaborate, and, most importantly, get feedback from the community.
-
-If you want to give feedback on a particular labs project, please post to [http://groups.google.com/group/bigbluebutton-dev/topics?gvc=2 bigbluebutton-dev].
-    
-    * [HTML5 HTML5 client]
-    * [WebhooksAPI WebhooksAPI]
-    * [BroadcastModule Broadcast Module]
-    * [StressTesting Stress Testing the BigBlueButton server]
-    * [PollingModule Polling Module]
-    * [Phidgets Physical Widgets for External Notification]
-    * [http://readytopresent.wordpress.com/ Ready To Present]
-    * [Whiteboard Whiteboard using Wiimote]
-    * [SummerOfCodeApplication GSOC Application Template]
-
-
- 
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
