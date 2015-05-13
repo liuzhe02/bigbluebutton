@@ -1,5 +1,3 @@
-Tiki Suite is an Integrated Web and desktop suite which includes BigBlueButton.
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
 
-Other components include ClearOS Enterprise, Kaltura, Jitsi and  LibreOffice.
-
-Please see: http://suite.tiki.org/
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
