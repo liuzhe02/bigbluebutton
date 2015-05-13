@@ -1,14 +1,3 @@
-#summary Overview of installation
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
 
-= Introduction =
-
-The !BigBlueButton 0.81 server runs under Ubuntu 10.04 64-bit.  To setup your own !BigBlueButton server:
-
-    * [InstallationUbuntu Install from packages] (Ubuntu 10.04 64-bit)
-    * [BigBlueButtonVM Download BigBlueButton Virtual Machine] (Mac OS X or Windows desktop)
-
-After you've setup a !BigBlueButton server, you can configure it using the `bbb-conf` tool, see
-
-    * [BBBConf BigBlueButton configuration tool]
-
-If you are new to !BigBlueButton, please read through the [TechnicalOverview overview] pages to learn more about !BigBlueButton's architecture and configuration.
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
