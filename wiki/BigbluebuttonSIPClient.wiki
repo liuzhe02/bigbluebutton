@@ -1,34 +1,4 @@
-#summary One-sentence summary of this page.
 #labels Phase-Design,Phase-Deploy,Phase-QA
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
 
-= Introduction =
-
-This is a place holder for Bigbluebutton SIPClient
-
-
-= Details =
-
-main sections: 
-
-Design
-
-SIP Phone
-
-SIP Client Applet
-
-
-Build and Deployment
-
-SIP Phone
-
-SIP Client Applet
-
-
-Potential problems and issues
-
-Future work 
-
-Features, enhancements, server side work, etc
-
-
-
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
