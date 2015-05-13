@@ -1,36 +1,3 @@
-#summary Proposed Google Summer of Code projects for BigBlueButton. Let us know if you want to work on one.
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
 
-_Note: !BigBlueButton didn't get accepted this year in GSOC 2011 -- but we'll be trying hard for 2012!  Further discussion on these projects has moved to the issue tracker with labels of [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=label:Type-Research&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&x=priority&y=component&mode=grid&cells=tiles Research]._
-
-<wiki:toc max_depth="3" />
-
-= Introduction =
-
-Welcome!  This page gives a summary of !BigBlueButton projects for the 2011 Google Summer of Code (GSoC).  Many of these projects are based on requests from our community.  
-
-If you are interested in one of these projects, please post to [http://groups.google.com/group/bigbluebutton-dev bigbluebutton-dev] with any questions or suggestions.  If you are interested in working on a !BigBlueButton project not listed here, we welcome your suggestions!
-
-For some background on the !BigBlueButton project, see the FAQ, [http://en.wikipedia.org/wiki/BigBlueButton wikipedia], [http://bigbluebutton.org/content/videos videos].
-
-= GSOC 2011 Student Projects =
-
-== HTML5 Client ==
-Create an HTML5 client for !BigBlueButton.  This project touches on creating a WebSockets server that can bridge communications to the red5 RTMP server.  Once you have the WebSockets server in place, you need to create a UI that mimics (or improves!) on the current Flash UI.  
-
-== Flex 4 Prototype ==
-We need a shiny new Flex 4 client to replace our Flex 3 client.  The current version of !BigBlueButton uses the [http://code.google.com/p/flexlib/ FlexLib component library].  Flex 4 brings the [http://opensource.adobe.com/wiki/display/flexsdk/Gumbo+Component+Architecture Spark component architecture].  
-
-== XMPP Integration ==
-Convert the Chat module to work with XMPP.  This would enable people to log into bigbluebutton chat with their favorite XMPP compatible chat client, such as !OpenFire, GTalk, Pidgin, etc...
-
-== IRC Bridge ==
-A bridge from Chat to IRC.  This could be done in conjunction with the XMPP idea, as there are already some XMPP to IRC solutions.
-
-== Accessibility Support ==
-Find ways to make !BigBlueButton more accessible, in accordance with [http://www.section508.gov/ Section 508].
-
-== Android Client ==
-Create an Android client for !BigBlueButton.  There is some initial work that you can build upon, see [http://bigbluebutton-blog.blogspot.com/2011/02/bigbluebutton-on-android-phone.html  BigBlueButton on Android Phone].
-
-== iPhone/iPad Client ==
-Create a native Objective-C client for the iPhone or iPad.
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
