@@ -1,1 +1,3 @@
-See: MatterhornIntegration
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
+
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
