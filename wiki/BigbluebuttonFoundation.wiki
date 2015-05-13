@@ -1,21 +1,3 @@
-#summary Information on the Bigbluebutton Foundation
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
 
-=Bigbluebutton Foundation Wiki=
-
-This page is currently under construction.   Included here are the items that drive the success of the Bigbluebutton product and its community.
-
-to be added but not limited to:
- * Membership articles
- * Process for membership
-
-
-<wiki:comment>
-
-<= Details =>
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages>
-
-</wiki:comment>
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
