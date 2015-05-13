@@ -1,11 +1,3 @@
-#summary BigBlueButton 0.81-RC4 documentation
+Google Code has been great,  but its [http://google-opensource.blogspot.ca/2015/03/farewell-to-google-code.html shutting down].
 
-The following is a list of updated documentation for 0.81-RC4.
-    
-    * [081Overview 081Overview]
-    * [081InstallationUbuntu 081InstallationUbuntu]
-    * [081DevelopingBigBlueButton 081DevelopingBigBlueButton]
-    * [081API 081API]
-    * [081Accessibility 081Accessibility]
-    * [081RecordAndPlayback 081RecordAndPlayback]
-    * [LTI LTI]
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/ http://docs.bigbluebutton.org/].
