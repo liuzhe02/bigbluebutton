@@ -18,7 +18,7 @@ If you've found a bug (or would like to make an enhancement request), we'd like 
 
 To reduce the duplication of submissions, we ask you take a few moments and go through the steps below.  
 
-*1. Search the Issues database*:   [http://code.google.com/p/bigbluebutton/issues/list?can=1&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&cells=tiles Search the complete issue database] to see if someone has already reported the defect or made the enhancement request.  If you find a match, add your comments to the issue (don't create a new one!) and feel fee to vote (star the issue) for its resolution.
+*1. Search the Issues database*:   [https://github.com/bigbluebutton/bigbluebutton/issues Search the complete issue database] to see if someone has already reported the defect or made the enhancement request.  If you find a match, add your comments to the issue (don't create a new one!) and feel fee to vote (star the issue) for its resolution.
 
 *2.  Post to bigbluebutton-dev:* If you are not a !BigBlueButton developer, we ask that you first post to [http://groups.google.com/group/bigbluebutton-dev BigBlueButton-developers] mailing list.  
 
@@ -30,9 +30,6 @@ There are over 1000 members of bigbluebutton-dev, and all of the core developers
 
 When creating a new issue, please add a url to the original discussion in bigbluebutton-dev.
 
-Go to [http://code.google.com/p/bigbluebutton/issues/list BigBlueButton Issues List]
+Go to [https://github.com/bigbluebutton/bigbluebutton/issues BigBlueButton Issues List]
 
-Grid view: [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&sort=&mode=grid&y=Component&x=Stars&cells=ids&nobtn=Update Stars] - [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&sort=&mode=grid&y=Component&x=Priority&cells=ids&nobtn=Update Priority] - [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&sort=&mode=grid&y=Component&x=Status&cells=ids&nobtn=Update Status] - [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&sort=&mode=grid&y=Owner&x=Status&cells=ids&nobtn=Update Assigned]
-
-
-Labels: [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=label:Stability&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&x=priority&y=component&mode=grid&cells=tiles Stability] - [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=label:Usability&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&sort=&mode=grid&y=Component&x=Priority&cells=tiles&nobtn=Update Usability] - [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=label:Performance&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&x=priority&y=component&mode=grid&cells=tiles Performance] - [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=component=Localization&colspec=ID%20Type%20Status%20Priority%20Milestone%20Owner%20Component%20Summary Localization] - [http://code.google.com/p/bigbluebutton/issues/list?can=2&q=label:Type-Research&colspec=ID+Type+Status+Priority+Milestone+Owner+Component+Summary&x=priority&y=component&mode=grid&cells=tiles Research]
+Labels: [https://github.com/bigbluebutton/bigbluebutton/labels/Stability Stability] - [https://github.com/bigbluebutton/bigbluebutton/labels/Usability Usability] - [https://github.com/bigbluebutton/bigbluebutton/labels/Performance Performance] - [https://github.com/bigbluebutton/bigbluebutton/labels/Localization Localization] - [https://github.com/bigbluebutton/bigbluebutton/labels/Type-Research Research]
