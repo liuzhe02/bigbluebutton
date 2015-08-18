@@ -1,0 +1,1 @@
+See: [this page](http://code.google.com/p/bigbluebutton/wiki/081RecordAndPlayback).

@@ -1,0 +1,1 @@
+The documentation has moved to [http://docs.bigbluebutton.org/](http://docs.bigbluebutton.org/).rce Components]

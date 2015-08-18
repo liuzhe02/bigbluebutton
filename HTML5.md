@@ -1,0 +1,1 @@
+We have moved (and updated) our documentation to [http://docs.bigbluebutton.org/](http://docs.bigbluebutton.org/).
